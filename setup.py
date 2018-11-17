@@ -10,6 +10,7 @@ setup(name='wvpy',
       install_requires=[
           'numpy',
           'matplotlib',
-          'sklearn'
+          'sklearn',
+          'pandas'
       ]
 )

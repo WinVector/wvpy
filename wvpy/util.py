@@ -4,7 +4,7 @@ import matplotlib.pyplot
 import sklearn
 import sklearn.metrics
 import itertools
-
+import pandas
 
 
 
@@ -88,3 +88,9 @@ def search_grid(inp):
     """build a cross product of all named dictionary entries"""
     gen = (dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values()))
     return([ci for ci in gen])
+
+def grid_to_df(grid):
+    """convert a search_grid list of maps to a pandas data frame"""
+    n = len(grid)
+    keys = [ ki for ki in grid[1].keys() ]
+    return(pandas.DataFrame({ ki : [ grid[i][ki] for i in range(n) ] for ki in keys }))
