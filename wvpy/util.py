@@ -1,5 +1,6 @@
 
 import numpy
+import statistics
 import matplotlib.pyplot
 import sklearn
 import sklearn.metrics
@@ -100,4 +101,29 @@ def grid_to_df(grid):
 def eval_fn_per_row(f, x2, df):
     """evaluate f(row-as-map, x2) for rows in df"""
     return([ f({ k : df.loc[i, k] for k in df.columns }, x2) for i in range(df.shape[0]) ])
+
+
+def perm_score_vars(d, istrue, model, modelvars, k = 5):
+    """evaluate model~istrue on d permuting each of the modelvars and return variable importances"""
+    d2 = d.copy()
+    preds = model.predict_proba(d2[modelvars])
+    basedev = mean_deviance(preds, istrue)
+    def perm_score_var(victim):
+        dorig = numpy.array(d2[victim].copy())
+        dnew = numpy.array(d2[victim].copy())
+        def perm_score_var_once():
+            numpy.random.shuffle(dnew)
+            d2[victim] = dnew
+            preds = model.predict_proba(d2[modelvars])
+            permdev = mean_deviance(preds, istrue)
+            return(permdev)
+        devs = [ perm_score_var_once() for rep in range(k) ]
+        d2[victim] = dorig
+        return(numpy.mean(devs), statistics.stdev(devs))
+    stats = [ perm_score_var(victim) for victim in modelvars ]
+    vf = pandas.DataFrame({"var" : modelvars})
+    vf["importance"] = [ di[0]  - basedev for di in stats ]
+    vf["importance_dev"] = [ di[1] for di in stats ]
+    vf.sort_values(by = ["importance"], ascending = False, inplace = True)
+    return(vf)
 

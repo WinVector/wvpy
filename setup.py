@@ -8,6 +8,7 @@ setup(name='wvpy',
       url='https://github.com/WinVector/vtreat',
       packages=['wvpy'],
       install_requires=[
+          'statistics',
           'numpy',
           'matplotlib',
           'sklearn',
