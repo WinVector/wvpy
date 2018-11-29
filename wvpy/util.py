@@ -1,7 +1,9 @@
 
 import numpy
 import statistics
+import matplotlib
 import matplotlib.pyplot
+import seaborn
 import sklearn
 import sklearn.metrics
 import itertools
