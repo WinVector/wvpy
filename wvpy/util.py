@@ -65,10 +65,12 @@ def mk_cross_plan(n, k):
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
 def plot_roc(prediction, istrue):
+    """plot a ROC curve of numeric prediction against boolean istrue"""
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     matplotlib.pyplot.figure()
     lw = 2
+    matplotlib.pyplot.gcf().clear()
     matplotlib.pyplot.plot(fpr, tpr, color='darkorange',
          lw=lw, 
          label='ROC curve  (area = {0:0.2f})'
@@ -82,6 +84,17 @@ def plot_roc(prediction, istrue):
     matplotlib.pyplot.legend(loc="lower right")
     matplotlib.pyplot.show()
     return(auc)
+
+def dual_density_plot(probs, istrue):
+    """plot a dual density plot of numeric prediction against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    preds_on_positive = [ probs[i] for i in range(len(probs)) if istrue[i] ]
+    preds_on_negative = [ probs[i] for i in range(len(probs)) if not istrue[i] ]
+    seaborn.kdeplot(preds_on_positive, label = "positive examples", bw=0.01)
+    seaborn.kdeplot(preds_on_negative , label = "negative examples", bw=0.01)
+    matplotlib.pyplot.ylabel("density of examples")
+    matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.show()
 
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
