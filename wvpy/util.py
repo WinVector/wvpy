@@ -112,12 +112,12 @@ def dual_density_plot_proba1(probs, istrue):
 def dual_hist_plot_proba1(probs, istrue):
     """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
     matplotlib.pyplot.gcf().clear()
-    pf = pandas.DataFrame(prob = probs[:,1], istrue = istrue)
-    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=.5)
+    pf = pandas.DataFrame({'prob' : [ probs[i,1] for i in range(probs.shape[0])], 'istrue' : istrue})
+    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
     bins = numpy.arange(0, 1.1, 0.1)
-    g = g.map(plt.hist, "prob", bins=bins)
+    g = g.map(matplotlib.pyplot.hist, "prob", bins=bins)
+    #g = g.map(seaborn.distplot, "prob", bins=bins)
     matplotlib.pyplot.show()
-
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
 def search_grid(inp):
