@@ -88,7 +88,7 @@ def plot_roc(prediction, istrue):
     return(auc)
 
 def dual_density_plot(probs, istrue):
-    """plot a dual density plot of numeric prediction against boolean istrue"""
+    """plot a dual density plot of numeric prediction probs against boolean istrue"""
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [ probs[i] for i in range(len(probs)) if istrue[i] ]
     preds_on_negative = [ probs[i] for i in range(len(probs)) if not istrue[i] ]
@@ -96,6 +96,26 @@ def dual_density_plot(probs, istrue):
     seaborn.kdeplot(preds_on_negative , label = "negative examples", bw=0.01)
     matplotlib.pyplot.ylabel("density of examples")
     matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.show()
+
+def dual_density_plot_proba1(probs, istrue):
+    """plot a dual density plot of numeric prediction probs[:,1] against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    preds_on_positive = [ probs[i,1] for i in range(len(probs)) if istrue[i] ]
+    preds_on_negative = [ probs[i,1] for i in range(len(probs)) if not istrue[i] ]
+    seaborn.kdeplot(preds_on_positive, label = "positive examples", bw=0.01)
+    seaborn.kdeplot(preds_on_negative , label = "negative examples", bw=0.01)
+    matplotlib.pyplot.ylabel("density of examples")
+    matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.show()
+
+def dual_hist_plot_proba1(probs, istrue):
+    """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    pf = pandas.DataFrame(prob = probs[:,1], istrue = istrue)
+    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=.5)
+    bins = numpy.arange(0, 1.1, 0.1)
+    g = g.map(plt.hist, "prob", bins=bins)
     matplotlib.pyplot.show()
 
 
