@@ -3,6 +3,7 @@ README.txt
 setup.py
 Doc/documentation.txt
 examples/example_cross_plan.py
+wvpy/__init__.py
 wvpy/util.py
 wvpy.egg-info/PKG-INFO
 wvpy.egg-info/SOURCES.txt
