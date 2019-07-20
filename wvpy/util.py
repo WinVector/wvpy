@@ -88,7 +88,7 @@ def plot_roc(prediction, istrue):
     return(auc)
 
 def dual_density_plot(probs, istrue):
-    """plot a dual density plot of numeric prediction against boolean istrue"""
+    """plot a dual density plot of numeric prediction probs against boolean istrue"""
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [ probs[i] for i in range(len(probs)) if istrue[i] ]
     preds_on_negative = [ probs[i] for i in range(len(probs)) if not istrue[i] ]
@@ -98,6 +98,36 @@ def dual_density_plot(probs, istrue):
     matplotlib.pyplot.xlabel("model score")
     matplotlib.pyplot.show()
 
+def dual_density_plot_proba1(probs, istrue):
+    """plot a dual density plot of numeric prediction probs[:,1] against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    preds_on_positive = [ probs[i,1] for i in range(len(probs)) if istrue[i] ]
+    preds_on_negative = [ probs[i,1] for i in range(len(probs)) if not istrue[i] ]
+    seaborn.kdeplot(preds_on_positive, label = "positive examples", bw=0.01)
+    seaborn.kdeplot(preds_on_negative , label = "negative examples", bw=0.01)
+    matplotlib.pyplot.ylabel("density of examples")
+    matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.show()
+
+def dual_hist_plot_proba1(probs, istrue):
+    """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    pf = pandas.DataFrame({'prob' : [ probs[i,1] for i in range(probs.shape[0])], 'istrue' : istrue})
+    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
+    bins = numpy.arange(0, 1.1, 0.1)
+    g = g.map(matplotlib.pyplot.hist, "prob", bins=bins)
+    #g = g.map(seaborn.distplot, "prob", bins=bins)
+    matplotlib.pyplot.show()
+
+def dual_hist_plot(probs, istrue):
+    """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+    matplotlib.pyplot.gcf().clear()
+    pf = pandas.DataFrame({'prob' : [ probs[i] for i in range(probs.shape[0])], 'istrue' : istrue})
+    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
+    bins = numpy.arange(0, 1.1, 0.1)
+    g = g.map(matplotlib.pyplot.hist, "prob", bins=bins)
+    #g = g.map(seaborn.distplot, "prob", bins=bins)
+    matplotlib.pyplot.show()
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
 def search_grid(inp):
