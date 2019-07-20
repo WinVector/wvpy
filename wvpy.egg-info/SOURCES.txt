@@ -1,0 +1,11 @@
+MANIFEST.in
+README.txt
+setup.py
+Doc/documentation.txt
+examples/example_cross_plan.py
+wvpy/util.py
+wvpy.egg-info/PKG-INFO
+wvpy.egg-info/SOURCES.txt
+wvpy.egg-info/dependency_links.txt
+wvpy.egg-info/requires.txt
+wvpy.egg-info/top_level.txt
