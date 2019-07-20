@@ -1,4 +1,6 @@
 
-import wvpy
+import wvpy.util
 
-mk_cross_plan(10, 3)
+wvpy.util.mk_cross_plan(10, 3)
+
+
