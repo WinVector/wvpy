@@ -13,5 +13,8 @@ setup(name='wvpy',
           'matplotlib',
           'sklearn',
           'pandas'
+      ],
+      classifiers=[
+        'License :: OSI Approved :: BSD-3-Clause'
       ]
 )
