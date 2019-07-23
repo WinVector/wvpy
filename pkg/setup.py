@@ -1,12 +1,12 @@
 # setup.py
-from setuptools import setup
+import setuptools
 
-setup(name='wvpy',
+setuptools.setup(name='wvpy',
       version='0.1',
       author='John Mount',
       author_email='jmount@win-vector.com',
       url='https://github.com/WinVector/wvpy',
-      packages=['wvpy'],
+      packages=setuptools.find_packages(),
       install_requires=[
           'statistics',
           'numpy',

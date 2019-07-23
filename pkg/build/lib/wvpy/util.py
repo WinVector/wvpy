@@ -118,9 +118,38 @@ def dual_hist_plot_proba1(probs, istrue):
     g = g.map(matplotlib.pyplot.hist, "prob", bins=bins)
     #g = g.map(seaborn.distplot, "prob", bins=bins)
     matplotlib.pyplot.show()
+    
+
+def gain_curve_plot(prediction, outcome):
+    """plot cumulative outcome as a function of prediction order (descending)"""
+    df = pandas.DataFrame({"prediction":prediction, "outcome":outcome})
+    df.sort_values(["prediction"], ascending=[False], inplace=True)
+    df["fraction_of_observations_by_prediction"] = [(1+i)/df.shape[0] for i in range(df.shape[0])]
+    df["cumulative_outcome"] = df["outcome"].cumsum()
+    df["cumulative_outcome_fraction"] = df["cumulative_outcome"]/numpy.max(df["cumulative_outcome"])
+    seaborn.scatterplot(x = "fraction_of_observations_by_prediction", 
+                        y = "cumulative_outcome_fraction", 
+                        data = df)
+    seaborn.lineplot(x=[0,1], 
+                     y=[0,1], 
+                     color="red")
+
+def lift_curve_plot(prediction, outcome):
+    """plot lift as a function of prediction order (descending)"""
+    df = pandas.DataFrame({"prediction":prediction, "outcome":outcome})
+    df.sort_values(["prediction"], ascending=[False], inplace=True)
+    df["fraction_of_observations_by_prediction"] = [(1+i)/df.shape[0] for i in range(df.shape[0])]
+    df["cumulative_outcome"] = df["outcome"].cumsum()
+    df["cumulative_outcome_fraction"] = df["cumulative_outcome"]/numpy.max(df["cumulative_outcome"])
+    df["lift"] = df["cumulative_outcome_fraction"]/df["fraction_of_observations_by_prediction"]
+    seaborn.scatterplot(x = "fraction_of_observations_by_prediction", 
+                        y = "lift", 
+                        data = df)
+    matplotlib.pyplot.axhline(y=1, color="red")
+
 
 def dual_hist_plot(probs, istrue):
-    """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+    """plot a dual histogram plot of numeric prediction probs against boolean istrue"""
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame({'prob' : [ probs[i] for i in range(probs.shape[0])], 'istrue' : istrue})
     g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
@@ -128,6 +157,7 @@ def dual_hist_plot(probs, istrue):
     g = g.map(matplotlib.pyplot.hist, "prob", bins=bins)
     #g = g.map(seaborn.distplot, "prob", bins=bins)
     matplotlib.pyplot.show()
+
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
 def search_grid(inp):
