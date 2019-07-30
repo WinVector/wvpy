@@ -65,7 +65,7 @@ def mk_cross_plan(n, k):
 
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
-def plot_roc(prediction, istrue):
+def plot_roc(prediction, istrue, title='Receiver operating characteristic plot'):
     """plot a ROC curve of numeric prediction against boolean istrue"""
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
@@ -82,9 +82,9 @@ def plot_roc(prediction, istrue):
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     matplotlib.pyplot.xlim([0.0, 1.0])
     matplotlib.pyplot.ylim([0.0, 1.05])
-    matplotlib.pyplot.xlabel("False Positive Rate")
-    matplotlib.pyplot.ylabel("True Positive Rate")
-    matplotlib.pyplot.title("Receiver operating characteristic example")
+    matplotlib.pyplot.xlabel("False Positive Rate (1-Specificity)")
+    matplotlib.pyplot.ylabel("True Positive Rate (Sensitivity)")
+    matplotlib.pyplot.title(title)
     matplotlib.pyplot.legend(loc="lower right")
     matplotlib.pyplot.show()
     return auc
