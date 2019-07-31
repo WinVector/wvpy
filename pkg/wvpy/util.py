@@ -72,13 +72,14 @@ def plot_roc(prediction, istrue, title='Receiver operating characteristic plot')
     matplotlib.pyplot.figure()
     lw = 2
     matplotlib.pyplot.gcf().clear()
-    matplotlib.pyplot.plot(
+    ax = matplotlib.pyplot.plot(
         fpr,
         tpr,
         color="darkorange",
         lw=lw,
         label="ROC curve  (area = {0:0.2f})" "".format(auc),
     )
+    matplotlib.pyplot.fill_between(fpr, tpr, color='orange', alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     matplotlib.pyplot.xlim([0.0, 1.0])
     matplotlib.pyplot.ylim([0.0, 1.05])
