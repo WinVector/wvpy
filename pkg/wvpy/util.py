@@ -96,8 +96,8 @@ def dual_density_plot(probs, istrue):
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]]
     preds_on_negative = [probs[i] for i in range(len(probs)) if not istrue[i]]
-    seaborn.kdeplot(preds_on_positive, label="positive examples", bw=0.01)
-    seaborn.kdeplot(preds_on_negative, label="negative examples", bw=0.01)
+    seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
+    seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
     matplotlib.pyplot.xlabel("model score")
     matplotlib.pyplot.show()
@@ -108,8 +108,8 @@ def dual_density_plot_proba1(probs, istrue):
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [probs[i, 1] for i in range(len(probs)) if istrue[i]]
     preds_on_negative = [probs[i, 1] for i in range(len(probs)) if not istrue[i]]
-    seaborn.kdeplot(preds_on_positive, label="positive examples", bw=0.01)
-    seaborn.kdeplot(preds_on_negative, label="negative examples", bw=0.01)
+    seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
+    seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
     matplotlib.pyplot.xlabel("model score")
     matplotlib.pyplot.show()
