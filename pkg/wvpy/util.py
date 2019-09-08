@@ -9,6 +9,7 @@ import itertools
 import pandas
 
 
+# noinspection PyPep8Naming
 def cross_predict_model(fitter, X, Y, plan):
     """train a model Y~X using the cross validation plan and return predictions"""
     preds = [None] * X.shape[0]
@@ -21,6 +22,7 @@ def cross_predict_model(fitter, X, Y, plan):
     return preds
 
 
+# noinspection PyPep8Naming
 def cross_predict_model_prob(fitter, X, Y, plan):
     """train a model Y~X using the cross validation plan and return probabilty matrix"""
     preds = numpy.zeros((X.shape[0], 2))
@@ -65,21 +67,21 @@ def mk_cross_plan(n, k):
 
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
-def plot_roc(prediction, istrue, title='Receiver operating characteristic plot'):
+def plot_roc(prediction, istrue, title="Receiver operating characteristic plot"):
     """plot a ROC curve of numeric prediction against boolean istrue"""
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     matplotlib.pyplot.figure()
     lw = 2
     matplotlib.pyplot.gcf().clear()
-    ax = matplotlib.pyplot.plot(
+    matplotlib.pyplot.plot(
         fpr,
         tpr,
         color="darkorange",
         lw=lw,
         label="ROC curve  (area = {0:0.2f})" "".format(auc),
     )
-    matplotlib.pyplot.fill_between(fpr, tpr, color='orange', alpha=0.3)
+    matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     matplotlib.pyplot.xlim([0.0, 1.0])
     matplotlib.pyplot.ylim([0.0, 1.05])
@@ -212,6 +214,7 @@ def perm_score_vars(d, istrue, model, modelvars, k=5):
             permdev = mean_deviance(predsp, istrue)
             return permdev
 
+        # noinspection PyUnusedLocal
         devs = [perm_score_var_once() for rep in range(k)]
         d2[victim] = dorig
         return numpy.mean(devs), statistics.stdev(devs)
