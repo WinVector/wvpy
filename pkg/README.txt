@@ -3,7 +3,7 @@ Win Vector LLC tools for teaching data science in Python 3
 # ~/anaconda3/bin/python3 setup.py sdist
 
 ~/anaconda3/bin/pip uninstall wvpy
-~/anaconda3/bin/pip install https://github.com/WinVector/wvpy/raw/master/dist/wvpy-0.1.tar.gz
+~/anaconda3/bin/pip install https://github.com/WinVector/wvpy/raw/master/dist/wvpy-0.1.2.tar.gz
 # (any dependencies warned about abort install)
 
 

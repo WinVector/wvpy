@@ -1,13 +1,15 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: wvpy
-Version: 0.1.1
-Summary: UNKNOWN
+Version: 0.1.2
+Summary: Simple utilities for teaching Pandas and scikit learn.
 Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
 Author-email: jmount@win-vector.com
-License: UNKNOWN
-Description: UNKNOWN
-Platform: UNKNOWN
+License: License :: OSI Approved :: BSD 3-clause License
+Description: 
+        Simple utilities for teaching Pandas and scikit learn.
+        
+Platform: any
 Classifier: Intended Audience :: Science/Research
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3
@@ -15,3 +17,4 @@ Classifier: Programming Language :: Python :: 3.5
 Classifier: Programming Language :: Python :: 3.6
 Classifier: Programming Language :: Python :: 3.7
 Classifier: License :: OSI Approved :: BSD License
+Description-Content-Type: text/markdown
