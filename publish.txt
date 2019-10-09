@@ -1,0 +1,5 @@
+
+
+twine check pkg/dist/*
+twine upload --repository-url https://test.pypi.org/legacy/ pkg/dist/*
+twine upload pkg/dist/*

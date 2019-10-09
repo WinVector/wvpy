@@ -93,7 +93,7 @@ def plot_roc(prediction, istrue, title="Receiver operating characteristic plot")
     return auc
 
 
-def dual_density_plot(probs, istrue):
+def dual_density_plot(probs, istrue, title="Double density plot"):
     """plot a dual density plot of numeric prediction probs against boolean istrue"""
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]]
@@ -102,6 +102,7 @@ def dual_density_plot(probs, istrue):
     seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
     matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
 
@@ -129,9 +130,11 @@ def dual_hist_plot_proba1(probs, istrue):
     matplotlib.pyplot.show()
 
 
-def gain_curve_plot(prediction, outcome):
+def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
     """plot cumulative outcome as a function of prediction order (descending)"""
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
+
+    # compute the gain curve
     df.sort_values(["prediction"], ascending=[False], inplace=True)
     df["fraction_of_observations_by_prediction"] = [
         (1 + i) / df.shape[0] for i in range(df.shape[0])
@@ -140,15 +143,37 @@ def gain_curve_plot(prediction, outcome):
     df["cumulative_outcome_fraction"] = df["cumulative_outcome"] / numpy.max(
         df["cumulative_outcome"]
     )
-    seaborn.scatterplot(
+
+    # compute the wizard curve
+    df.sort_values(["outcome"], ascending=[False], inplace=True)
+    df["fraction_of_observations_by_wizard"] = [
+        (1 + i) / df.shape[0] for i in range(df.shape[0])
+    ]
+    df["cumulative_outcome_by_wizard"] = df["outcome"].cumsum()
+    df["cumulative_outcome_fraction_wizard"] = df["cumulative_outcome_by_wizard"] / numpy.max(
+        df["cumulative_outcome_by_wizard"]
+    )
+
+    seaborn.lineplot(
         x="fraction_of_observations_by_prediction",
         y="cumulative_outcome_fraction",
         data=df,
     )
+
+    seaborn.lineplot(
+        x="fraction_of_observations_by_wizard",
+        y="cumulative_outcome_fraction_wizard",
+        color="gray",
+        linestyle="--",
+        data=df,
+    )
+
     seaborn.lineplot(x=[0, 1], y=[0, 1], color="red")
+    matplotlib.pyplot.title(title)
+    matplotlib.pyplot.show()
 
 
-def lift_curve_plot(prediction, outcome):
+def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
     """plot lift as a function of prediction order (descending)"""
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
     df.sort_values(["prediction"], ascending=[False], inplace=True)
@@ -162,8 +187,10 @@ def lift_curve_plot(prediction, outcome):
     df["lift"] = (
         df["cumulative_outcome_fraction"] / df["fraction_of_observations_by_prediction"]
     )
-    seaborn.scatterplot(x="fraction_of_observations_by_prediction", y="lift", data=df)
+    seaborn.lineplot(x="fraction_of_observations_by_prediction", y="lift", data=df)
     matplotlib.pyplot.axhline(y=1, color="red")
+    matplotlib.pyplot.title(title)
+    matplotlib.pyplot.show()
 
 
 def dual_hist_plot(probs, istrue):
