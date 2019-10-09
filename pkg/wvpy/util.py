@@ -7,6 +7,8 @@ import sklearn
 import sklearn.metrics
 import itertools
 import pandas
+import math
+from data_algebra.cdata import *
 
 
 # noinspection PyPep8Naming
@@ -252,3 +254,61 @@ def perm_score_vars(d, istrue, model, modelvars, k=5):
     vf["importance_dev"] = [di[1] for di in stats]
     vf.sort_values(by=["importance"], ascending=False, inplace=True)
     return vf
+
+
+def threshold_statistics(d, model_predictions, yvalues):
+    sorted_frame = d.sort_values([model_predictions], ascending=[False], inplace=False)
+    sorted_frame.reset_index(inplace=True, drop=True)
+
+    sorted_frame["precision"] = sorted_frame[yvalues].cumsum()  # predicted true AND true (so far)
+    sorted_frame["running"] = sorted_frame.index + 1  # predicted true so far
+    sorted_frame["precision"] = sorted_frame["precision"] / sorted_frame["running"]
+    sorted_frame["recall"] = sorted_frame[yvalues].cumsum() / sorted_frame[yvalues].sum()  # denom = total true
+    sorted_frame["enrichment"] = sorted_frame["precision"] / sorted_frame[yvalues].mean()
+    sorted_frame["sensitivity"] = sorted_frame["recall"]
+
+    sorted_frame["notY"] = 1 - sorted_frame[yvalues]  # falses
+
+    # num = predicted true AND false, denom = total false
+    sorted_frame["false_positive_rate"] = sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
+    sorted_frame["specificity"] = 1 - sorted_frame["false_positive_rate"]
+
+    sorted_frame.rename(columns={"prediction": "threshold"}, inplace=True)
+    columns_I_want = ["threshold", "precision", "enrichment", "recall", "sensitivity", "specificity",
+                      "false_positive_rate"]
+    sorted_frame = sorted_frame.loc[:, columns_I_want].copy()
+    return sorted_frame
+
+
+def threshold_plot(d, pred_var, truth_var, truth_target,
+                   threshold_range=(-math.inf, math.inf),
+                   plotvars=("precision", "recall"),
+                   title="Measures as a function of threshold"
+                   ):
+    frame = d.copy()
+    frame["outcol"] = frame[truth_var] == truth_target
+
+    prt_frame = threshold_statistics(frame, pred_var, "outcol")
+
+    selector = (threshold_range[0] <= prt_frame.threshold) & \
+               (prt_frame.threshold <= threshold_range[1])
+    to_plot = prt_frame.loc[selector, :]
+
+    reshaper = RecordMap(
+        blocks_out=RecordSpecification(
+            pandas.DataFrame({
+                'measure': plotvars,
+                'value': plotvars,
+            }),
+            record_keys=['threshold']
+        )
+    )
+
+    prtlong = reshaper.transform(to_plot)
+    prtlong.head()
+
+    grid = seaborn.FacetGrid(prtlong, row="measure", row_order=plotvars, aspect=2, sharey=False)
+    grid = grid.map(matplotlib.pyplot.plot, "threshold", "value")
+    matplotlib.pyplot.subplots_adjust(top=0.9)
+    grid.fig.suptitle(title)
+    matplotlib.pyplot.show()
