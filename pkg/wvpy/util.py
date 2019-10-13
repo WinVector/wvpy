@@ -132,7 +132,7 @@ def dual_hist_plot_proba1(probs, istrue):
     matplotlib.pyplot.show()
 
 
-def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
+def gain_curve_plot_working(prediction, outcome, title="Gain curve plot"):
     """plot cumulative outcome as a function of prediction order (descending)"""
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
 
@@ -157,12 +157,6 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
     )
 
     seaborn.lineplot(
-        x="fraction_of_observations_by_prediction",
-        y="cumulative_outcome_fraction",
-        data=df,
-    )
-
-    seaborn.lineplot(
         x="fraction_of_observations_by_wizard",
         y="cumulative_outcome_fraction_wizard",
         color="gray",
@@ -170,7 +164,15 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
         data=df,
     )
 
+    seaborn.lineplot(
+        x="fraction_of_observations_by_prediction",
+        y="cumulative_outcome_fraction",
+        data=df,
+    )
+
     seaborn.lineplot(x=[0, 1], y=[0, 1], color="red")
+    matplotlib.pyplot.xlabel("fraction of observations by sort criterion")
+    matplotlib.pyplot.ylabel("cumulative outcome fraction")
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
