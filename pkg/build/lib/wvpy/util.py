@@ -132,7 +132,7 @@ def dual_hist_plot_proba1(probs, istrue):
     matplotlib.pyplot.show()
 
 
-def gain_curve_plot_working(prediction, outcome, title="Gain curve plot"):
+def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
     """plot cumulative outcome as a function of prediction order (descending)"""
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
 
