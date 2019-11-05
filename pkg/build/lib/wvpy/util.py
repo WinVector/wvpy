@@ -318,7 +318,7 @@ def threshold_plot(
 
     reshaper = RecordMap(
         blocks_out=RecordSpecification(
-            pandas.DataFrame({"measure": plotvars, "value": plotvars,}),
+            pandas.DataFrame({"measure": plotvars, "value": plotvars}),
             record_keys=["threshold"],
         )
     )
