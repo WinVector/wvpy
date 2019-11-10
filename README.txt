@@ -1,7 +1,7 @@
 Win Vector LLC extras for teaching data science in Python 3
 
 pip install wvpy
-# or: pip install https://github.com/WinVector/wvpy/raw/master/dist/wvpy-0.1.7.tar.gz
+# or: pip install https://github.com/WinVector/wvpy/raw/master/dist/wvpy-0.1.8.tar.gz
 
 ~/anaconda3/bin/python3
 
