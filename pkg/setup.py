@@ -13,11 +13,10 @@ setuptools.setup(name='wvpy',
       url='https://github.com/WinVector/wvpy',
       packages=setuptools.find_packages(),
       install_requires=[
-          'statistics',
           'numpy',
-          'matplotlib',
-          'sklearn',
           'pandas',
+          'sklearn',
+          'matplotlib',
           'data_algebra'
       ],
       platforms=['any'],

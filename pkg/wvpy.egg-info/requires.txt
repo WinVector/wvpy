@@ -1,6 +1,5 @@
-statistics
 numpy
-matplotlib
-sklearn
 pandas
+sklearn
+matplotlib
 data_algebra
