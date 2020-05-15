@@ -1,3 +1,4 @@
+
 import numpy
 import statistics
 import matplotlib
@@ -12,7 +13,7 @@ from data_algebra.cdata import *
 
 
 # noinspection PyPep8Naming
-def cross_predict_model(fitter, X, Y, plan):
+def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
     """train a model Y~X using the cross validation plan and return predictions"""
     preds = [None] * X.shape[0]
     for g in range(len(plan)):
@@ -25,8 +26,8 @@ def cross_predict_model(fitter, X, Y, plan):
 
 
 # noinspection PyPep8Naming
-def cross_predict_model_prob(fitter, X, Y, plan):
-    """train a model Y~X using the cross validation plan and return probabilty matrix"""
+def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
+    """train a model Y~X using the cross validation plan and return probability matrix"""
     preds = numpy.zeros((X.shape[0], 2))
     for g in range(len(plan)):
         pi = plan[g]
@@ -40,8 +41,10 @@ def cross_predict_model_prob(fitter, X, Y, plan):
 
 def mean_deviance(predictions, istrue):
     """compute per-row deviance of predictions versus istrue"""
+    predictions = [v for v in predictions]
+    istrue = [v for v in istrue]
     mass_on_correct = [
-        predictions[i, 1] if istrue[i] else predictions[i, 0]
+        predictions[i] if istrue[i] else 1.0 - predictions[i]
         for i in range(len(istrue))
     ]
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
@@ -49,12 +52,13 @@ def mean_deviance(predictions, istrue):
 
 def mean_null_deviance(istrue):
     """compute per-row nulll deviance of predictions versus istrue"""
+    istrue = [v for v in istrue]
     p = numpy.mean(istrue)
     mass_on_correct = [p if istrue[i] else 1 - p for i in range(len(istrue))]
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
 
-def mk_cross_plan(n, k):
+def mk_cross_plan(n: int, k: int):
     """randomly split range(n) into k disjoint groups"""
     grp = [i % k for i in range(n)]
     numpy.random.shuffle(grp)
@@ -71,6 +75,8 @@ def mk_cross_plan(n, k):
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
 def plot_roc(prediction, istrue, title="Receiver operating characteristic plot"):
     """plot a ROC curve of numeric prediction against boolean istrue"""
+    prediction = [v for v in prediction]
+    istrue = [v for v in istrue]
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     matplotlib.pyplot.figure()
@@ -97,6 +103,8 @@ def plot_roc(prediction, istrue, title="Receiver operating characteristic plot")
 
 def dual_density_plot(probs, istrue, title="Double density plot"):
     """plot a dual density plot of numeric prediction probs against boolean istrue"""
+    probs = [v for v in probs]
+    istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]]
     preds_on_negative = [probs[i] for i in range(len(probs)) if not istrue[i]]
@@ -110,6 +118,7 @@ def dual_density_plot(probs, istrue, title="Double density plot"):
 
 def dual_density_plot_proba1(probs, istrue):
     """plot a dual density plot of numeric prediction probs[:,1] against boolean istrue"""
+    istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [probs[i, 1] for i in range(len(probs)) if istrue[i]]
     preds_on_negative = [probs[i, 1] for i in range(len(probs)) if not istrue[i]]
@@ -122,6 +131,7 @@ def dual_density_plot_proba1(probs, istrue):
 
 def dual_hist_plot_proba1(probs, istrue):
     """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+    istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
         {"prob": [probs[i, 1] for i in range(probs.shape[0])], "istrue": istrue}
@@ -134,6 +144,8 @@ def dual_hist_plot_proba1(probs, istrue):
 
 def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
     """plot cumulative outcome as a function of prediction order (descending)"""
+    prediction = [v for v in prediction]
+    outcome = [v for v in outcome]
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
 
     # compute the gain curve
@@ -179,6 +191,8 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
 
 def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
     """plot lift as a function of prediction order (descending)"""
+    prediction = [v for v in prediction]
+    outcome = [v for v in outcome]
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
     df.sort_values(["prediction"], ascending=[False], inplace=True)
     df["fraction_of_observations_by_prediction"] = [
@@ -197,15 +211,18 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
     matplotlib.pyplot.show()
 
 
-def dual_hist_plot(probs, istrue):
+def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
     """plot a dual histogram plot of numeric prediction probs against boolean istrue"""
+    probs = [v for v in probs]
+    istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
-        {"prob": [probs[i] for i in range(probs.shape[0])], "istrue": istrue}
+        {"prob": probs, "istrue": istrue}
     )
     g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
     bins = numpy.arange(0, 1.1, 0.1)
     g.map(matplotlib.pyplot.hist, "prob", bins=bins)
+    matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
 
@@ -228,11 +245,13 @@ def eval_fn_per_row(f, x2, df):
     return [f({k: df.loc[i, k] for k in df.columns}, x2) for i in range(df.shape[0])]
 
 
-def perm_score_vars(d, istrue, model, modelvars, k=5):
+def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     """evaluate model~istrue on d permuting each of the modelvars and return variable importances"""
-    d2 = d.copy()
+    d2 = d[modelvars].copy()
+    d2.reset_index(inplace=True, drop=True)
+    istrue = [v for v in istrue]
     preds = model.predict_proba(d2[modelvars])
-    basedev = mean_deviance(preds, istrue)
+    basedev = mean_deviance(preds[:, 1], istrue)
 
     def perm_score_var(victim):
         dorig = numpy.array(d2[victim].copy())
@@ -242,7 +261,7 @@ def perm_score_vars(d, istrue, model, modelvars, k=5):
             numpy.random.shuffle(dnew)
             d2[victim] = dnew
             predsp = model.predict_proba(d2[modelvars])
-            permdev = mean_deviance(predsp, istrue)
+            permdev = mean_deviance(predsp[:, 1], istrue)
             return permdev
 
         # noinspection PyUnusedLocal
@@ -258,7 +277,7 @@ def perm_score_vars(d, istrue, model, modelvars, k=5):
     return vf
 
 
-def threshold_statistics(d, model_predictions, yvalues):
+def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues):
     sorted_frame = d.sort_values([model_predictions], ascending=[False], inplace=False)
     sorted_frame.reset_index(inplace=True, drop=True)
 
@@ -298,7 +317,7 @@ def threshold_statistics(d, model_predictions, yvalues):
 
 
 def threshold_plot(
-    d,
+    d: pandas.DataFrame,
     pred_var,
     truth_var,
     truth_target,
@@ -306,7 +325,8 @@ def threshold_plot(
     plotvars=("precision", "recall"),
     title="Measures as a function of threshold",
 ):
-    frame = d.copy()
+    frame = d[[pred_var, truth_var]].copy()
+    frame.reset_index(inplace=True, drop=True)
     frame["outcol"] = frame[truth_var] == truth_target
 
     prt_frame = threshold_statistics(frame, pred_var, "outcol")
