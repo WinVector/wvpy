@@ -13,7 +13,7 @@ from data_algebra.cdata import *
 
 
 # noinspection PyPep8Naming
-def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.DataFrame, plan):
+def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
     """train a model Y~X using the cross validation plan and return predictions"""
     preds = [None] * X.shape[0]
     for g in range(len(plan)):
@@ -26,8 +26,8 @@ def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.DataFrame, plan):
 
 
 # noinspection PyPep8Naming
-def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.DataFrame, plan):
-    """train a model Y~X using the cross validation plan and return probabilty matrix"""
+def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
+    """train a model Y~X using the cross validation plan and return probability matrix"""
     preds = numpy.zeros((X.shape[0], 2))
     for g in range(len(plan)):
         pi = plan[g]
@@ -251,7 +251,7 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     d2.reset_index(inplace=True, drop=True)
     istrue = [v for v in istrue]
     preds = model.predict_proba(d2[modelvars])
-    basedev = mean_deviance(preds, istrue)
+    basedev = mean_deviance(preds[:, 1], istrue)
 
     def perm_score_var(victim):
         dorig = numpy.array(d2[victim].copy())
@@ -261,7 +261,7 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
             numpy.random.shuffle(dnew)
             d2[victim] = dnew
             predsp = model.predict_proba(d2[modelvars])
-            permdev = mean_deviance(predsp, istrue)
+            permdev = mean_deviance(predsp[:, 1], istrue)
             return permdev
 
         # noinspection PyUnusedLocal
