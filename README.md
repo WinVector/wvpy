@@ -29,8 +29,54 @@ wvpy.util.mk_cross_plan(10,2)
 
 
 
-    [{'train': [1, 4, 5, 6, 8], 'test': [0, 2, 3, 7, 9]},
-     {'train': [0, 2, 3, 7, 9], 'test': [1, 4, 5, 6, 8]}]
+    [{'train': [0, 1, 4, 5, 7], 'test': [2, 3, 6, 8, 9]},
+     {'train': [2, 3, 6, 8, 9], 'test': [0, 1, 4, 5, 7]}]
+
+
+
+Plotting example
+
+
+```python
+import pandas
+```
+
+
+```python
+d = pandas.DataFrame({
+    'x': [1, 2, 3, 4, 5],
+    'y': [False, False, True, True, False]
+})
+```
+
+
+```python
+help(wvpy.util.plot_roc)
+```
+
+    Help on function plot_roc in module wvpy.util:
+    
+    plot_roc(prediction, istrue, title='Receiver operating characteristic plot')
+        plot a ROC curve of numeric prediction against boolean istrue
+    
+
+
+
+```python
+wvpy.util.plot_roc(
+    prediction=d.x,
+    istrue=d.y,
+    title='Example ROC plot')
+```
+
+
+![png](output_8_0.png)
+
+
+
+
+
+    0.6666666666666667
 
 
 
