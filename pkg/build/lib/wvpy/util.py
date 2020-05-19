@@ -39,9 +39,11 @@ def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan
     return preds
 
 
-def mean_deviance(predictions, istrue):
+def mean_deviance(predictions, istrue, *, eps=1.0e-6):
     """compute per-row deviance of predictions versus istrue"""
     predictions = [v for v in predictions]
+    predictions = numpy.max(predictions, eps)
+    predictions = numpy.min(predictions, 1-eps)
     istrue = [v for v in istrue]
     mass_on_correct = [
         predictions[i] if istrue[i] else 1.0 - predictions[i]
@@ -50,10 +52,13 @@ def mean_deviance(predictions, istrue):
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
 
-def mean_null_deviance(istrue):
+def mean_null_deviance(istrue, *, eps=1.0e-6):
     """compute per-row nulll deviance of predictions versus istrue"""
     istrue = [v for v in istrue]
     p = numpy.mean(istrue)
+    eps = 1.0e-6
+    p = numpy.max(p, eps)
+    p = numpy.min(p, 1-eps)
     mass_on_correct = [p if istrue[i] else 1 - p for i in range(len(istrue))]
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
