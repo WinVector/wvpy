@@ -77,10 +77,36 @@ def mk_cross_plan(n: int, k: int):
 
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
-def plot_roc(prediction, istrue, title="Receiver operating characteristic plot"):
-    """plot a ROC curve of numeric prediction against boolean istrue"""
+def plot_roc(prediction, istrue,
+             title="Receiver operating characteristic plot",
+             *,
+             truth_target=True):
+    """
+    Plot a ROC curve of numeric prediction against boolean istrue.
+
+    :param prediction: column of numeric predictions
+    :param istrue: column of items to predict
+    :param title: plot title
+    :param truth_target: value to condider target or true.
+    :return: calculated area under the curve, plot produced by call.
+
+    Example:
+
+    import pandas
+    import wvpy.util
+
+    d = pandas.DataFrame({
+        'x': [1, 2, 3, 4, 5],
+        'y': [False, False, True, True, False]
+    })
+
+    wvpy.util.plot_roc(
+        prediction=d['x'],
+        istrue=d['y'],
+    )
+    """
     prediction = [v for v in prediction]
-    istrue = [v for v in istrue]
+    istrue = [v==truth_target for v in istrue]
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     matplotlib.pyplot.figure()
@@ -105,13 +131,39 @@ def plot_roc(prediction, istrue, title="Receiver operating characteristic plot")
     return auc
 
 
-def dual_density_plot(probs, istrue, title="Double density plot"):
-    """plot a dual density plot of numeric prediction probs against boolean istrue"""
+def dual_density_plot(probs, istrue,
+                      title="Double density plot",
+                      *,
+                      truth_target=True):
+    """
+    Plot a dual density plot of numeric prediction probs against boolean istrue.
+
+    :param probs: vector of numeric predictions.
+    :param istrue: truth vector
+    :param title: tiotle of plot
+    :param truth_target: value considerd true
+    :return: None, plot produced by function call.
+
+    Example:
+
+    import pandas
+    import wvpy.util
+
+    d = pandas.DataFrame({
+        'x': [1, 2, 3, 4, 5],
+        'y': [False, False, True, True, False]
+    })
+
+    wvpy.util.dual_density_plot(
+        probs=d['x'],
+        istrue=d['y'],
+    )
+    """
     probs = [v for v in probs]
-    istrue = [v for v in istrue]
+    istrue = [v==truth_target for v in istrue]
     matplotlib.pyplot.gcf().clear()
-    preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]]
-    preds_on_negative = [probs[i] for i in range(len(probs)) if not istrue[i]]
+    preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]==truth_target]
+    preds_on_negative = [probs[i] for i in range(len(probs)) if not istrue[i]==truth_target]
     seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
     seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
@@ -120,16 +172,28 @@ def dual_density_plot(probs, istrue, title="Double density plot"):
     matplotlib.pyplot.show()
 
 
-def dual_density_plot_proba1(probs, istrue):
-    """plot a dual density plot of numeric prediction probs[:,1] against boolean istrue"""
+def dual_density_plot_proba1(probs, istrue,
+                             title="Double density plot",
+                             *,
+                             truth_target=True):
+    """
+    Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
+
+    :param probs: vector of numeric predictions
+    :param istrue: truth target
+    :param title: title of plot
+    :param truth_target: value considered true
+    :return: None, plot produced by call.
+    """
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
-    preds_on_positive = [probs[i, 1] for i in range(len(probs)) if istrue[i]]
-    preds_on_negative = [probs[i, 1] for i in range(len(probs)) if not istrue[i]]
+    preds_on_positive = [probs[i, 1] for i in range(len(probs)) if istrue[i]==truth_target]
+    preds_on_negative = [probs[i, 1] for i in range(len(probs)) if not istrue[i]==truth_target]
     seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
     seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
     matplotlib.pyplot.xlabel("model score")
+    matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
 
@@ -282,6 +346,31 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
 
 
 def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues, *, y_target=True):
+    """
+    Compute a number of threshold statistics of how well model predictions match a truth target.
+
+    :param d: pandas.DataFrame to take values from
+    :param model_predictions: name of predictions column
+    :param yvalues: truth values
+    :param y_target: value considered to be true
+    :return: summary statistic frame, include before and after pseudo-observations
+
+    Example:
+
+    import pandas
+    import wvpy.util
+
+    d = pandas.DataFrame({
+        'x': [1, 2, 3, 4, 5],
+        'y': [False, False, True, True, False]
+    })
+
+    wvpy.util.threshold_statistics(
+        d,
+        model_predictions='x',
+        yvalues='y',
+    )
+    """
     # make a thin frame to re-sort for cumulative statistics
     sorted_frame = pandas.DataFrame({
         'threshold': d[model_predictions].copy(),
@@ -354,6 +443,38 @@ def threshold_plot(
     plotvars=("precision", "recall"),
     title="Measures as a function of threshold",
 ):
+    """
+    Produce multiple facet plot relating the performance of using a threshold greater than or equal to
+    different values at predicting a truth target.
+
+    :param d: pandas.DataFrame to plot
+    :param pred_var: name of column of numeric predictions
+    :param truth_var: name of column with reference truth
+    :param truth_target: value considered true
+    :param threshold_range: x-axis range to plot
+    :param plotvars: list of metrics to plot, must come from ['threshold', 'count', 'fraction', 'precision',
+        'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
+        'enrichment', 'gain', 'lift', 'recall', 'sensitivity', 'specificity']
+    :param title: title for plot
+    :return: None, plot produced as a side effect
+
+    Example:
+
+    import pandas
+    import wvpy.util
+
+    d = pandas.DataFrame({
+        'x': [1, 2, 3, 4, 5],
+        'y': [False, False, True, True, False]
+    })
+
+    wvpy.util.threshold_plot(
+        d,
+        pred_var='x',
+        truth_var='y',
+        plotvars=("sensitivity", "specificity", "fraction"),
+    )
+    """
     frame = d[[pred_var, truth_var]].copy()
     frame.reset_index(inplace=True, drop=True)
     frame["outcol"] = frame[truth_var] == truth_target
