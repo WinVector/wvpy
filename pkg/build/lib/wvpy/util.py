@@ -56,7 +56,6 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
     """compute per-row nulll deviance of predictions versus istrue"""
     istrue = [v for v in istrue]
     p = numpy.mean(istrue)
-    eps = 1.0e-6
     p = numpy.maximum(p, eps)
     p = numpy.minimum(p, 1-eps)
     mass_on_correct = [p if istrue[i] else 1 - p for i in range(len(istrue))]
@@ -282,42 +281,67 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     return vf
 
 
-def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues):
-    sorted_frame = d.sort_values([model_predictions], ascending=[False], inplace=False)
+def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues, *, y_target=True):
+    # make a thin frame to re-sort for cumulative statistics
+    sorted_frame = pandas.DataFrame({
+        'threshold': d[model_predictions].copy(),
+        'truth': d[yvalues] == y_target
+    })
+    sorted_frame['orig_index'] = sorted_frame.index + 0
+    sorted_frame.sort_values(['threshold', 'orig_index'], ascending=[False, True], inplace=True)
+    sorted_frame.reset_index(inplace=True, drop=True)
+    sorted_frame["notY"] = 1 - sorted_frame['truth']  # falses
+    sorted_frame["one"] = 1
+    del sorted_frame['orig_index']
+
+    # pseudo-observation to get end-case (accept nothing case)
+    eps = 1.0e-6
+    sorted_frame = pandas.concat([
+        pandas.DataFrame({
+            'threshold': [sorted_frame['threshold'].max() + eps],
+            'truth': [False],
+            'notY': [0],
+            'one': [0],
+        }),
+        sorted_frame,
+        pandas.DataFrame({
+            'threshold': [sorted_frame['threshold'].min() - eps],
+            'truth': [False],
+            'notY': [0],
+            'one': [0],
+        }),
+    ])
     sorted_frame.reset_index(inplace=True, drop=True)
 
-    sorted_frame["precision"] = sorted_frame[
-        yvalues
-    ].cumsum()  # predicted true AND true (so far)
-    sorted_frame["running"] = sorted_frame.index + 1  # predicted true so far
-    sorted_frame["precision"] = sorted_frame["precision"] / sorted_frame["running"]
-    sorted_frame["recall"] = (
-        sorted_frame[yvalues].cumsum() / sorted_frame[yvalues].sum()
-    )  # denom = total true
-    sorted_frame["enrichment"] = (
-        sorted_frame["precision"] / sorted_frame[yvalues].mean()
-    )
+    # basic cumulative facts
+    sorted_frame["count"] = sorted_frame['one'].cumsum()  # predicted true so far
+    sorted_frame["fraction"] = sorted_frame["count"] / sorted_frame['one'].sum()
+    sorted_frame["precision"] = sorted_frame['truth'].cumsum() / sorted_frame["count"]
+    sorted_frame["true_positive_rate"] = sorted_frame['truth'].cumsum() / sorted_frame['truth'].sum()
+    sorted_frame["false_positive_rate"] = sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
+    sorted_frame["true_negative_rate"] = (sorted_frame['notY'].sum() - sorted_frame['notY'].cumsum()) /\
+                                         sorted_frame['notY'].sum()
+    sorted_frame["false_negative_rate"] = (sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()) /\
+                                          sorted_frame["truth"].sum()
+    sorted_frame["enrichment"] = sorted_frame["precision"] / sorted_frame['truth'].mean()
+
+    # derived facts and synonyms
+    sorted_frame["gain"] = sorted_frame["enrichment"]
+    sorted_frame["lift"] = sorted_frame["gain"] / sorted_frame["fraction"]
+    sorted_frame["recall"] = sorted_frame["true_positive_rate"]
     sorted_frame["sensitivity"] = sorted_frame["recall"]
-
-    sorted_frame["notY"] = 1 - sorted_frame[yvalues]  # falses
-
-    # num = predicted true AND false, denom = total false
-    sorted_frame["false_positive_rate"] = (
-        sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
-    )
     sorted_frame["specificity"] = 1 - sorted_frame["false_positive_rate"]
 
-    sorted_frame.rename(columns={"prediction": "threshold"}, inplace=True)
-    columns_I_want = [
-        "threshold",
-        "precision",
-        "enrichment",
-        "recall",
-        "sensitivity",
-        "specificity",
-        "false_positive_rate",
-    ]
-    sorted_frame = sorted_frame.loc[:, columns_I_want].copy()
+    # re-order for neatness
+    sorted_frame['new_index'] = sorted_frame.index.copy()
+    sorted_frame.sort_values(['new_index'], ascending=[False], inplace=True)
+    sorted_frame.reset_index(inplace=True, drop=True)
+
+    # clean up
+    del sorted_frame['notY']
+    del sorted_frame['one']
+    del sorted_frame['new_index']
+    del sorted_frame['truth']
     return sorted_frame
 
 
@@ -325,7 +349,7 @@ def threshold_plot(
     d: pandas.DataFrame,
     pred_var,
     truth_var,
-    truth_target,
+    truth_target=True,
     threshold_range=(-math.inf, math.inf),
     plotvars=("precision", "recall"),
     title="Measures as a function of threshold",
