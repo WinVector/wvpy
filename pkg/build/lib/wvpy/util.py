@@ -1,4 +1,3 @@
-
 import numpy
 import statistics
 import matplotlib
@@ -43,7 +42,7 @@ def mean_deviance(predictions, istrue, *, eps=1.0e-6):
     """compute per-row deviance of predictions versus istrue"""
     predictions = [v for v in predictions]
     predictions = numpy.maximum(predictions, eps)
-    predictions = numpy.minimum(predictions, 1-eps)
+    predictions = numpy.minimum(predictions, 1 - eps)
     istrue = [v for v in istrue]
     mass_on_correct = [
         predictions[i] if istrue[i] else 1.0 - predictions[i]
@@ -57,7 +56,7 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
     istrue = [v for v in istrue]
     p = numpy.mean(istrue)
     p = numpy.maximum(p, eps)
-    p = numpy.minimum(p, 1-eps)
+    p = numpy.minimum(p, 1 - eps)
     mass_on_correct = [p if istrue[i] else 1 - p for i in range(len(istrue))]
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
@@ -77,10 +76,13 @@ def mk_cross_plan(n: int, k: int):
 
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
-def plot_roc(prediction, istrue,
-             title="Receiver operating characteristic plot",
-             *,
-             truth_target=True):
+def plot_roc(
+    prediction,
+    istrue,
+    title="Receiver operating characteristic plot",
+    *,
+    truth_target=True
+):
     """
     Plot a ROC curve of numeric prediction against boolean istrue.
 
@@ -106,7 +108,7 @@ def plot_roc(prediction, istrue,
     )
     """
     prediction = [v for v in prediction]
-    istrue = [v==truth_target for v in istrue]
+    istrue = [v == truth_target for v in istrue]
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     matplotlib.pyplot.figure()
@@ -131,10 +133,7 @@ def plot_roc(prediction, istrue,
     return auc
 
 
-def dual_density_plot(probs, istrue,
-                      title="Double density plot",
-                      *,
-                      truth_target=True):
+def dual_density_plot(probs, istrue, title="Double density plot", *, truth_target=True):
     """
     Plot a dual density plot of numeric prediction probs against boolean istrue.
 
@@ -160,10 +159,14 @@ def dual_density_plot(probs, istrue,
     )
     """
     probs = [v for v in probs]
-    istrue = [v==truth_target for v in istrue]
+    istrue = [v == truth_target for v in istrue]
     matplotlib.pyplot.gcf().clear()
-    preds_on_positive = [probs[i] for i in range(len(probs)) if istrue[i]==truth_target]
-    preds_on_negative = [probs[i] for i in range(len(probs)) if not istrue[i]==truth_target]
+    preds_on_positive = [
+        probs[i] for i in range(len(probs)) if istrue[i] == truth_target
+    ]
+    preds_on_negative = [
+        probs[i] for i in range(len(probs)) if not istrue[i] == truth_target
+    ]
     seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
     seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
@@ -172,10 +175,9 @@ def dual_density_plot(probs, istrue,
     matplotlib.pyplot.show()
 
 
-def dual_density_plot_proba1(probs, istrue,
-                             title="Double density plot",
-                             *,
-                             truth_target=True):
+def dual_density_plot_proba1(
+    probs, istrue, title="Double density plot", *, truth_target=True
+):
     """
     Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
 
@@ -187,8 +189,12 @@ def dual_density_plot_proba1(probs, istrue,
     """
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
-    preds_on_positive = [probs[i, 1] for i in range(len(probs)) if istrue[i]==truth_target]
-    preds_on_negative = [probs[i, 1] for i in range(len(probs)) if not istrue[i]==truth_target]
+    preds_on_positive = [
+        probs[i, 1] for i in range(len(probs)) if istrue[i] == truth_target
+    ]
+    preds_on_negative = [
+        probs[i, 1] for i in range(len(probs)) if not istrue[i] == truth_target
+    ]
     seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
     seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
     matplotlib.pyplot.ylabel("density of examples")
@@ -284,9 +290,7 @@ def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
     probs = [v for v in probs]
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
-    pf = pandas.DataFrame(
-        {"prob": probs, "istrue": istrue}
-    )
+    pf = pandas.DataFrame({"prob": probs, "istrue": istrue})
     g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
     bins = numpy.arange(0, 1.1, 0.1)
     g.map(matplotlib.pyplot.hist, "prob", bins=bins)
@@ -345,7 +349,9 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     return vf
 
 
-def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues, *, y_target=True):
+def threshold_statistics(
+    d: pandas.DataFrame, model_predictions, yvalues, *, y_target=True
+):
     """
     Compute a number of threshold statistics of how well model predictions match a truth target.
 
@@ -372,47 +378,62 @@ def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues, *, y_t
     )
     """
     # make a thin frame to re-sort for cumulative statistics
-    sorted_frame = pandas.DataFrame({
-        'threshold': d[model_predictions].copy(),
-        'truth': d[yvalues] == y_target
-    })
-    sorted_frame['orig_index'] = sorted_frame.index + 0
-    sorted_frame.sort_values(['threshold', 'orig_index'], ascending=[False, True], inplace=True)
+    sorted_frame = pandas.DataFrame(
+        {"threshold": d[model_predictions].copy(), "truth": d[yvalues] == y_target}
+    )
+    sorted_frame["orig_index"] = sorted_frame.index + 0
+    sorted_frame.sort_values(
+        ["threshold", "orig_index"], ascending=[False, True], inplace=True
+    )
     sorted_frame.reset_index(inplace=True, drop=True)
-    sorted_frame["notY"] = 1 - sorted_frame['truth']  # falses
+    sorted_frame["notY"] = 1 - sorted_frame["truth"]  # falses
     sorted_frame["one"] = 1
-    del sorted_frame['orig_index']
+    del sorted_frame["orig_index"]
 
     # pseudo-observation to get end-case (accept nothing case)
     eps = 1.0e-6
-    sorted_frame = pandas.concat([
-        pandas.DataFrame({
-            'threshold': [sorted_frame['threshold'].max() + eps],
-            'truth': [False],
-            'notY': [0],
-            'one': [0],
-        }),
-        sorted_frame,
-        pandas.DataFrame({
-            'threshold': [sorted_frame['threshold'].min() - eps],
-            'truth': [False],
-            'notY': [0],
-            'one': [0],
-        }),
-    ])
+    sorted_frame = pandas.concat(
+        [
+            pandas.DataFrame(
+                {
+                    "threshold": [sorted_frame["threshold"].max() + eps],
+                    "truth": [False],
+                    "notY": [0],
+                    "one": [0],
+                }
+            ),
+            sorted_frame,
+            pandas.DataFrame(
+                {
+                    "threshold": [sorted_frame["threshold"].min() - eps],
+                    "truth": [False],
+                    "notY": [0],
+                    "one": [0],
+                }
+            ),
+        ]
+    )
     sorted_frame.reset_index(inplace=True, drop=True)
 
     # basic cumulative facts
-    sorted_frame["count"] = sorted_frame['one'].cumsum()  # predicted true so far
-    sorted_frame["fraction"] = sorted_frame["count"] / sorted_frame['one'].sum()
-    sorted_frame["precision"] = sorted_frame['truth'].cumsum() / sorted_frame["count"]
-    sorted_frame["true_positive_rate"] = sorted_frame['truth'].cumsum() / sorted_frame['truth'].sum()
-    sorted_frame["false_positive_rate"] = sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
-    sorted_frame["true_negative_rate"] = (sorted_frame['notY'].sum() - sorted_frame['notY'].cumsum()) /\
-                                         sorted_frame['notY'].sum()
-    sorted_frame["false_negative_rate"] = (sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()) /\
-                                          sorted_frame["truth"].sum()
-    sorted_frame["enrichment"] = sorted_frame["precision"] / sorted_frame['truth'].mean()
+    sorted_frame["count"] = sorted_frame["one"].cumsum()  # predicted true so far
+    sorted_frame["fraction"] = sorted_frame["count"] / sorted_frame["one"].sum()
+    sorted_frame["precision"] = sorted_frame["truth"].cumsum() / sorted_frame["count"]
+    sorted_frame["true_positive_rate"] = (
+        sorted_frame["truth"].cumsum() / sorted_frame["truth"].sum()
+    )
+    sorted_frame["false_positive_rate"] = (
+        sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
+    )
+    sorted_frame["true_negative_rate"] = (
+        sorted_frame["notY"].sum() - sorted_frame["notY"].cumsum()
+    ) / sorted_frame["notY"].sum()
+    sorted_frame["false_negative_rate"] = (
+        sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()
+    ) / sorted_frame["truth"].sum()
+    sorted_frame["enrichment"] = (
+        sorted_frame["precision"] / sorted_frame["truth"].mean()
+    )
 
     # derived facts and synonyms
     sorted_frame["gain"] = sorted_frame["enrichment"]
@@ -422,15 +443,15 @@ def threshold_statistics(d: pandas.DataFrame, model_predictions, yvalues, *, y_t
     sorted_frame["specificity"] = 1 - sorted_frame["false_positive_rate"]
 
     # re-order for neatness
-    sorted_frame['new_index'] = sorted_frame.index.copy()
-    sorted_frame.sort_values(['new_index'], ascending=[False], inplace=True)
+    sorted_frame["new_index"] = sorted_frame.index.copy()
+    sorted_frame.sort_values(["new_index"], ascending=[False], inplace=True)
     sorted_frame.reset_index(inplace=True, drop=True)
 
     # clean up
-    del sorted_frame['notY']
-    del sorted_frame['one']
-    del sorted_frame['new_index']
-    del sorted_frame['truth']
+    del sorted_frame["notY"]
+    del sorted_frame["one"]
+    del sorted_frame["new_index"]
+    del sorted_frame["truth"]
     return sorted_frame
 
 
@@ -482,10 +503,13 @@ def threshold_plot(
     prt_frame = threshold_statistics(frame, pred_var, "outcol")
     bad_plot_vars = set(plotvars) - set(prt_frame.columns)
     if len(bad_plot_vars) > 0:
-        raise ValueError("allowed plotting variables are: "
-                         + str(prt_frame.columns)
-                         + ", " + str(bad_plot_vars)
-                         + " unexpected.")
+        raise ValueError(
+            "allowed plotting variables are: "
+            + str(prt_frame.columns)
+            + ", "
+            + str(bad_plot_vars)
+            + " unexpected."
+        )
 
     selector = (threshold_range[0] <= prt_frame.threshold) & (
         prt_frame.threshold <= threshold_range[1]
