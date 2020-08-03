@@ -359,6 +359,12 @@ def threshold_plot(
     frame["outcol"] = frame[truth_var] == truth_target
 
     prt_frame = threshold_statistics(frame, pred_var, "outcol")
+    bad_plot_vars = set(plotvars) - set(prt_frame.columns)
+    if len(bad_plot_vars) > 0:
+        raise ValueError("allowed plotting variables are: "
+                         + str(prt_frame.columns)
+                         + ", " + str(bad_plot_vars)
+                         + " unexpected.")
 
     selector = (threshold_range[0] <= prt_frame.threshold) & (
         prt_frame.threshold <= threshold_range[1]
