@@ -62,7 +62,19 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
 
 
 def mk_cross_plan(n: int, k: int):
-    """randomly split range(n) into k disjoint groups"""
+    """
+    Randomly split range(n) into k train/test groups such that test groups partition range(n).
+
+    :param n: integer > 1
+    :param k: integer > 1
+    :return: list of train/test dictionaries
+
+    Example:
+
+    import wvpy.util
+
+    wvpy.util.mk_cross_plan(10, 3)
+    """
     grp = [i % k for i in range(n)]
     numpy.random.shuffle(grp)
     plan = [
@@ -175,6 +187,19 @@ def dual_density_plot(probs, istrue, title="Double density plot", *, truth_targe
     matplotlib.pyplot.show()
 
 
+def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
+    """plot a dual histogram plot of numeric prediction probs against boolean istrue"""
+    probs = [v for v in probs]
+    istrue = [v for v in istrue]
+    matplotlib.pyplot.gcf().clear()
+    pf = pandas.DataFrame({"prob": probs, "istrue": istrue})
+    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
+    bins = numpy.arange(0, 1.1, 0.1)
+    g.map(matplotlib.pyplot.hist, "prob", bins=bins)
+    matplotlib.pyplot.title(title)
+    matplotlib.pyplot.show()
+
+
 def dual_density_plot_proba1(
     probs, istrue, title="Double density plot", *, truth_target=True
 ):
@@ -281,19 +306,6 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
     )
     seaborn.lineplot(x="fraction_of_observations_by_prediction", y="lift", data=df)
     matplotlib.pyplot.axhline(y=1, color="red")
-    matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
-
-
-def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
-    """plot a dual histogram plot of numeric prediction probs against boolean istrue"""
-    probs = [v for v in probs]
-    istrue = [v for v in istrue]
-    matplotlib.pyplot.gcf().clear()
-    pf = pandas.DataFrame({"prob": probs, "istrue": istrue})
-    g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
-    bins = numpy.arange(0, 1.1, 0.1)
-    g.map(matplotlib.pyplot.hist, "prob", bins=bins)
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
