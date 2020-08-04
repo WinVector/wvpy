@@ -429,20 +429,20 @@ def threshold_statistics(
 
     # basic cumulative facts
     sorted_frame["count"] = sorted_frame["one"].cumsum()  # predicted true so far
-    sorted_frame["fraction"] = sorted_frame["count"] / sorted_frame["one"].sum()
-    sorted_frame["precision"] = sorted_frame["truth"].cumsum() / sorted_frame["count"]
+    sorted_frame["fraction"] = sorted_frame["count"] / max(1, sorted_frame["one"].sum())
+    sorted_frame["precision"] = sorted_frame["truth"].cumsum() / sorted_frame["count"].clip(lower=1)
     sorted_frame["true_positive_rate"] = (
-        sorted_frame["truth"].cumsum() / sorted_frame["truth"].sum()
+        sorted_frame["truth"].cumsum() / max(1, sorted_frame["truth"].sum())
     )
     sorted_frame["false_positive_rate"] = (
-        sorted_frame["notY"].cumsum() / sorted_frame["notY"].sum()
+        sorted_frame["notY"].cumsum() / max(1, sorted_frame["notY"].sum())
     )
     sorted_frame["true_negative_rate"] = (
         sorted_frame["notY"].sum() - sorted_frame["notY"].cumsum()
-    ) / sorted_frame["notY"].sum()
+    ) / max(1, sorted_frame["notY"].sum())
     sorted_frame["false_negative_rate"] = (
         sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()
-    ) / sorted_frame["truth"].sum()
+    ) / max(1, sorted_frame["truth"].sum())
 
     # derived facts and synonyms
     sorted_frame["recall"] = sorted_frame["true_positive_rate"]
