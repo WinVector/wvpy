@@ -443,13 +443,8 @@ def threshold_statistics(
     sorted_frame["false_negative_rate"] = (
         sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()
     ) / sorted_frame["truth"].sum()
-    sorted_frame["enrichment"] = (
-        sorted_frame["precision"] / sorted_frame["truth"].mean()
-    )
 
     # derived facts and synonyms
-    sorted_frame["gain"] = sorted_frame["enrichment"]
-    sorted_frame["lift"] = sorted_frame["gain"] / sorted_frame["fraction"]
     sorted_frame["recall"] = sorted_frame["true_positive_rate"]
     sorted_frame["sensitivity"] = sorted_frame["recall"]
     sorted_frame["specificity"] = 1 - sorted_frame["false_positive_rate"]
@@ -487,7 +482,7 @@ def threshold_plot(
     :param threshold_range: x-axis range to plot
     :param plotvars: list of metrics to plot, must come from ['threshold', 'count', 'fraction', 'precision',
         'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
-        'enrichment', 'gain', 'lift', 'recall', 'sensitivity', 'specificity']
+        'recall', 'sensitivity', 'specificity']
     :param title: title for plot
     :return: None, plot produced as a side effect
 
