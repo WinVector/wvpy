@@ -444,6 +444,9 @@ def threshold_statistics(
         sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()
     ) / max(1, sorted_frame["truth"].sum())
 
+    # approximate cdf work
+    sorted_frame['cdf'] = 1 - sorted_frame['fraction']
+
     # derived facts and synonyms
     sorted_frame["recall"] = sorted_frame["true_positive_rate"]
     sorted_frame["sensitivity"] = sorted_frame["recall"]
@@ -500,7 +503,7 @@ def threshold_plot(
         d,
         pred_var='x',
         truth_var='y',
-        plotvars=("sensitivity", "specificity", "fraction"),
+        plotvars=("sensitivity", "specificity"),
     )
     """
     frame = d[[pred_var, truth_var]].copy()

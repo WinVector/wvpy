@@ -6,6 +6,8 @@ They are not replacements for the obvious methods in sklearn.
 
 
 ```python
+import numpy.random
+import pandas
 import wvpy.util
 
 wvpy.__version__
@@ -32,25 +34,12 @@ wvpy.util.mk_cross_plan(10,2)
 
 
 
-    [{'train': [0, 1, 2, 4, 7], 'test': [3, 5, 6, 8, 9]},
-     {'train': [3, 5, 6, 8, 9], 'test': [0, 1, 2, 4, 7]}]
+    [{'train': [2, 5, 6, 7, 8], 'test': [0, 1, 3, 4, 9]},
+     {'train': [0, 1, 3, 4, 9], 'test': [2, 5, 6, 7, 8]}]
 
 
 
 Plotting example
-
-
-```python
-import pandas
-```
-
-
-```python
-d = pandas.DataFrame({
-    'x': [1, 2, 3, 4, 5],
-    'y': [False, False, True, True, False]
-})
-```
 
 
 ```python
@@ -87,6 +76,23 @@ help(wvpy.util.plot_roc)
 
 
 ```python
+d = pandas.concat([
+    pandas.DataFrame({
+        'x': numpy.random.normal(size=1000),
+        'y': numpy.random.choice([True, False], 
+                                 p=(0.02, 0.98), 
+                                 size=1000, 
+                                 replace=True)}),
+    pandas.DataFrame({
+        'x': numpy.random.normal(size=200) + 5,
+        'y': numpy.random.choice([True, False], 
+                                 size=200, 
+                                 replace=True)}),
+])
+```
+
+
+```python
 wvpy.util.plot_roc(
     prediction=d.x,
     istrue=d.y,
@@ -94,13 +100,13 @@ wvpy.util.plot_roc(
 ```
 
 
-![png](output_8_0.png)
+![png](output_7_0.png)
 
 
 
 
 
-    0.6666666666666667
+    0.8826929012345679
 
 
 
@@ -122,7 +128,7 @@ help(wvpy.util.threshold_plot)
         :param threshold_range: x-axis range to plot
         :param plotvars: list of metrics to plot, must come from ['threshold', 'count', 'fraction', 'precision',
             'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
-            'enrichment', 'gain', 'lift', 'recall', 'sensitivity', 'specificity']
+            'recall', 'sensitivity', 'specificity']
         :param title: title for plot
         :return: None, plot produced as a side effect
         
@@ -140,7 +146,7 @@ help(wvpy.util.threshold_plot)
             d,
             pred_var='x',
             truth_var='y',
-            plotvars=("sensitivity", "specificity", "fraction"),
+            plotvars=("sensitivity", "specificity"),
         )
     
 
@@ -151,13 +157,35 @@ wvpy.util.threshold_plot(
         d,
         pred_var='x',
         truth_var='y',
-        plotvars=("sensitivity", "specificity", "fraction"),
+        plotvars=("sensitivity", "specificity"),
+        title = "example plot"
+    )
+```
+
+
+![png](output_9_0.png)
+
+
+
+```python
+
+wvpy.util.threshold_plot(
+        d,
+        pred_var='x',
+        truth_var='y',
+        plotvars=("precision", "recall"),
+        title = "example plot"
     )
 ```
 
 
 ![png](output_10_0.png)
 
+
+
+```python
+
+```
 
 
 ```python
