@@ -87,13 +87,41 @@ def mk_cross_plan(n: int, k: int):
     return plan
 
 
+# https://win-vector.com/2020/09/13/why-working-with-auc-is-more-powerful-than-one-might-think/
+def matching_roc_area_curve(auc):
+    """
+
+    :param auc: area to match
+    :return: tuple of ideal x, y series matching area
+    """
+    step = 0.01
+    eval_pts = numpy.arange(0, 1 + step, step)
+    q_eps = 1e-6
+    q_low = 0
+    q_high = 1
+    while(q_low + q_eps < q_high):
+        q_mid = (q_low + q_high)/2.0
+        q_mid_area = numpy.mean(
+            1 - (1 - (1 - eval_pts)**q_mid)**(1/q_mid))
+        if q_mid_area <= auc:
+            q_high = q_mid
+        else:
+            q_low = q_mid
+    q = (q_low + q_high) / 2.0
+    return {'auc': auc,
+            'q': q,
+            'x': 1 - eval_pts,
+            'y': 1 - (1 - (1 - eval_pts)**q)**(1/q)}
+
+
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
 def plot_roc(
     prediction,
     istrue,
     title="Receiver operating characteristic plot",
     *,
-    truth_target=True
+    truth_target=True,
+    ideal_line_color=None
 ):
     """
     Plot a ROC curve of numeric prediction against boolean istrue.
@@ -101,7 +129,8 @@ def plot_roc(
     :param prediction: column of numeric predictions
     :param istrue: column of items to predict
     :param title: plot title
-    :param truth_target: value to condider target or true.
+    :param truth_target: value to consider target or true.
+    :param ideal_line_color: if not None, color of ideal line
     :return: calculated area under the curve, plot produced by call.
 
     Example:
@@ -117,12 +146,16 @@ def plot_roc(
     wvpy.util.plot_roc(
         prediction=d['x'],
         istrue=d['y'],
+        ideal_line_color = 'lightgrey'
     )
     """
     prediction = [v for v in prediction]
     istrue = [v == truth_target for v in istrue]
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
+    ideal_curve = None
+    if ideal_line_color is not None:
+        ideal_curve = matching_roc_area_curve(auc)
     matplotlib.pyplot.figure()
     lw = 2
     matplotlib.pyplot.gcf().clear()
@@ -133,10 +166,16 @@ def plot_roc(
         tpr,
         color="darkorange",
         lw=lw,
-        label="ROC curve  (area = {0:0.2f})" "".format(auc),
+        label="ROC curve (area = {0:0.2f})" "".format(auc),
     )
     matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
+    if ideal_curve is not None:
+        matplotlib.pyplot.plot(
+            ideal_curve['x'],
+            ideal_curve['y'],
+            linestyle='--',
+            color=ideal_line_color)
     matplotlib.pyplot.xlim([0.0, 1.0])
     matplotlib.pyplot.ylim([0.0, 1.0])
     matplotlib.pyplot.xlabel("False Positive Rate (1-Specificity)")
