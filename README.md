@@ -16,7 +16,7 @@ wvpy.__version__
 
 
 
-    '0.2.2'
+    '0.2.3'
 
 
 
@@ -34,8 +34,8 @@ wvpy.util.mk_cross_plan(10,2)
 
 
 
-    [{'train': [2, 5, 6, 7, 8], 'test': [0, 1, 3, 4, 9]},
-     {'train': [0, 1, 3, 4, 9], 'test': [2, 5, 6, 7, 8]}]
+    [{'train': [0, 3, 4, 6, 8], 'test': [1, 2, 5, 7, 9]},
+     {'train': [1, 2, 5, 7, 9], 'test': [0, 3, 4, 6, 8]}]
 
 
 
@@ -48,13 +48,14 @@ help(wvpy.util.plot_roc)
 
     Help on function plot_roc in module wvpy.util:
     
-    plot_roc(prediction, istrue, title='Receiver operating characteristic plot', *, truth_target=True)
+    plot_roc(prediction, istrue, title='Receiver operating characteristic plot', *, truth_target=True, ideal_line_color=None)
         Plot a ROC curve of numeric prediction against boolean istrue.
         
         :param prediction: column of numeric predictions
         :param istrue: column of items to predict
         :param title: plot title
-        :param truth_target: value to condider target or true.
+        :param truth_target: value to consider target or true.
+        :param ideal_line_color: if not None, color of ideal line
         :return: calculated area under the curve, plot produced by call.
         
         Example:
@@ -70,6 +71,7 @@ help(wvpy.util.plot_roc)
         wvpy.util.plot_roc(
             prediction=d['x'],
             istrue=d['y'],
+            ideal_line_color = 'lightgrey'
         )
     
 
@@ -96,17 +98,22 @@ d = pandas.concat([
 wvpy.util.plot_roc(
     prediction=d.x,
     istrue=d.y,
+    ideal_line_color="DarkGrey",
     title='Example ROC plot')
 ```
 
 
-![png](output_7_0.png)
+    <Figure size 432x288 with 0 Axes>
+
+
+
+![png](output_7_1.png)
 
 
 
 
 
-    0.8826929012345679
+    0.9017104802533561
 
 
 
@@ -181,6 +188,11 @@ wvpy.util.threshold_plot(
 
 ![png](output_10_0.png)
 
+
+
+```python
+
+```
 
 
 ```python
