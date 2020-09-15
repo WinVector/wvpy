@@ -126,6 +126,8 @@ def plot_roc(
     matplotlib.pyplot.figure()
     lw = 2
     matplotlib.pyplot.gcf().clear()
+    fig1, ax1 = matplotlib.pyplot.subplots()
+    ax1.set_aspect('equal')
     matplotlib.pyplot.plot(
         fpr,
         tpr,
@@ -136,7 +138,7 @@ def plot_roc(
     matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     matplotlib.pyplot.xlim([0.0, 1.0])
-    matplotlib.pyplot.ylim([0.0, 1.05])
+    matplotlib.pyplot.ylim([0.0, 1.0])
     matplotlib.pyplot.xlabel("False Positive Rate (1-Specificity)")
     matplotlib.pyplot.ylabel("True Positive Rate (Sensitivity)")
     matplotlib.pyplot.title(title)
