@@ -99,19 +99,20 @@ def matching_roc_area_curve(auc):
     q_eps = 1e-6
     q_low = 0
     q_high = 1
-    while(q_low + q_eps < q_high):
-        q_mid = (q_low + q_high)/2.0
-        q_mid_area = numpy.mean(
-            1 - (1 - (1 - eval_pts)**q_mid)**(1/q_mid))
+    while q_low + q_eps < q_high:
+        q_mid = (q_low + q_high) / 2.0
+        q_mid_area = numpy.mean(1 - (1 - (1 - eval_pts) ** q_mid) ** (1 / q_mid))
         if q_mid_area <= auc:
             q_high = q_mid
         else:
             q_low = q_mid
     q = (q_low + q_high) / 2.0
-    return {'auc': auc,
-            'q': q,
-            'x': 1 - eval_pts,
-            'y': 1 - (1 - (1 - eval_pts)**q)**(1/q)}
+    return {
+        "auc": auc,
+        "q": q,
+        "x": 1 - eval_pts,
+        "y": 1 - (1 - (1 - eval_pts) ** q) ** (1 / q),
+    }
 
 
 # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
@@ -160,7 +161,7 @@ def plot_roc(
     lw = 2
     matplotlib.pyplot.gcf().clear()
     fig1, ax1 = matplotlib.pyplot.subplots()
-    ax1.set_aspect('equal')
+    ax1.set_aspect("equal")
     matplotlib.pyplot.plot(
         fpr,
         tpr,
@@ -172,10 +173,8 @@ def plot_roc(
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     if ideal_curve is not None:
         matplotlib.pyplot.plot(
-            ideal_curve['x'],
-            ideal_curve['y'],
-            linestyle='--',
-            color=ideal_line_color)
+            ideal_curve["x"], ideal_curve["y"], linestyle="--", color=ideal_line_color
+        )
     matplotlib.pyplot.xlim([0.0, 1.0])
     matplotlib.pyplot.ylim([0.0, 1.0])
     matplotlib.pyplot.xlabel("False Positive Rate (1-Specificity)")
@@ -186,7 +185,17 @@ def plot_roc(
     return auc
 
 
-def dual_density_plot(probs, istrue, title="Double density plot", *, truth_target=True):
+def dual_density_plot(
+    probs,
+    istrue,
+    title="Double density plot",
+    *,
+    truth_target=True,
+    positive_label="positive examples",
+    negative_lable="negative examples",
+    ylable="density of examples",
+    xlabel="model score"
+):
     """
     Plot a dual density plot of numeric prediction probs against boolean istrue.
 
@@ -194,6 +203,10 @@ def dual_density_plot(probs, istrue, title="Double density plot", *, truth_targe
     :param istrue: truth vector
     :param title: tiotle of plot
     :param truth_target: value considerd true
+    :param positive_label=label for positive class
+    :param negative_lable=label for negative class
+    :param ylable=y axis label
+    :param xlabel=x axis label
     :return: None, plot produced by function call.
 
     Example:
@@ -220,10 +233,10 @@ def dual_density_plot(probs, istrue, title="Double density plot", *, truth_targe
     preds_on_negative = [
         probs[i] for i in range(len(probs)) if not istrue[i] == truth_target
     ]
-    seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
-    seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
-    matplotlib.pyplot.ylabel("density of examples")
-    matplotlib.pyplot.xlabel("model score")
+    seaborn.kdeplot(preds_on_positive, label=positive_label, shade=True)
+    seaborn.kdeplot(preds_on_negative, label=negative_lable, shade=True)
+    matplotlib.pyplot.ylabel(ylable)
+    matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
@@ -242,7 +255,15 @@ def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
 
 
 def dual_density_plot_proba1(
-    probs, istrue, title="Double density plot", *, truth_target=True
+    probs,
+    istrue,
+    title="Double density plot",
+    *,
+    truth_target=True,
+    positive_label="positive examples",
+    negative_lable="negative examples",
+    ylable="density of examples",
+    xlabel="model score"
 ):
     """
     Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
@@ -251,6 +272,10 @@ def dual_density_plot_proba1(
     :param istrue: truth target
     :param title: title of plot
     :param truth_target: value considered true
+    :param positive_label=label for positive class
+    :param negative_lable=label for negative class
+    :param ylable=y axis label
+    :param xlabel=x axis label
     :return: None, plot produced by call.
     """
     istrue = [v for v in istrue]
@@ -261,10 +286,10 @@ def dual_density_plot_proba1(
     preds_on_negative = [
         probs[i, 1] for i in range(len(probs)) if not istrue[i] == truth_target
     ]
-    seaborn.kdeplot(preds_on_positive, label="positive examples", shade=True)
-    seaborn.kdeplot(preds_on_negative, label="negative examples", shade=True)
-    matplotlib.pyplot.ylabel("density of examples")
-    matplotlib.pyplot.xlabel("model score")
+    seaborn.kdeplot(preds_on_positive, label=positive_label, shade=True)
+    seaborn.kdeplot(preds_on_negative, label=negative_lable, shade=True)
+    matplotlib.pyplot.ylabel(ylable)
+    matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
 
@@ -471,12 +496,14 @@ def threshold_statistics(
     # basic cumulative facts
     sorted_frame["count"] = sorted_frame["one"].cumsum()  # predicted true so far
     sorted_frame["fraction"] = sorted_frame["count"] / max(1, sorted_frame["one"].sum())
-    sorted_frame["precision"] = sorted_frame["truth"].cumsum() / sorted_frame["count"].clip(lower=1)
-    sorted_frame["true_positive_rate"] = (
-        sorted_frame["truth"].cumsum() / max(1, sorted_frame["truth"].sum())
+    sorted_frame["precision"] = sorted_frame["truth"].cumsum() / sorted_frame[
+        "count"
+    ].clip(lower=1)
+    sorted_frame["true_positive_rate"] = sorted_frame["truth"].cumsum() / max(
+        1, sorted_frame["truth"].sum()
     )
-    sorted_frame["false_positive_rate"] = (
-        sorted_frame["notY"].cumsum() / max(1, sorted_frame["notY"].sum())
+    sorted_frame["false_positive_rate"] = sorted_frame["notY"].cumsum() / max(
+        1, sorted_frame["notY"].sum()
     )
     sorted_frame["true_negative_rate"] = (
         sorted_frame["notY"].sum() - sorted_frame["notY"].cumsum()
@@ -486,7 +513,7 @@ def threshold_statistics(
     ) / max(1, sorted_frame["truth"].sum())
 
     # approximate cdf work
-    sorted_frame['cdf'] = 1 - sorted_frame['fraction']
+    sorted_frame["cdf"] = 1 - sorted_frame["fraction"]
 
     # derived facts and synonyms
     sorted_frame["recall"] = sorted_frame["true_positive_rate"]

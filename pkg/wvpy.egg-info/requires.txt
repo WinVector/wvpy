@@ -1,5 +1,5 @@
 numpy
 pandas
-scikit-learn
+sklearn
 matplotlib
 data_algebra

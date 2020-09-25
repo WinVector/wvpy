@@ -1,5 +1,5 @@
-
 import wvpy.util
+
 
 def test_cross_plan1():
     n = 10
@@ -10,8 +10,8 @@ def test_cross_plan1():
     universe = set(range(n))
     saw = set()
     for split in plan:
-        train = split['train']
-        test = split['test']
+        train = split["train"]
+        test = split["test"]
         assert len(train) > 0
         assert len(test) > 0
         assert len(set(train) - universe) == 0
