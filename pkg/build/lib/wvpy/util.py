@@ -192,8 +192,8 @@ def dual_density_plot(
     *,
     truth_target=True,
     positive_label="positive examples",
-    negative_lable="negative examples",
-    ylable="density of examples",
+    negative_label="negative examples",
+    ylabel="density of examples",
     xlabel="model score"
 ):
     """
@@ -204,8 +204,8 @@ def dual_density_plot(
     :param title: tiotle of plot
     :param truth_target: value considerd true
     :param positive_label=label for positive class
-    :param negative_lable=label for negative class
-    :param ylable=y axis label
+    :param negative_label=label for negative class
+    :param ylabel=y axis label
     :param xlabel=x axis label
     :return: None, plot produced by function call.
 
@@ -234,8 +234,8 @@ def dual_density_plot(
         probs[i] for i in range(len(probs)) if not istrue[i] == truth_target
     ]
     seaborn.kdeplot(preds_on_positive, label=positive_label, shade=True)
-    seaborn.kdeplot(preds_on_negative, label=negative_lable, shade=True)
-    matplotlib.pyplot.ylabel(ylable)
+    seaborn.kdeplot(preds_on_negative, label=negative_label, shade=True)
+    matplotlib.pyplot.ylabel(ylabel)
     matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
@@ -261,8 +261,8 @@ def dual_density_plot_proba1(
     *,
     truth_target=True,
     positive_label="positive examples",
-    negative_lable="negative examples",
-    ylable="density of examples",
+    negative_label="negative examples",
+    ylabel="density of examples",
     xlabel="model score"
 ):
     """
@@ -273,8 +273,8 @@ def dual_density_plot_proba1(
     :param title: title of plot
     :param truth_target: value considered true
     :param positive_label=label for positive class
-    :param negative_lable=label for negative class
-    :param ylable=y axis label
+    :param negative_label=label for negative class
+    :param ylabel=y axis label
     :param xlabel=x axis label
     :return: None, plot produced by call.
     """
@@ -287,8 +287,8 @@ def dual_density_plot_proba1(
         probs[i, 1] for i in range(len(probs)) if not istrue[i] == truth_target
     ]
     seaborn.kdeplot(preds_on_positive, label=positive_label, shade=True)
-    seaborn.kdeplot(preds_on_negative, label=negative_lable, shade=True)
-    matplotlib.pyplot.ylabel(ylable)
+    seaborn.kdeplot(preds_on_negative, label=negative_label, shade=True)
+    matplotlib.pyplot.ylabel(ylabel)
     matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.show()
