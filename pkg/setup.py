@@ -8,7 +8,7 @@ Simple utilities for teaching Pandas and scikit learn.
 
 setuptools.setup(
     name="wvpy",
-    version="0.2.3",
+    version="0.2.4",
     author="John Mount",
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
@@ -26,6 +26,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: BSD License",
     ],
     long_description=LONG_DESCRIPTION,

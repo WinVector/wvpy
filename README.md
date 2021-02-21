@@ -16,7 +16,7 @@ wvpy.__version__
 
 
 
-    '0.2.3'
+    '0.2.4'
 
 
 
@@ -34,8 +34,8 @@ wvpy.util.mk_cross_plan(10,2)
 
 
 
-    [{'train': [0, 3, 4, 6, 8], 'test': [1, 2, 5, 7, 9]},
-     {'train': [1, 2, 5, 7, 9], 'test': [0, 3, 4, 6, 8]}]
+    [{'train': [2, 4, 5, 6, 7], 'test': [0, 1, 3, 8, 9]},
+     {'train': [0, 1, 3, 8, 9], 'test': [2, 4, 5, 6, 7]}]
 
 
 
@@ -107,13 +107,15 @@ wvpy.util.plot_roc(
 
 
 
+    
 ![png](output_7_1.png)
+    
 
 
 
 
 
-    0.9017104802533561
+    0.8758830658271999
 
 
 
@@ -170,7 +172,9 @@ wvpy.util.threshold_plot(
 ```
 
 
+    
 ![png](output_9_0.png)
+    
 
 
 
@@ -186,7 +190,9 @@ wvpy.util.threshold_plot(
 ```
 
 
+    
 ![png](output_10_0.png)
+    
 
 
 
