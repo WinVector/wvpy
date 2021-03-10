@@ -122,7 +122,8 @@ def plot_roc(
     title="Receiver operating characteristic plot",
     *,
     truth_target=True,
-    ideal_line_color=None
+    ideal_line_color=None,
+    extra_points=None
 ):
     """
     Plot a ROC curve of numeric prediction against boolean istrue.
@@ -132,6 +133,7 @@ def plot_roc(
     :param title: plot title
     :param truth_target: value to consider target or true.
     :param ideal_line_color: if not None, color of ideal line
+    :param extra_points: data frame of additional point to annotate graph, columns fpr, tpr, label
     :return: calculated area under the curve, plot produced by call.
 
     Example:
@@ -147,7 +149,17 @@ def plot_roc(
     wvpy.util.plot_roc(
         prediction=d['x'],
         istrue=d['y'],
-        ideal_line_color = 'lightgrey'
+        ideal_line_color='lightgrey'
+    )
+
+    wvpy.util.plot_roc(
+        prediction=d['x'],
+        istrue=d['y'],
+        extra_points=pandas.DataFrame({
+            'tpr': [0, 1],
+            'fpr': [0, 1],
+            'label': ['AAA', 'BBB']
+        })
     )
     """
     prediction = [v for v in prediction]
@@ -171,6 +183,20 @@ def plot_roc(
     )
     matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
+    if extra_points is not None:
+        matplotlib.pyplot.plot(
+            extra_points.fpr,
+            extra_points.tpr,
+            'bo',
+            color="red")
+        if 'label' in extra_points.columns:
+            tpr = extra_points.tpr.to_list()
+            fpr = extra_points.fpr.to_list()
+            label = extra_points.label.to_list()
+            for i in range(extra_points.shape[0]):
+                txt = label[i]
+                if txt is not None:
+                    ax1.annotate(txt, (fpr[i], tpr[i]))
     if ideal_curve is not None:
         matplotlib.pyplot.plot(
             ideal_curve["x"], ideal_curve["y"], linestyle="--", color=ideal_line_color
