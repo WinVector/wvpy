@@ -13,7 +13,16 @@ from data_algebra.cdata import *
 
 # noinspection PyPep8Naming
 def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
-    """train a model Y~X using the cross validation plan and return predictions"""
+    """
+    train a model Y~X using the cross validation plan and return predictions
+
+    :param fitter: sklearn model we can call .fit() on
+    :param X: explanatory variables (matrix or data frame)
+    :param Y: dependent variable (vector or series)
+    :param plan: cross validation plan from mk_cross_plan()
+    :return: vector of simulated out of sample predictions
+    """
+
     preds = [None] * X.shape[0]
     for g in range(len(plan)):
         pi = plan[g]
@@ -26,7 +35,15 @@ def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
 
 # noinspection PyPep8Naming
 def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
-    """train a model Y~X using the cross validation plan and return probability matrix"""
+    """
+    train a model Y~X using the cross validation plan and return probability matrix
+
+    :param fitter: sklearn model we can call .fit() on
+    :param X: explanatory variables (matrix or data frame)
+    :param Y: dependent variable (vector or series)
+    :param plan: cross validation plan from mk_cross_plan()
+    :return: matrix of simulated out of sample predictions
+    """
     preds = numpy.zeros((X.shape[0], 2))
     for g in range(len(plan)):
         pi = plan[g]
@@ -39,7 +56,15 @@ def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan
 
 
 def mean_deviance(predictions, istrue, *, eps=1.0e-6):
-    """compute per-row deviance of predictions versus istrue"""
+    """
+    compute per-row deviance of predictions versus istrue
+
+    :param predictions: vector of probability preditions
+    :param istrue: vector of True/False outcomes to be predicted
+    :param eps: how close to zero or one we clip predictions
+    :return: vector of per-row deviances
+    """
+
     predictions = [v for v in predictions]
     predictions = numpy.maximum(predictions, eps)
     predictions = numpy.minimum(predictions, 1 - eps)
@@ -52,7 +77,14 @@ def mean_deviance(predictions, istrue, *, eps=1.0e-6):
 
 
 def mean_null_deviance(istrue, *, eps=1.0e-6):
-    """compute per-row nulll deviance of predictions versus istrue"""
+    """
+    compute per-row nulll deviance of predictions versus istrue
+
+    :param istrue: vector of True/False outcomes to be predicted
+    :param eps: how close to zero or one we clip predictions
+    :return: mean null deviance of using prevalence as the prediction.
+    """
+
     istrue = [v for v in istrue]
     p = numpy.mean(istrue)
     p = numpy.maximum(p, eps)
@@ -90,6 +122,7 @@ def mk_cross_plan(n: int, k: int):
 # https://win-vector.com/2020/09/13/why-working-with-auc-is-more-powerful-than-one-might-think/
 def matching_roc_area_curve(auc):
     """
+    Find an ROC curve with a given area.
 
     :param auc: area to match
     :return: tuple of ideal x, y series matching area
@@ -123,7 +156,8 @@ def plot_roc(
     *,
     truth_target=True,
     ideal_line_color=None,
-    extra_points=None
+    extra_points=None,
+    show=True
 ):
     """
     Plot a ROC curve of numeric prediction against boolean istrue.
@@ -134,6 +168,7 @@ def plot_roc(
     :param truth_target: value to consider target or true.
     :param ideal_line_color: if not None, color of ideal line
     :param extra_points: data frame of additional point to annotate graph, columns fpr, tpr, label
+    :param show: logical, if True call matplotlib.pyplot.show()
     :return: calculated area under the curve, plot produced by call.
 
     Example:
@@ -207,7 +242,8 @@ def plot_roc(
     matplotlib.pyplot.ylabel("True Positive Rate (Sensitivity)")
     matplotlib.pyplot.title(title)
     matplotlib.pyplot.legend(loc="lower right")
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
     return auc
 
 
@@ -220,20 +256,22 @@ def dual_density_plot(
     positive_label="positive examples",
     negative_label="negative examples",
     ylabel="density of examples",
-    xlabel="model score"
+    xlabel="model score",
+    show=True
 ):
     """
     Plot a dual density plot of numeric prediction probs against boolean istrue.
 
     :param probs: vector of numeric predictions.
     :param istrue: truth vector
-    :param title: tiotle of plot
+    :param title: title of plot
     :param truth_target: value considerd true
     :param positive_label=label for positive class
     :param negative_label=label for negative class
     :param ylabel=y axis label
     :param xlabel=x axis label
-    :return: None, plot produced by function call.
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
 
     Example:
 
@@ -264,11 +302,22 @@ def dual_density_plot(
     matplotlib.pyplot.ylabel(ylabel)
     matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
+    matplotlib.pyplot.legend()
+    if show:
+        matplotlib.pyplot.show()
 
 
-def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
-    """plot a dual histogram plot of numeric prediction probs against boolean istrue"""
+def dual_hist_plot(probs, istrue, title="Dual Histogram Plot", *, show=True):
+    """
+    plot a dual histogram plot of numeric prediction probs against boolean istrue
+
+    :param probs: vector of numeric predictions.
+    :param istrue: truth vector
+    :param title: title of plot
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
+    """
+
     probs = [v for v in probs]
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
@@ -277,7 +326,8 @@ def dual_hist_plot(probs, istrue, title="Dual Histogram Plot"):
     bins = numpy.arange(0, 1.1, 0.1)
     g.map(matplotlib.pyplot.hist, "prob", bins=bins)
     matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
 
 
 def dual_density_plot_proba1(
@@ -289,7 +339,8 @@ def dual_density_plot_proba1(
     positive_label="positive examples",
     negative_label="negative examples",
     ylabel="density of examples",
-    xlabel="model score"
+    xlabel="model score",
+    show=True
 ):
     """
     Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
@@ -302,7 +353,8 @@ def dual_density_plot_proba1(
     :param negative_label=label for negative class
     :param ylabel=y axis label
     :param xlabel=x axis label
-    :return: None, plot produced by call.
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
     """
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
@@ -317,11 +369,21 @@ def dual_density_plot_proba1(
     matplotlib.pyplot.ylabel(ylabel)
     matplotlib.pyplot.xlabel(xlabel)
     matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
+    matplotlib.pyplot.legend()
+    if show:
+        matplotlib.pyplot.show()
 
 
-def dual_hist_plot_proba1(probs, istrue):
-    """plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue"""
+def dual_hist_plot_proba1(probs, istrue, *, show=True):
+    """
+    plot a dual histogram plot of numeric prediction probs[:,1] against boolean istrue
+
+    :param probs: vector of probability predictions
+    :param istrue: vector of ground truth to condition on
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
+    """
+
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
@@ -330,11 +392,21 @@ def dual_hist_plot_proba1(probs, istrue):
     g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
     bins = numpy.arange(0, 1.1, 0.1)
     g.map(matplotlib.pyplot.hist, "prob", bins=bins)
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
 
 
-def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
-    """plot cumulative outcome as a function of prediction order (descending)"""
+def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
+    """
+    plot cumulative outcome as a function of prediction order (descending)
+
+    :param prediction: vector of numeric predictions
+    :param outcome: vector of actual values
+    :param title: plot title
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
+    """
+
     prediction = [v for v in prediction]
     outcome = [v for v in outcome]
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
@@ -377,11 +449,21 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot"):
     matplotlib.pyplot.xlabel("fraction of observations by sort criterion")
     matplotlib.pyplot.ylabel("cumulative outcome fraction")
     matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
 
 
-def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
-    """plot lift as a function of prediction order (descending)"""
+def lift_curve_plot(prediction, outcome, title="Lift curve plot", *, show=True):
+    """
+    plot lift as a function of prediction order (descending)
+
+    :param prediction: vector of numeric predictions
+    :param outcome: vector of actual values
+    :param title: plot title
+    :param show: logical, if True call matplotlib.pyplot.show()
+    :return: None
+    """
+
     prediction = [v for v in prediction]
     outcome = [v for v in outcome]
     df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
@@ -399,30 +481,61 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot"):
     seaborn.lineplot(x="fraction_of_observations_by_prediction", y="lift", data=df)
     matplotlib.pyplot.axhline(y=1, color="red")
     matplotlib.pyplot.title(title)
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
 
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
 def search_grid(inp):
-    """build a cross product of all named dictionary entries"""
+    """
+    build a cross product of all named dictionary entries
+
+    :param inp:
+    :return:
+    """
+
     gen = (dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values()))
     return [ci for ci in gen]
 
 
 def grid_to_df(grid):
-    """convert a search_grid list of maps to a pandas data frame"""
+    """
+    convert a search_grid list of maps to a pandas data frame
+
+    :param grid:
+    :return:
+    """
+
     n = len(grid)
     keys = [ki for ki in grid[1].keys()]
     return pandas.DataFrame({ki: [grid[i][ki] for i in range(n)] for ki in keys})
 
 
 def eval_fn_per_row(f, x2, df):
-    """evaluate f(row-as-map, x2) for rows in df"""
+    """
+    evaluate f(row-as-map, x2) for rows in df
+
+    :param f:
+    :param x2:
+    :param df:
+    :return:
+    """
+
     return [f({k: df.loc[i, k] for k in df.columns}, x2) for i in range(df.shape[0])]
 
 
 def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
-    """evaluate model~istrue on d permuting each of the modelvars and return variable importances"""
+    """
+    evaluate model~istrue on d permuting each of the modelvars and return variable importances
+
+    :param d:
+    :param istrue:
+    :param model:
+    :param modelvars:
+    :param k:
+    :return:
+    """
+
     d2 = d[modelvars].copy()
     d2.reset_index(inplace=True, drop=True)
     istrue = [v for v in istrue]
@@ -567,6 +680,8 @@ def threshold_plot(
     threshold_range=(-math.inf, math.inf),
     plotvars=("precision", "recall"),
     title="Measures as a function of threshold",
+    *,
+    show=True
 ):
     """
     Produce multiple facet plot relating the performance of using a threshold greater than or equal to
@@ -581,6 +696,7 @@ def threshold_plot(
         'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
         'recall', 'sensitivity', 'specificity']
     :param title: title for plot
+    :param show: logical, if True call matplotlib.pyplot.show()
     :return: None, plot produced as a side effect
 
     Example:
@@ -636,4 +752,5 @@ def threshold_plot(
     grid = grid.map(matplotlib.pyplot.plot, "threshold", "value")
     matplotlib.pyplot.subplots_adjust(top=0.9)
     grid.fig.suptitle(title)
-    matplotlib.pyplot.show()
+    if show:
+        matplotlib.pyplot.show()
