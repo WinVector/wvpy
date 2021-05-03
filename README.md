@@ -16,7 +16,7 @@ wvpy.__version__
 
 
 
-    '0.2.4'
+    '0.2.7'
 
 
 
@@ -25,17 +25,13 @@ Illustration of cross-method plan.
 
 ```python
 wvpy.util.mk_cross_plan(10,2)
-
-
-
-
 ```
 
 
 
 
-    [{'train': [2, 4, 5, 6, 7], 'test': [0, 1, 3, 8, 9]},
-     {'train': [0, 1, 3, 8, 9], 'test': [2, 4, 5, 6, 7]}]
+    [{'train': [1, 2, 3, 4, 9], 'test': [0, 5, 6, 7, 8]},
+     {'train': [0, 5, 6, 7, 8], 'test': [1, 2, 3, 4, 9]}]
 
 
 
@@ -48,7 +44,7 @@ help(wvpy.util.plot_roc)
 
     Help on function plot_roc in module wvpy.util:
     
-    plot_roc(prediction, istrue, title='Receiver operating characteristic plot', *, truth_target=True, ideal_line_color=None)
+    plot_roc(prediction, istrue, title='Receiver operating characteristic plot', *, truth_target=True, ideal_line_color=None, extra_points=None, show=True)
         Plot a ROC curve of numeric prediction against boolean istrue.
         
         :param prediction: column of numeric predictions
@@ -56,6 +52,8 @@ help(wvpy.util.plot_roc)
         :param title: plot title
         :param truth_target: value to consider target or true.
         :param ideal_line_color: if not None, color of ideal line
+        :param extra_points: data frame of additional point to annotate graph, columns fpr, tpr, label
+        :param show: logical, if True call matplotlib.pyplot.show()
         :return: calculated area under the curve, plot produced by call.
         
         Example:
@@ -71,7 +69,17 @@ help(wvpy.util.plot_roc)
         wvpy.util.plot_roc(
             prediction=d['x'],
             istrue=d['y'],
-            ideal_line_color = 'lightgrey'
+            ideal_line_color='lightgrey'
+        )
+        
+        wvpy.util.plot_roc(
+            prediction=d['x'],
+            istrue=d['y'],
+            extra_points=pandas.DataFrame({
+                'tpr': [0, 1],
+                'fpr': [0, 1],
+                'label': ['AAA', 'BBB']
+            })
         )
     
 
@@ -115,7 +123,7 @@ wvpy.util.plot_roc(
 
 
 
-    0.8758830658271999
+    0.903298366883511
 
 
 
@@ -126,7 +134,7 @@ help(wvpy.util.threshold_plot)
 
     Help on function threshold_plot in module wvpy.util:
     
-    threshold_plot(d: pandas.core.frame.DataFrame, pred_var, truth_var, truth_target=True, threshold_range=(-inf, inf), plotvars=('precision', 'recall'), title='Measures as a function of threshold')
+    threshold_plot(d: pandas.core.frame.DataFrame, pred_var, truth_var, truth_target=True, threshold_range=(-inf, inf), plotvars=('precision', 'recall'), title='Measures as a function of threshold', *, show=True)
         Produce multiple facet plot relating the performance of using a threshold greater than or equal to
         different values at predicting a truth target.
         
@@ -139,6 +147,7 @@ help(wvpy.util.threshold_plot)
             'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
             'recall', 'sensitivity', 'specificity']
         :param title: title for plot
+        :param show: logical, if True call matplotlib.pyplot.show()
         :return: None, plot produced as a side effect
         
         Example:
@@ -197,13 +206,51 @@ wvpy.util.threshold_plot(
 
 
 ```python
-
+help(wvpy.util.gain_curve_plot)
 ```
+
+    Help on function gain_curve_plot in module wvpy.util:
+    
+    gain_curve_plot(prediction, outcome, title='Gain curve plot', *, show=True)
+        plot cumulative outcome as a function of prediction order (descending)
+        
+        :param prediction: vector of numeric predictions
+        :param outcome: vector of actual values
+        :param title: plot title
+        :param show: logical, if True call matplotlib.pyplot.show()
+        :return: None
+    
+
 
 
 ```python
-
+wvpy.util.gain_curve_plot(
+        prediction=d['x'],
+        outcome=d['y'],
+        title = "gain curve plot"
+)
 ```
+
+
+    
+![png](output_12_0.png)
+    
+
+
+
+```python
+wvpy.util.lift_curve_plot(
+        prediction=d['x'],
+        outcome=d['y'],
+        title = "lift curve plot"
+)
+```
+
+
+    
+![png](output_13_0.png)
+    
+
 
 
 ```python

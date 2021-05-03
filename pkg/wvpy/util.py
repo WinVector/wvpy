@@ -407,15 +407,14 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
     :return: None
     """
 
-    prediction = [v for v in prediction]
-    outcome = [v for v in outcome]
-    df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
+    df = pandas.DataFrame({
+        "prediction": numpy.array(prediction).copy(),
+        "outcome": numpy.array(outcome).copy()
+    })
 
     # compute the gain curve
     df.sort_values(["prediction"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_prediction"] = [
-        (1 + i) / df.shape[0] for i in range(df.shape[0])
-    ]
+    df["fraction_of_observations_by_prediction"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
     df["cumulative_outcome"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction"] = df["cumulative_outcome"] / numpy.max(
         df["cumulative_outcome"]
@@ -423,9 +422,8 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
 
     # compute the wizard curve
     df.sort_values(["outcome"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_wizard"] = [
-        (1 + i) / df.shape[0] for i in range(df.shape[0])
-    ]
+    df["fraction_of_observations_by_wizard"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
+
     df["cumulative_outcome_by_wizard"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction_wizard"] = df[
         "cumulative_outcome_by_wizard"
@@ -464,17 +462,20 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot", *, show=True):
     :return: None
     """
 
-    prediction = [v for v in prediction]
-    outcome = [v for v in outcome]
-    df = pandas.DataFrame({"prediction": prediction, "outcome": outcome})
+    df = pandas.DataFrame({
+        "prediction": numpy.array(prediction).copy(),
+        "outcome": numpy.array(outcome).copy()
+    })
+
+    # compute the gain curve
     df.sort_values(["prediction"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_prediction"] = [
-        (1 + i) / df.shape[0] for i in range(df.shape[0])
-    ]
+    df["fraction_of_observations_by_prediction"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
     df["cumulative_outcome"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction"] = df["cumulative_outcome"] / numpy.max(
         df["cumulative_outcome"]
     )
+
+    # move to lift
     df["lift"] = (
         df["cumulative_outcome_fraction"] / df["fraction_of_observations_by_prediction"]
     )
