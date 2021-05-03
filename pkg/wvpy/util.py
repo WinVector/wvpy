@@ -23,13 +23,12 @@ def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
     :return: vector of simulated out of sample predictions
     """
 
-    preds = [None] * X.shape[0]
+    preds = numpy.NaN * numpy.zeros(X.shape[0])
     for g in range(len(plan)):
         pi = plan[g]
         model = fitter.fit(X.iloc[pi["train"]], Y.iloc[pi["train"]])
         predg = model.predict(X.iloc[pi["test"]])
-        for i in range(len(pi["test"])):
-            preds[pi["test"][i]] = predg[i]
+        preds[pi["test"]] = predg
     return preds
 
 
@@ -44,6 +43,7 @@ def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan
     :param plan: cross validation plan from mk_cross_plan()
     :return: matrix of simulated out of sample predictions
     """
+    # TODO: vectorize and switch to Pandas
     preds = numpy.zeros((X.shape[0], 2))
     for g in range(len(plan)):
         pi = plan[g]
@@ -69,6 +69,7 @@ def mean_deviance(predictions, istrue, *, eps=1.0e-6):
     predictions = numpy.maximum(predictions, eps)
     predictions = numpy.minimum(predictions, 1 - eps)
     istrue = [v for v in istrue]
+    # TODO: vectorize
     mass_on_correct = [
         predictions[i] if istrue[i] else 1.0 - predictions[i]
         for i in range(len(istrue))
@@ -85,6 +86,7 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
     :return: mean null deviance of using prevalence as the prediction.
     """
 
+    # TODO: vectorize
     istrue = [v for v in istrue]
     p = numpy.mean(istrue)
     p = numpy.maximum(p, eps)
@@ -197,6 +199,7 @@ def plot_roc(
         })
     )
     """
+    # TODO: vectorize
     prediction = [v for v in prediction]
     istrue = [v == truth_target for v in istrue]
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
@@ -288,6 +291,7 @@ def dual_density_plot(
         istrue=d['y'],
     )
     """
+    # TODO: vectorize
     probs = [v for v in probs]
     istrue = [v == truth_target for v in istrue]
     matplotlib.pyplot.gcf().clear()
@@ -317,7 +321,7 @@ def dual_hist_plot(probs, istrue, title="Dual Histogram Plot", *, show=True):
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
     """
-
+    # TODO: vectorize
     probs = [v for v in probs]
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
@@ -356,6 +360,7 @@ def dual_density_plot_proba1(
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
     """
+    # TODO: vectorize
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [
@@ -383,7 +388,7 @@ def dual_hist_plot_proba1(probs, istrue, *, show=True):
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
     """
-
+    # TODO: vectorize
     istrue = [v for v in istrue]
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
