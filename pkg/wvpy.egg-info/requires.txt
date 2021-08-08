@@ -2,4 +2,5 @@ numpy
 pandas
 sklearn
 matplotlib
+vtreat
 data_algebra

@@ -222,12 +222,8 @@ def plot_roc(
     matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     if extra_points is not None:
-        matplotlib.pyplot.plot(
-            extra_points.fpr,
-            extra_points.tpr,
-            'bo',
-            color="red")
-        if 'label' in extra_points.columns:
+        matplotlib.pyplot.plot(extra_points.fpr, extra_points.tpr, "bo", color="red")
+        if "label" in extra_points.columns:
             tpr = extra_points.tpr.to_list()
             fpr = extra_points.fpr.to_list()
             label = extra_points.label.to_list()
@@ -412,14 +408,18 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
     :return: None
     """
 
-    df = pandas.DataFrame({
-        "prediction": numpy.array(prediction).copy(),
-        "outcome": numpy.array(outcome).copy()
-    })
+    df = pandas.DataFrame(
+        {
+            "prediction": numpy.array(prediction).copy(),
+            "outcome": numpy.array(outcome).copy(),
+        }
+    )
 
     # compute the gain curve
     df.sort_values(["prediction"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_prediction"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
+    df["fraction_of_observations_by_prediction"] = (
+        numpy.arange(df.shape[0]) + 1.0
+    ) / df.shape[0]
     df["cumulative_outcome"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction"] = df["cumulative_outcome"] / numpy.max(
         df["cumulative_outcome"]
@@ -427,7 +427,9 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
 
     # compute the wizard curve
     df.sort_values(["outcome"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_wizard"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
+    df["fraction_of_observations_by_wizard"] = (
+        numpy.arange(df.shape[0]) + 1.0
+    ) / df.shape[0]
 
     df["cumulative_outcome_by_wizard"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction_wizard"] = df[
@@ -467,14 +469,18 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot", *, show=True):
     :return: None
     """
 
-    df = pandas.DataFrame({
-        "prediction": numpy.array(prediction).copy(),
-        "outcome": numpy.array(outcome).copy()
-    })
+    df = pandas.DataFrame(
+        {
+            "prediction": numpy.array(prediction).copy(),
+            "outcome": numpy.array(outcome).copy(),
+        }
+    )
 
     # compute the gain curve
     df.sort_values(["prediction"], ascending=[False], inplace=True)
-    df["fraction_of_observations_by_prediction"] = (numpy.arange(df.shape[0]) + 1.0) / df.shape[0]
+    df["fraction_of_observations_by_prediction"] = (
+        numpy.arange(df.shape[0]) + 1.0
+    ) / df.shape[0]
     df["cumulative_outcome"] = df["outcome"].cumsum()
     df["cumulative_outcome_fraction"] = df["cumulative_outcome"] / numpy.max(
         df["cumulative_outcome"]
