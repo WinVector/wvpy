@@ -6,9 +6,6 @@ Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
 Author-email: jmount@win-vector.com
 License: License :: OSI Approved :: BSD 3-clause License
-Description: 
-        Simple utilities for teaching Pandas and scikit learn.
-        
 Platform: any
 Classifier: Intended Audience :: Science/Research
 Classifier: Programming Language :: Python
@@ -20,3 +17,9 @@ Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Classifier: License :: OSI Approved :: BSD License
 Description-Content-Type: text/markdown
+License-File: LICENSE
+
+
+Simple utilities for teaching Pandas and scikit learn.
+
+

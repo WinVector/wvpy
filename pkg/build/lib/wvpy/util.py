@@ -1,3 +1,6 @@
+
+from typing import Tuple
+
 import numpy
 import statistics
 import matplotlib
@@ -579,14 +582,18 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
 
 
 def threshold_statistics(
-    d: pandas.DataFrame, model_predictions, yvalues, *, y_target=True
-):
+        d: pandas.DataFrame,
+        *,
+        model_predictions: str,
+        yvalues: str,
+        y_target=True
+) -> pandas.DataFrame:
     """
     Compute a number of threshold statistics of how well model predictions match a truth target.
 
     :param d: pandas.DataFrame to take values from
     :param model_predictions: name of predictions column
-    :param yvalues: truth values
+    :param yvalues: name of truth values column
     :param y_target: value considered to be true
     :return: summary statistic frame, include before and after pseudo-observations
 
@@ -662,6 +669,10 @@ def threshold_statistics(
     sorted_frame["false_negative_rate"] = (
         sorted_frame["truth"].sum() - sorted_frame["truth"].cumsum()
     ) / max(1, sorted_frame["truth"].sum())
+    sorted_frame["accuracy"] = (
+        sorted_frame["truth"].cumsum()  # true positive count
+        + sorted_frame["notY"].sum() - sorted_frame["notY"].cumsum()  # true negative count
+    ) / sorted_frame["one"].sum()
 
     # approximate cdf work
     sorted_frame["cdf"] = 1 - sorted_frame["fraction"]
@@ -686,15 +697,15 @@ def threshold_statistics(
 
 def threshold_plot(
     d: pandas.DataFrame,
-    pred_var,
-    truth_var,
-    truth_target=True,
-    threshold_range=(-math.inf, math.inf),
-    plotvars=("precision", "recall"),
-    title="Measures as a function of threshold",
+    pred_var: str,
+    truth_var: str,
+    truth_target: bool = True,
+    threshold_range: Tuple[float, float] = (-math.inf, math.inf),
+    plotvars: Tuple = ("precision", "recall"),
+    title : str = "Measures as a function of threshold",
     *,
-    show=True
-):
+    show : bool = True,
+) -> None:
     """
     Produce multiple facet plot relating the performance of using a threshold greater than or equal to
     different values at predicting a truth target.
@@ -704,9 +715,9 @@ def threshold_plot(
     :param truth_var: name of column with reference truth
     :param truth_target: value considered true
     :param threshold_range: x-axis range to plot
-    :param plotvars: list of metrics to plot, must come from ['threshold', 'count', 'fraction', 'precision',
+    :param plotvars: list of metrics to plot, must come from ['threshold', 'count', 'fraction',
         'true_positive_rate', 'false_positive_rate', 'true_negative_rate', 'false_negative_rate',
-        'recall', 'sensitivity', 'specificity']
+        'precision', 'recall', 'sensitivity', 'specificity', 'accuracy']
     :param title: title for plot
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None, plot produced as a side effect
@@ -728,11 +739,22 @@ def threshold_plot(
         plotvars=("sensitivity", "specificity"),
     )
     """
+    if isinstance(plotvars, str):
+        plotvars = [plotvars]
+    else:
+        plotvars = [v for v in plotvars]
+    assert isinstance(plotvars, list)
+    assert len(plotvars) > 0
+    assert all([isinstance(v, str) for v in plotvars])
     frame = d[[pred_var, truth_var]].copy()
     frame.reset_index(inplace=True, drop=True)
     frame["outcol"] = frame[truth_var] == truth_target
 
-    prt_frame = threshold_statistics(frame, pred_var, "outcol")
+    prt_frame = threshold_statistics(
+        frame,
+        model_predictions=pred_var,
+        yvalues="outcol",
+    )
     bad_plot_vars = set(plotvars) - set(prt_frame.columns)
     if len(bad_plot_vars) > 0:
         raise ValueError(
@@ -748,21 +770,30 @@ def threshold_plot(
     )
     to_plot = prt_frame.loc[selector, :]
 
-    reshaper = RecordMap(
-        blocks_out=RecordSpecification(
-            pandas.DataFrame({"measure": plotvars, "value": plotvars}),
-            record_keys=["threshold"],
+    if len(plotvars) > 1:
+        reshaper = RecordMap(
+            blocks_out=RecordSpecification(
+                pandas.DataFrame({"measure": plotvars, "value": plotvars}),
+                control_table_keys=['measure'],
+                record_keys=["threshold"],
+            )
         )
-    )
+        prtlong = reshaper.transform(to_plot)
+        grid = seaborn.FacetGrid(
+            prtlong, row="measure", row_order=plotvars, aspect=2, sharey=False
+        )
+        grid = grid.map(matplotlib.pyplot.plot, "threshold", "value")
+        matplotlib.pyplot.subplots_adjust(top=0.9)
+        grid.fig.suptitle(title)
+    else:
+        # can plot off primary frame
+        seaborn.lineplot(
+            data=to_plot,
+            x='threshold',
+            y=plotvars[0],
+        )
+        matplotlib.pyplot.suptitle(title)
+        matplotlib.pyplot.title(plotvars[0])
 
-    prtlong = reshaper.transform(to_plot)
-    prtlong.head()
-
-    grid = seaborn.FacetGrid(
-        prtlong, row="measure", row_order=plotvars, aspect=2, sharey=False
-    )
-    grid = grid.map(matplotlib.pyplot.plot, "threshold", "value")
-    matplotlib.pyplot.subplots_adjust(top=0.9)
-    grid.fig.suptitle(title)
     if show:
         matplotlib.pyplot.show()
