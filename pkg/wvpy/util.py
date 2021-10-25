@@ -783,6 +783,7 @@ def threshold_plot(
             prtlong, row="measure", row_order=plotvars, aspect=2, sharey=False
         )
         grid = grid.map(matplotlib.pyplot.plot, "threshold", "value")
+        grid.set(ylabel=None)
         matplotlib.pyplot.subplots_adjust(top=0.9)
         grid.fig.suptitle(title)
     else:
@@ -793,7 +794,7 @@ def threshold_plot(
             y=plotvars[0],
         )
         matplotlib.pyplot.suptitle(title)
-        matplotlib.pyplot.title(plotvars[0])
+        matplotlib.pyplot.title(f'measure = {plotvars[0]}')
 
     if show:
         matplotlib.pyplot.show()

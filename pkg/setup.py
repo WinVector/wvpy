@@ -13,7 +13,14 @@ setuptools.setup(
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
     packages=setuptools.find_packages(),
-    install_requires=["numpy", "pandas", "sklearn", "matplotlib", "vtreat", "data_algebra"],
+    install_requires=[
+        "numpy",
+        "pandas",
+        "sklearn",
+        "matplotlib",
+        "vtreat>=1.0.0",
+        "data_algebra>=0.9.0"
+    ],
     platforms=["any"],
     license="License :: OSI Approved :: BSD 3-clause License",
     description=DESCRIPTION,
