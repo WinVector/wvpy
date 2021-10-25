@@ -6,7 +6,7 @@ pytest --cov wvpy > ../coverage.txt
 cat ../coverage.txt
 python3 setup.py sdist bdist_wheel
 pip install dist/wvpy-*.tar.gz
-pdoc -o docs wvpy
+pdoc -o docs ./wvpy
 popd
 twine check pkg/dist/*
 
