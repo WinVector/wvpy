@@ -109,10 +109,16 @@
                     <h1 class="modulename">
 <a href="./../wvpy.html">wvpy</a><wbr>.util    </h1>
 
-                
+                        <div class="docstring"><p>Utility functions for teaching data science.</p>
+</div>
+
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
+            <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility functions for teaching data science.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
@@ -277,7 +283,7 @@
     <span class="n">truth_target</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">ideal_line_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">extra_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a ROC curve of numeric prediction against boolean istrue.</span>
@@ -374,7 +380,7 @@
     <span class="n">negative_label</span><span class="o">=</span><span class="s2">&quot;negative examples&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;density of examples&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;model score&quot;</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs against boolean istrue.</span>
@@ -458,7 +464,7 @@
     <span class="n">negative_label</span><span class="o">=</span><span class="s2">&quot;negative examples&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;density of examples&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;model score&quot;</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.</span>
@@ -673,10 +679,12 @@
     <span class="n">basedev</span> <span class="o">=</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">istrue</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">perm_score_var</span><span class="p">(</span><span class="n">victim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Permutation score column named victim&quot;&quot;&quot;</span>
         <span class="n">dorig</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="n">dnew</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="k">def</span> <span class="nf">perm_score_var_once</span><span class="p">():</span>
+            <span class="sd">&quot;&quot;&quot;apply fn once, used for list comprehension&quot;&quot;&quot;</span>
             <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">dnew</span><span class="p">)</span>
             <span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span> <span class="o">=</span> <span class="n">dnew</span>
             <span class="n">predsp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">modelvars</span><span class="p">])</span>
@@ -697,11 +705,7 @@
 
 
 <span class="k">def</span> <span class="nf">threshold_statistics</span><span class="p">(</span>
-        <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">model_predictions</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">yvalues</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">y_target</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">model_predictions</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">yvalues</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">y_target</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a number of threshold statistics of how well model predictions match a truth target.</span>
@@ -786,7 +790,8 @@
     <span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;truth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
     <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;truth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true positive count</span>
-        <span class="o">+</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true negative count</span>
+        <span class="o">+</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="o">-</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true negative count</span>
     <span class="p">)</span> <span class="o">/</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;one&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
     <span class="c1"># approximate cdf work</span>
@@ -817,9 +822,9 @@
     <span class="n">truth_target</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">threshold_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
     <span class="n">plotvars</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">),</span>
-    <span class="n">title</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Measures as a function of threshold&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Measures as a function of threshold&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">show</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produce multiple facet plot relating the performance of using a threshold greater than or equal to</span>
@@ -866,9 +871,7 @@
     <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;outcol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">truth_var</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
 
     <span class="n">prt_frame</span> <span class="o">=</span> <span class="n">threshold_statistics</span><span class="p">(</span>
-        <span class="n">frame</span><span class="p">,</span>
-        <span class="n">model_predictions</span><span class="o">=</span><span class="n">pred_var</span><span class="p">,</span>
-        <span class="n">yvalues</span><span class="o">=</span><span class="s2">&quot;outcol&quot;</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">,</span> <span class="n">model_predictions</span><span class="o">=</span><span class="n">pred_var</span><span class="p">,</span> <span class="n">yvalues</span><span class="o">=</span><span class="s2">&quot;outcol&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">bad_plot_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">plotvars</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">prt_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bad_plot_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -889,7 +892,7 @@
         <span class="n">reshaper</span> <span class="o">=</span> <span class="n">RecordMap</span><span class="p">(</span>
             <span class="n">blocks_out</span><span class="o">=</span><span class="n">RecordSpecification</span><span class="p">(</span>
                 <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="n">plotvars</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">plotvars</span><span class="p">}),</span>
-                <span class="n">control_table_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;measure&#39;</span><span class="p">],</span>
+                <span class="n">control_table_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">],</span>
                 <span class="n">record_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -904,18 +907,18 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># can plot off primary frame</span>
         <span class="n">seaborn</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">to_plot</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="s1">&#39;threshold&#39;</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">to_plot</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-        <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;measure = </span><span class="si">{</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;measure = </span><span class="si">{</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span>
+    <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
 <span class="sd">    Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.</span>
@@ -925,31 +928,32 @@
 <span class="sd">    :return: encoding bundle dictionary, see apply_onehot_enc() for use.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span>
+    <span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
     <span class="n">categorical_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span>  <span class="c1"># clean copy</span>
     <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">categorical_var_names</span><span class="p">])</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="n">enc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span>
-        <span class="n">categories</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
-        <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># default</span>
-        <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">categories</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>  <span class="c1"># default</span>
+    <span class="p">)</span>
     <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">categorical_var_names</span><span class="p">])</span>
     <span class="n">produced_column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">enc</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
     <span class="c1"># map back to original column names</span>
 
     <span class="k">def</span> <span class="nf">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;_.*$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^.*_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Replace x[0-9]+_level with var_level&quot;&quot;&quot;</span>
+        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_.*$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^.*_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">produced_column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">produced_column_names</span><span class="p">]</span>
     <span class="c1"># return the structure</span>
     <span class="n">encoder_bundle</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;categorical_var_names&#39;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
-        <span class="s1">&#39;enc&#39;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
-        <span class="s1">&#39;produced_column_names&#39;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
+        <span class="s2">&quot;categorical_var_names&quot;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
+        <span class="s2">&quot;enc&quot;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
+        <span class="s2">&quot;produced_column_names&quot;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">encoder_bundle</span>
 
@@ -965,11 +969,13 @@
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="c1"># one hot re-code columns, preserving column names info</span>
-    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;enc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">]]))</span>
-    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;produced_column_names&#39;</span><span class="p">]</span>
+    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;enc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;categorical_var_names&quot;</span><span class="p">]])</span>
+    <span class="p">)</span>
+    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;produced_column_names&quot;</span><span class="p">]</span>
     <span class="c1"># copy over non-invovled columns</span>
-    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">])</span>
-    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
+    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;categorical_var_names&quot;</span><span class="p">])</span>
+    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">complementary_columns</span><span class="p">],</span> <span class="n">one_hotted</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">res</span>
 </pre></div>
@@ -1286,7 +1292,7 @@
     <span class="n">truth_target</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">ideal_line_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">extra_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a ROC curve of numeric prediction against boolean istrue.</span>
@@ -1446,7 +1452,7 @@ import <a href="">wvpy.util</a></p>
     <span class="n">negative_label</span><span class="o">=</span><span class="s2">&quot;negative examples&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;density of examples&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;model score&quot;</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs against boolean istrue.</span>
@@ -1607,7 +1613,7 @@ import <a href="">wvpy.util</a></p>
     <span class="n">negative_label</span><span class="o">=</span><span class="s2">&quot;negative examples&quot;</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;density of examples&quot;</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;model score&quot;</span><span class="p">,</span>
-    <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.</span>
@@ -1979,10 +1985,12 @@ import <a href="">wvpy.util</a></p>
     <span class="n">basedev</span> <span class="o">=</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">istrue</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">perm_score_var</span><span class="p">(</span><span class="n">victim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Permutation score column named victim&quot;&quot;&quot;</span>
         <span class="n">dorig</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="n">dnew</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="k">def</span> <span class="nf">perm_score_var_once</span><span class="p">():</span>
+            <span class="sd">&quot;&quot;&quot;apply fn once, used for list comprehension&quot;&quot;&quot;</span>
             <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">dnew</span><span class="p">)</span>
             <span class="n">d2</span><span class="p">[</span><span class="n">victim</span><span class="p">]</span> <span class="o">=</span> <span class="n">dnew</span>
             <span class="n">predsp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">modelvars</span><span class="p">])</span>
@@ -2033,11 +2041,7 @@ import <a href="">wvpy.util</a></p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">threshold_statistics</span><span class="p">(</span>
-        <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">model_predictions</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">yvalues</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">y_target</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">model_predictions</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">yvalues</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">y_target</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a number of threshold statistics of how well model predictions match a truth target.</span>
@@ -2122,7 +2126,8 @@ import <a href="">wvpy.util</a></p>
     <span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;truth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
     <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;truth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true positive count</span>
-        <span class="o">+</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true negative count</span>
+        <span class="o">+</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="o">-</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;notY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># true negative count</span>
     <span class="p">)</span> <span class="o">/</span> <span class="n">sorted_frame</span><span class="p">[</span><span class="s2">&quot;one&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
     <span class="c1"># approximate cdf work</span>
@@ -2202,9 +2207,9 @@ import <a href="">wvpy.util</a></p>
     <span class="n">truth_target</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">threshold_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
     <span class="n">plotvars</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">),</span>
-    <span class="n">title</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Measures as a function of threshold&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Measures as a function of threshold&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">show</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produce multiple facet plot relating the performance of using a threshold greater than or equal to</span>
@@ -2251,9 +2256,7 @@ import <a href="">wvpy.util</a></p>
     <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;outcol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="n">truth_var</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
 
     <span class="n">prt_frame</span> <span class="o">=</span> <span class="n">threshold_statistics</span><span class="p">(</span>
-        <span class="n">frame</span><span class="p">,</span>
-        <span class="n">model_predictions</span><span class="o">=</span><span class="n">pred_var</span><span class="p">,</span>
-        <span class="n">yvalues</span><span class="o">=</span><span class="s2">&quot;outcol&quot;</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">,</span> <span class="n">model_predictions</span><span class="o">=</span><span class="n">pred_var</span><span class="p">,</span> <span class="n">yvalues</span><span class="o">=</span><span class="s2">&quot;outcol&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">bad_plot_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">plotvars</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">prt_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bad_plot_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -2274,7 +2277,7 @@ import <a href="">wvpy.util</a></p>
         <span class="n">reshaper</span> <span class="o">=</span> <span class="n">RecordMap</span><span class="p">(</span>
             <span class="n">blocks_out</span><span class="o">=</span><span class="n">RecordSpecification</span><span class="p">(</span>
                 <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;measure&quot;</span><span class="p">:</span> <span class="n">plotvars</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">plotvars</span><span class="p">}),</span>
-                <span class="n">control_table_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;measure&#39;</span><span class="p">],</span>
+                <span class="n">control_table_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">],</span>
                 <span class="n">record_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -2289,12 +2292,10 @@ import <a href="">wvpy.util</a></p>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># can plot off primary frame</span>
         <span class="n">seaborn</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">to_plot</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="s1">&#39;threshold&#39;</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">to_plot</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-        <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;measure = </span><span class="si">{</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;measure = </span><span class="si">{</span><span class="n">plotvars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -2351,7 +2352,9 @@ import <a href="">wvpy.util</a></p>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span>
+    <span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
 <span class="sd">    Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.</span>
@@ -2361,31 +2364,32 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :return: encoding bundle dictionary, see apply_onehot_enc() for use.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span>
+    <span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
     <span class="n">categorical_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span>  <span class="c1"># clean copy</span>
     <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">categorical_var_names</span><span class="p">])</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="n">enc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span>
-        <span class="n">categories</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
-        <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># default</span>
-        <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">categories</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>  <span class="c1"># default</span>
+    <span class="p">)</span>
     <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">categorical_var_names</span><span class="p">])</span>
     <span class="n">produced_column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">enc</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
     <span class="c1"># map back to original column names</span>
 
     <span class="k">def</span> <span class="nf">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;_.*$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^.*_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Replace x[0-9]+_level with var_level&quot;&quot;&quot;</span>
+        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_.*$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^.*_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">produced_column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">produced_column_names</span><span class="p">]</span>
     <span class="c1"># return the structure</span>
     <span class="n">encoder_bundle</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;categorical_var_names&#39;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
-        <span class="s1">&#39;enc&#39;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
-        <span class="s1">&#39;produced_column_names&#39;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
+        <span class="s2">&quot;categorical_var_names&quot;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
+        <span class="s2">&quot;enc&quot;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
+        <span class="s2">&quot;produced_column_names&quot;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">encoder_bundle</span>
 </pre></div>
@@ -2427,11 +2431,13 @@ Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) ove
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="c1"># one hot re-code columns, preserving column names info</span>
-    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;enc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">]]))</span>
-    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;produced_column_names&#39;</span><span class="p">]</span>
+    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;enc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;categorical_var_names&quot;</span><span class="p">]])</span>
+    <span class="p">)</span>
+    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;produced_column_names&quot;</span><span class="p">]</span>
     <span class="c1"># copy over non-invovled columns</span>
-    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">])</span>
-    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
+    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s2">&quot;categorical_var_names&quot;</span><span class="p">])</span>
+    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">complementary_columns</span><span class="p">],</span> <span class="n">one_hotted</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">res</span>
 </pre></div>

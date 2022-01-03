@@ -1,3 +1,6 @@
+"""
+Utility functions for teaching data science.
+"""
 
 from typing import Iterable, Tuple
 
@@ -164,7 +167,7 @@ def plot_roc(
     truth_target=True,
     ideal_line_color=None,
     extra_points=None,
-    show=True
+    show=True,
 ):
     """
     Plot a ROC curve of numeric prediction against boolean istrue.
@@ -261,7 +264,7 @@ def dual_density_plot(
     negative_label="negative examples",
     ylabel="density of examples",
     xlabel="model score",
-    show=True
+    show=True,
 ):
     """
     Plot a dual density plot of numeric prediction probs against boolean istrue.
@@ -345,7 +348,7 @@ def dual_density_plot_proba1(
     negative_label="negative examples",
     ylabel="density of examples",
     xlabel="model score",
-    show=True
+    show=True,
 ):
     """
     Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
@@ -560,10 +563,12 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     basedev = mean_deviance(preds[:, 1], istrue)
 
     def perm_score_var(victim):
+        """Permutation score column named victim"""
         dorig = numpy.array(d2[victim].copy())
         dnew = numpy.array(d2[victim].copy())
 
         def perm_score_var_once():
+            """apply fn once, used for list comprehension"""
             numpy.random.shuffle(dnew)
             d2[victim] = dnew
             predsp = model.predict_proba(d2[modelvars])
@@ -584,11 +589,7 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
 
 
 def threshold_statistics(
-        d: pandas.DataFrame,
-        *,
-        model_predictions: str,
-        yvalues: str,
-        y_target=True
+    d: pandas.DataFrame, *, model_predictions: str, yvalues: str, y_target=True
 ) -> pandas.DataFrame:
     """
     Compute a number of threshold statistics of how well model predictions match a truth target.
@@ -673,7 +674,8 @@ def threshold_statistics(
     ) / max(1, sorted_frame["truth"].sum())
     sorted_frame["accuracy"] = (
         sorted_frame["truth"].cumsum()  # true positive count
-        + sorted_frame["notY"].sum() - sorted_frame["notY"].cumsum()  # true negative count
+        + sorted_frame["notY"].sum()
+        - sorted_frame["notY"].cumsum()  # true negative count
     ) / sorted_frame["one"].sum()
 
     # approximate cdf work
@@ -704,9 +706,9 @@ def threshold_plot(
     truth_target: bool = True,
     threshold_range: Tuple[float, float] = (-math.inf, math.inf),
     plotvars: Tuple = ("precision", "recall"),
-    title : str = "Measures as a function of threshold",
+    title: str = "Measures as a function of threshold",
     *,
-    show : bool = True,
+    show: bool = True,
 ) -> None:
     """
     Produce multiple facet plot relating the performance of using a threshold greater than or equal to
@@ -753,9 +755,7 @@ def threshold_plot(
     frame["outcol"] = frame[truth_var] == truth_target
 
     prt_frame = threshold_statistics(
-        frame,
-        model_predictions=pred_var,
-        yvalues="outcol",
+        frame, model_predictions=pred_var, yvalues="outcol",
     )
     bad_plot_vars = set(plotvars) - set(prt_frame.columns)
     if len(bad_plot_vars) > 0:
@@ -776,7 +776,7 @@ def threshold_plot(
         reshaper = RecordMap(
             blocks_out=RecordSpecification(
                 pandas.DataFrame({"measure": plotvars, "value": plotvars}),
-                control_table_keys=['measure'],
+                control_table_keys=["measure"],
                 record_keys=["threshold"],
             )
         )
@@ -791,18 +791,18 @@ def threshold_plot(
     else:
         # can plot off primary frame
         seaborn.lineplot(
-            data=to_plot,
-            x='threshold',
-            y=plotvars[0],
+            data=to_plot, x="threshold", y=plotvars[0],
         )
         matplotlib.pyplot.suptitle(title)
-        matplotlib.pyplot.title(f'measure = {plotvars[0]}')
+        matplotlib.pyplot.title(f"measure = {plotvars[0]}")
 
     if show:
         matplotlib.pyplot.show()
 
 
-def fit_onehot_enc(d: pandas.DataFrame, *, categorical_var_names: Iterable[str]) -> dict:
+def fit_onehot_enc(
+    d: pandas.DataFrame, *, categorical_var_names: Iterable[str]
+) -> dict:
     """
     Fit a sklearn OneHot Encoder to categorical_var_names columns.
     Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.
@@ -812,31 +812,32 @@ def fit_onehot_enc(d: pandas.DataFrame, *, categorical_var_names: Iterable[str])
     :return: encoding bundle dictionary, see apply_onehot_enc() for use.
     """
     assert isinstance(d, pandas.DataFrame)
-    assert not isinstance(categorical_var_names, str)  # single name, should be in a list
+    assert not isinstance(
+        categorical_var_names, str
+    )  # single name, should be in a list
     categorical_var_names = list(categorical_var_names)  # clean copy
     assert numpy.all([isinstance(v, str) for v in categorical_var_names])
     assert len(categorical_var_names) > 0
     enc = sklearn.preprocessing.OneHotEncoder(
-        categories='auto',
-        drop=None,  # default
-        sparse=False,
-        handle_unknown='ignore')
+        categories="auto", drop=None, sparse=False, handle_unknown="ignore"  # default
+    )
     enc.fit(d[categorical_var_names])
     produced_column_names = list(enc.get_feature_names())
     # map back to original column names
 
     def replace_col_name(v):
-        v_prefix = re.sub(r'_.*$', '', v)
-        v_suffix = re.sub(r'^.*_', '', v)
-        v_index = int(re.sub(r'^x', '', v_prefix))
-        return f'{categorical_var_names[v_index]}_{v_suffix}'
+        """Replace x[0-9]+_level with var_level"""
+        v_prefix = re.sub(r"_.*$", "", v)
+        v_suffix = re.sub(r"^.*_", "", v)
+        v_index = int(re.sub(r"^x", "", v_prefix))
+        return f"{categorical_var_names[v_index]}_{v_suffix}"
 
     produced_column_names = [replace_col_name(v) for v in produced_column_names]
     # return the structure
     encoder_bundle = {
-        'categorical_var_names': categorical_var_names,
-        'enc': enc,
-        'produced_column_names': produced_column_names,
+        "categorical_var_names": categorical_var_names,
+        "enc": enc,
+        "produced_column_names": produced_column_names,
     }
     return encoder_bundle
 
@@ -852,10 +853,12 @@ def apply_onehot_enc(d: pandas.DataFrame, *, encoder_bundle: dict) -> pandas.Dat
     assert isinstance(d, pandas.DataFrame)
     assert isinstance(encoder_bundle, dict)
     # one hot re-code columns, preserving column names info
-    one_hotted = pandas.DataFrame(encoder_bundle['enc'].transform(d[encoder_bundle['categorical_var_names']]))
-    one_hotted.columns = encoder_bundle['produced_column_names']
+    one_hotted = pandas.DataFrame(
+        encoder_bundle["enc"].transform(d[encoder_bundle["categorical_var_names"]])
+    )
+    one_hotted.columns = encoder_bundle["produced_column_names"]
     # copy over non-invovled columns
-    cat_set = set(encoder_bundle['categorical_var_names'])
-    complementary_columns = [c for c in d.columns if not c in cat_set]
+    cat_set = set(encoder_bundle["categorical_var_names"])
+    complementary_columns = [c for c in d.columns if c not in cat_set]
     res = pandas.concat([d[complementary_columns], one_hotted], axis=1)
     return res
