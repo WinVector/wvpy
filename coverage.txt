@@ -2,10 +2,10 @@
 platform darwin -- Python 3.9.7, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: cov-2.12.1, anyio-2.2.0, typeguard-2.13.0
-collected 3 items
+collected 4 items
 
-tests/test_cross_plan1.py .                                              [ 33%]
-tests/test_onehot.py .                                                   [ 66%]
+tests/test_cross_plan1.py .                                              [ 25%]
+tests/test_onehot.py ..                                                  [ 75%]
 tests/test_stats1.py .                                                   [100%]
 
 ---------- coverage: platform darwin, python 3.9.7-final-0 -----------
@@ -17,4 +17,4 @@ wvpy/util.py         298    205    31%
 TOTAL                301    205    32%
 
 
-============================== 3 passed in 3.60s ===============================
+============================== 4 passed in 3.48s ===============================

@@ -17,9 +17,10 @@ setuptools.setup(
         "numpy",
         "pandas",
         "sklearn",
+        "seaborn",
         "matplotlib",
-        "vtreat>=1.0.0",
-        "data_algebra>=0.9.0"
+        "vtreat>=1.1.1",
+        "data_algebra>=1.2.0"
     ],
     platforms=["any"],
     license="License :: OSI Approved :: BSD 3-clause License",

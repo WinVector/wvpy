@@ -918,6 +918,7 @@
 <span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
+<span class="sd">    Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.</span>
 
 <span class="sd">    :param d: training data</span>
 <span class="sd">    :param categorical_var_names: list of column names to learn transform from</span>
@@ -2353,6 +2354,7 @@ import <a href="">wvpy.util</a></p>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
+<span class="sd">    Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.</span>
 
 <span class="sd">    :param d: training data</span>
 <span class="sd">    :param categorical_var_names: list of column names to learn transform from</span>
@@ -2390,7 +2392,8 @@ import <a href="">wvpy.util</a></p>
 
         </details>
 
-            <div class="docstring"><p>Fit a sklearn OneHot Encoder to categorical_var_names columns.</p>
+            <div class="docstring"><p>Fit a sklearn OneHot Encoder to categorical_var_names columns.
+Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.</p>
 
 <p>:param d: training data
 :param categorical_var_names: list of column names to learn transform from

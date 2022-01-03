@@ -805,6 +805,7 @@ def threshold_plot(
 def fit_onehot_enc(d: pandas.DataFrame, *, categorical_var_names: Iterable[str]) -> dict:
     """
     Fit a sklearn OneHot Encoder to categorical_var_names columns.
+    Note: we suggest preferring vtreat ( https://github.com/WinVector/pyvtreat ) over this example code.
 
     :param d: training data
     :param categorical_var_names: list of column names to learn transform from
