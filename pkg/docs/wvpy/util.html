@@ -87,6 +87,12 @@
             <li>
                     <a class="function" href="#threshold_plot">threshold_plot</a>
             </li>
+            <li>
+                    <a class="function" href="#fit_onehot_enc">fit_onehot_enc</a>
+            </li>
+            <li>
+                    <a class="function" href="#apply_onehot_enc">apply_onehot_enc</a>
+            </li>
     </ul>
 
 
@@ -106,8 +112,9 @@
                 
                         <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+            <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
 
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">statistics</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
@@ -115,6 +122,7 @@
 <span class="kn">import</span> <span class="nn">seaborn</span>
 <span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+<span class="kn">import</span> <span class="nn">sklearn.preprocessing</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">pandas</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -905,6 +913,64 @@
 
     <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
+
+<span class="sd">    :param d: training data</span>
+<span class="sd">    :param categorical_var_names: list of column names to learn transform from</span>
+<span class="sd">    :return: encoding bundle dictionary, see apply_onehot_enc() for use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
+    <span class="n">categorical_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span>  <span class="c1"># clean copy</span>
+    <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">categorical_var_names</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">enc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span>
+        <span class="n">categories</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># default</span>
+        <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">categorical_var_names</span><span class="p">])</span>
+    <span class="n">produced_column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">enc</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
+    <span class="c1"># map back to original column names</span>
+
+    <span class="k">def</span> <span class="nf">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;_.*$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^.*_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">produced_column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">produced_column_names</span><span class="p">]</span>
+    <span class="c1"># return the structure</span>
+    <span class="n">encoder_bundle</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;categorical_var_names&#39;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
+        <span class="s1">&#39;enc&#39;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
+        <span class="s1">&#39;produced_column_names&#39;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">encoder_bundle</span>
+
+
+<span class="k">def</span> <span class="nf">apply_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">encoder_bundle</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a one hot encoding bundle to a data frame.</span>
+
+<span class="sd">    :param d: input data frame</span>
+<span class="sd">    :param encoder_bundle: transform specification, built by fit_onehot_enc()</span>
+<span class="sd">    :return: transformed data frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="c1"># one hot re-code columns, preserving column names info</span>
+    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;enc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">]]))</span>
+    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;produced_column_names&#39;</span><span class="p">]</span>
+    <span class="c1"># copy over non-invovled columns</span>
+    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">])</span>
+    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">complementary_columns</span><span class="p">],</span> <span class="n">one_hotted</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
 </pre></div>
 
         </details>
@@ -2266,6 +2332,114 @@ import <a href="">wvpy.util</a></p>
     truth_var='y',
     plotvars=("sensitivity", "specificity"),
 )</p>
+</div>
+
+
+                </section>
+                <section id="fit_onehot_enc">
+                            <div class="attr function"><a class="headerlink" href="#fit_onehot_enc">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">fit_onehot_enc</span><span class="signature">(
+    d: pandas.core.frame.DataFrame,
+    *,
+    categorical_var_names: Iterable[str]
+) -&gt; dict</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fit_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">categorical_var_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit a sklearn OneHot Encoder to categorical_var_names columns.</span>
+
+<span class="sd">    :param d: training data</span>
+<span class="sd">    :param categorical_var_names: list of column names to learn transform from</span>
+<span class="sd">    :return: encoding bundle dictionary, see apply_onehot_enc() for use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># single name, should be in a list</span>
+    <span class="n">categorical_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span>  <span class="c1"># clean copy</span>
+    <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">categorical_var_names</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_var_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">enc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span>
+        <span class="n">categories</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="n">drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># default</span>
+        <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">categorical_var_names</span><span class="p">])</span>
+    <span class="n">produced_column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">enc</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
+    <span class="c1"># map back to original column names</span>
+
+    <span class="k">def</span> <span class="nf">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="n">v_prefix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;_.*$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_suffix</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^.*_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">v_prefix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">categorical_var_names</span><span class="p">[</span><span class="n">v_index</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">v_suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">produced_column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">replace_col_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">produced_column_names</span><span class="p">]</span>
+    <span class="c1"># return the structure</span>
+    <span class="n">encoder_bundle</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;categorical_var_names&#39;</span><span class="p">:</span> <span class="n">categorical_var_names</span><span class="p">,</span>
+        <span class="s1">&#39;enc&#39;</span><span class="p">:</span> <span class="n">enc</span><span class="p">,</span>
+        <span class="s1">&#39;produced_column_names&#39;</span><span class="p">:</span> <span class="n">produced_column_names</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">encoder_bundle</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Fit a sklearn OneHot Encoder to categorical_var_names columns.</p>
+
+<p>:param d: training data
+:param categorical_var_names: list of column names to learn transform from
+:return: encoding bundle dictionary, see apply_onehot_enc() for use.</p>
+</div>
+
+
+                </section>
+                <section id="apply_onehot_enc">
+                            <div class="attr function"><a class="headerlink" href="#apply_onehot_enc">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">apply_onehot_enc</span><span class="signature">(
+    d: pandas.core.frame.DataFrame,
+    *,
+    encoder_bundle: dict
+) -&gt; pandas.core.frame.DataFrame</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">apply_onehot_enc</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">encoder_bundle</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a one hot encoding bundle to a data frame.</span>
+
+<span class="sd">    :param d: input data frame</span>
+<span class="sd">    :param encoder_bundle: transform specification, built by fit_onehot_enc()</span>
+<span class="sd">    :return: transformed data frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="c1"># one hot re-code columns, preserving column names info</span>
+    <span class="n">one_hotted</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;enc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">]]))</span>
+    <span class="n">one_hotted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;produced_column_names&#39;</span><span class="p">]</span>
+    <span class="c1"># copy over non-invovled columns</span>
+    <span class="n">cat_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">encoder_bundle</span><span class="p">[</span><span class="s1">&#39;categorical_var_names&#39;</span><span class="p">])</span>
+    <span class="n">complementary_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cat_set</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">complementary_columns</span><span class="p">],</span> <span class="n">one_hotted</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Apply a one hot encoding bundle to a data frame.</p>
+
+<p>:param d: input data frame
+:param encoder_bundle: transform specification, built by fit_onehot_enc()
+:return: transformed data frame</p>
 </div>
 
 

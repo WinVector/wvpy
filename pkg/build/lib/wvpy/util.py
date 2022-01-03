@@ -1,6 +1,7 @@
 
-from typing import Tuple
+from typing import Iterable, Tuple
 
+import re
 import numpy
 import statistics
 import matplotlib
@@ -8,6 +9,7 @@ import matplotlib.pyplot
 import seaborn
 import sklearn
 import sklearn.metrics
+import sklearn.preprocessing
 import itertools
 import pandas
 import math
@@ -798,3 +800,61 @@ def threshold_plot(
 
     if show:
         matplotlib.pyplot.show()
+
+
+def fit_onehot_enc(d: pandas.DataFrame, *, categorical_var_names: Iterable[str]) -> dict:
+    """
+    Fit a sklearn OneHot Encoder to categorical_var_names columns.
+
+    :param d: training data
+    :param categorical_var_names: list of column names to learn transform from
+    :return: encoding bundle dictionary, see apply_onehot_enc() for use.
+    """
+    assert isinstance(d, pandas.DataFrame)
+    assert not isinstance(categorical_var_names, str)  # single name, should be in a list
+    categorical_var_names = list(categorical_var_names)  # clean copy
+    assert numpy.all([isinstance(v, str) for v in categorical_var_names])
+    assert len(categorical_var_names) > 0
+    enc = sklearn.preprocessing.OneHotEncoder(
+        categories='auto',
+        drop=None,  # default
+        sparse=False,
+        handle_unknown='ignore')
+    enc.fit(d[categorical_var_names])
+    produced_column_names = list(enc.get_feature_names())
+    # map back to original column names
+
+    def replace_col_name(v):
+        v_prefix = re.sub(r'_.*$', '', v)
+        v_suffix = re.sub(r'^.*_', '', v)
+        v_index = int(re.sub(r'^x', '', v_prefix))
+        return f'{categorical_var_names[v_index]}_{v_suffix}'
+
+    produced_column_names = [replace_col_name(v) for v in produced_column_names]
+    # return the structure
+    encoder_bundle = {
+        'categorical_var_names': categorical_var_names,
+        'enc': enc,
+        'produced_column_names': produced_column_names,
+    }
+    return encoder_bundle
+
+
+def apply_onehot_enc(d: pandas.DataFrame, *, encoder_bundle: dict) -> pandas.DataFrame:
+    """
+    Apply a one hot encoding bundle to a data frame.
+
+    :param d: input data frame
+    :param encoder_bundle: transform specification, built by fit_onehot_enc()
+    :return: transformed data frame
+    """
+    assert isinstance(d, pandas.DataFrame)
+    assert isinstance(encoder_bundle, dict)
+    # one hot re-code columns, preserving column names info
+    one_hotted = pandas.DataFrame(encoder_bundle['enc'].transform(d[encoder_bundle['categorical_var_names']]))
+    one_hotted.columns = encoder_bundle['produced_column_names']
+    # copy over non-invovled columns
+    cat_set = set(encoder_bundle['categorical_var_names'])
+    complementary_columns = [c for c in d.columns if not c in cat_set]
+    res = pandas.concat([d[complementary_columns], one_hotted], axis=1)
+    return res
