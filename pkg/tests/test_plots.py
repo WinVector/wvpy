@@ -4,6 +4,9 @@ import pandas
 import matplotlib.pyplot
 import wvpy.util
 
+
+# from:
+# https://github.com/WinVector/wvpy/blob/main/examples/example_graphs.ipynb
 def test_graphs(monkeypatch):
     # https://stackoverflow.com/a/60127271/6901725
     monkeypatch.setattr(matplotlib.pyplot, 'show', lambda: None)
