@@ -37,9 +37,6 @@
                     <a class="function" href="#cross_predict_model_proba">cross_predict_model_proba</a>
             </li>
             <li>
-                    <a class="function" href="#cross_predict_model_prob">cross_predict_model_prob</a>
-            </li>
-            <li>
                     <a class="function" href="#mean_deviance">mean_deviance</a>
             </li>
             <li>
@@ -195,9 +192,6 @@
     <span class="k">return</span> <span class="n">preds</span>
 
 
-<span class="n">cross_predict_model_prob</span> <span class="o">=</span> <span class="n">cross_predict_model_proba</span>  <span class="c1"># old name</span>
-
-
 <span class="k">def</span> <span class="nf">mean_deviance</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    compute per-row deviance of predictions versus istrue</span>
@@ -208,15 +202,10 @@
 <span class="sd">    :return: vector of per-row deviances</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))</span>
-    <span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">istrue</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
 
 
@@ -229,13 +218,9 @@
 <span class="sd">    :return: mean null deviance of using prevalence as the prediction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))]</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">predictions</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">istrue</span><span class="o">=</span><span class="n">istrue</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">mk_cross_plan</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
@@ -1113,62 +1098,6 @@
 
 
                 </section>
-                <section id="cross_predict_model_prob">
-                            <div class="attr function"><a class="headerlink" href="#cross_predict_model_prob">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">cross_predict_model_prob</span><span class="signature">(
-    fitter,
-    X: pandas.core.frame.DataFrame,
-    y: pandas.core.series.Series,
-    plan: List
-) -&gt; pandas.core.frame.DataFrame</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cross_predict_model_proba</span><span class="p">(</span><span class="n">fitter</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">plan</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    train a model y~X using the cross validation plan and return probability matrix</span>
-
-<span class="sd">    :param fitter: sklearn model we can call .fit() on</span>
-<span class="sd">    :param X: explanatory variables, pandas DataFrame</span>
-<span class="sd">    :param y: dependent variable, pandas Series</span>
-<span class="sd">    :param plan: cross validation plan from mk_cross_plan()</span>
-<span class="sd">    :return: matrix of simulated out of sample predictions</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">List</span><span class="p">)</span>
-    <span class="n">preds</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">pi</span> <span class="ow">in</span> <span class="n">plan</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]],</span> <span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]])</span>
-        <span class="n">predg</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]])</span>
-        <span class="c1"># patch results in</span>
-        <span class="k">if</span> <span class="n">preds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">preds</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">predg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="n">preds</span><span class="p">[</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">predg</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
-    <span class="n">preds</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
-    <span class="n">preds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">preds</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>train a model y~X using the cross validation plan and return probability matrix</p>
-
-<p>:param fitter: sklearn model we can call .fit() on
-:param X: explanatory variables, pandas DataFrame
-:param y: dependent variable, pandas Series
-:param plan: cross validation plan from mk_cross_plan()
-:return: matrix of simulated out of sample predictions</p>
-</div>
-
-
-                </section>
                 <section id="mean_deviance">
                             <div class="attr function"><a class="headerlink" href="#mean_deviance">#&nbsp;&nbsp</a>
 
@@ -1189,15 +1118,10 @@
 <span class="sd">    :return: vector of per-row deviances</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))</span>
-    <span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">istrue</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
 </pre></div>
 
@@ -1232,13 +1156,9 @@
 <span class="sd">    :return: mean null deviance of using prevalence as the prediction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">eps</span><span class="p">)</span>
-    <span class="n">mass_on_correct</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))]</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mass_on_correct</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">istrue</span><span class="p">))</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">predictions</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">istrue</span><span class="o">=</span><span class="n">istrue</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
 </pre></div>
 
         </details>

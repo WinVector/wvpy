@@ -76,9 +76,6 @@ def cross_predict_model_proba(fitter, X: pandas.DataFrame, y: pandas.Series, pla
     return preds
 
 
-cross_predict_model_prob = cross_predict_model_proba  # old name
-
-
 def mean_deviance(predictions, istrue, *, eps=1.0e-6):
     """
     compute per-row deviance of predictions versus istrue
@@ -89,15 +86,10 @@ def mean_deviance(predictions, istrue, *, eps=1.0e-6):
     :return: vector of per-row deviances
     """
 
-    predictions = [v for v in predictions]
-    predictions = numpy.maximum(predictions, eps)
-    predictions = numpy.minimum(predictions, 1 - eps)
-    istrue = [v for v in istrue]
-    # TODO: vectorize
-    mass_on_correct = [
-        predictions[i] if istrue[i] else 1.0 - predictions[i]
-        for i in range(len(istrue))
-    ]
+    istrue = numpy.asarray(istrue)
+    predictions = numpy.asarray(predictions)
+    mass_on_correct = numpy.where(istrue, predictions, 1-predictions)
+    mass_on_correct = numpy.maximum(mass_on_correct, eps)
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
 
@@ -110,13 +102,9 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
     :return: mean null deviance of using prevalence as the prediction.
     """
 
-    # TODO: vectorize
-    istrue = [v for v in istrue]
-    p = numpy.mean(istrue)
-    p = numpy.maximum(p, eps)
-    p = numpy.minimum(p, 1 - eps)
-    mass_on_correct = [p if istrue[i] else 1 - p for i in range(len(istrue))]
-    return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
+    istrue = numpy.asarray(istrue)
+    p = numpy.zeros(len(istrue)) + numpy.mean(istrue)
+    return mean_deviance(predictions=p, istrue=istrue, eps=eps)
 
 
 def mk_cross_plan(n: int, k: int) -> List:
