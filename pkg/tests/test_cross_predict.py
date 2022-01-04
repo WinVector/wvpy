@@ -7,6 +7,7 @@ import wvpy.util
 
 
 def test_cross_predict_1():
+    numpy.random.seed(2022)
     d = pandas.DataFrame({
         'x': range(10),
     })
@@ -21,6 +22,7 @@ def test_cross_predict_1():
 
 
 def test_cross_predict_prob_1():
+    numpy.random.seed(2022)
     d = pandas.DataFrame({
         'x': numpy.random.normal(size=100),
     })
