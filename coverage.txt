@@ -2,22 +2,26 @@
 platform darwin -- Python 3.9.7, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: cov-2.12.1, anyio-2.2.0, typeguard-2.13.0
-collected 8 items
+collected 13 items
 
-tests/test_cross_plan1.py .                                              [ 12%]
-tests/test_cross_predict.py ..                                           [ 37%]
-tests/test_deviance_calc.py .                                            [ 50%]
-tests/test_onehot.py ..                                                  [ 75%]
-tests/test_stats1.py .                                                   [ 87%]
+tests/test_cross_plan1.py .                                              [  7%]
+tests/test_cross_predict.py ..                                           [ 23%]
+tests/test_deviance_calc.py .                                            [ 30%]
+tests/test_eval_fn_pre_row.py .                                          [ 38%]
+tests/test_match_auc.py .                                                [ 46%]
+tests/test_onehot.py ..                                                  [ 61%]
+tests/test_perm_score_vars.py .                                          [ 69%]
+tests/test_search_grid.py ..                                             [ 84%]
+tests/test_stats1.py .                                                   [ 92%]
 tests/test_threshold_stats.py .                                          [100%]
 
 ---------- coverage: platform darwin, python 3.9.7-final-0 -----------
 Name               Stmts   Miss  Cover
 --------------------------------------
 wvpy/__init__.py       3      0   100%
-wvpy/util.py         303    177    42%
+wvpy/util.py         305    135    56%
 --------------------------------------
-TOTAL                306    177    42%
+TOTAL                308    135    56%
 
 
-============================== 8 passed in 3.63s ===============================
+============================== 13 passed in 5.58s ==============================

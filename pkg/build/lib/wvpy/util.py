@@ -134,12 +134,12 @@ def mk_cross_plan(n: int, k: int) -> List:
 
 
 # https://win-vector.com/2020/09/13/why-working-with-auc-is-more-powerful-than-one-might-think/
-def matching_roc_area_curve(auc):
+def matching_roc_area_curve(auc: float) -> dict:
     """
-    Find an ROC curve with a given area.
+    Find an ROC curve with a given area with form of y = 1 - (1 - (1 - x) ** q) ** (1 / q).
 
     :param auc: area to match
-    :return: tuple of ideal x, y series matching area
+    :return: dictionary of ideal x, y series matching area
     """
     step = 0.01
     eval_pts = numpy.arange(0, 1 + step, step)
@@ -510,24 +510,24 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot", *, show=True):
 
 
 # https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists
-def search_grid(inp):
+def search_grid(inp: dict) -> List:
     """
     build a cross product of all named dictionary entries
 
-    :param inp:
-    :return:
+    :param inp: dictionary of value lists
+    :return: list of value dictionaries
     """
 
     gen = (dict(zip(inp.keys(), values)) for values in itertools.product(*inp.values()))
     return [ci for ci in gen]
 
 
-def grid_to_df(grid):
+def grid_to_df(grid: List) -> pandas.DataFrame:
     """
     convert a search_grid list of maps to a pandas data frame
 
-    :param grid:
-    :return:
+    :param grid: list of combos
+    :return: data frame with one row per combo
     """
 
     n = len(grid)
@@ -535,34 +535,35 @@ def grid_to_df(grid):
     return pandas.DataFrame({ki: [grid[i][ki] for i in range(n)] for ki in keys})
 
 
-def eval_fn_per_row(f, x2, df):
+def eval_fn_per_row(f, x2, df: pandas.DataFrame) -> List:
     """
     evaluate f(row-as-map, x2) for rows in df
 
-    :param f:
-    :param x2:
-    :param df:
-    :return:
+    :param f: function to evaluate
+    :param x2: extra argument
+    :param df: data frame to take rows from
+    :return: list of evaluations
     """
 
+    assert isinstance(df, pandas.DataFrame)
     return [f({k: df.loc[i, k] for k in df.columns}, x2) for i in range(df.shape[0])]
 
 
-def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
+def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars: List[str], k=5):
     """
     evaluate model~istrue on d permuting each of the modelvars and return variable importances
 
-    :param d:
-    :param istrue:
-    :param model:
-    :param modelvars:
-    :param k:
-    :return:
+    :param d: data source (copied)
+    :param istrue: y-target
+    :param model: model to evaluate
+    :param modelvars: names of variables to permute
+    :param k: number of permutations
+    :return: score data frame
     """
 
     d2 = d[modelvars].copy()
     d2.reset_index(inplace=True, drop=True)
-    istrue = [v for v in istrue]
+    istrue = numpy.asarray(istrue)
     preds = model.predict_proba(d2[modelvars])
     basedev = mean_deviance(preds[:, 1], istrue)
 
@@ -589,6 +590,7 @@ def perm_score_vars(d: pandas.DataFrame, istrue, model, modelvars, k=5):
     vf["importance"] = [di[0] - basedev for di in stats]
     vf["importance_dev"] = [di[1] for di in stats]
     vf.sort_values(by=["importance"], ascending=False, inplace=True)
+    vf = vf.reset_index(inplace=False, drop=True)
     return vf
 
 

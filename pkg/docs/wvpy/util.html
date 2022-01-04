@@ -250,12 +250,12 @@
 
 
 <span class="c1"># https://win-vector.com/2020/09/13/why-working-with-auc-is-more-powerful-than-one-might-think/</span>
-<span class="k">def</span> <span class="nf">matching_roc_area_curve</span><span class="p">(</span><span class="n">auc</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">matching_roc_area_curve</span><span class="p">(</span><span class="n">auc</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find an ROC curve with a given area.</span>
+<span class="sd">    Find an ROC curve with a given area with form of y = 1 - (1 - (1 - x) ** q) ** (1 / q).</span>
 
 <span class="sd">    :param auc: area to match</span>
-<span class="sd">    :return: tuple of ideal x, y series matching area</span>
+<span class="sd">    :return: dictionary of ideal x, y series matching area</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">step</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">eval_pts</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
@@ -626,24 +626,24 @@
 
 
 <span class="c1"># https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists</span>
-<span class="k">def</span> <span class="nf">search_grid</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">search_grid</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    build a cross product of all named dictionary entries</span>
 
-<span class="sd">    :param inp:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param inp: dictionary of value lists</span>
+<span class="sd">    :return: list of value dictionaries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">gen</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">values</span><span class="p">))</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">inp</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">ci</span> <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">grid_to_df</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">grid_to_df</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert a search_grid list of maps to a pandas data frame</span>
 
-<span class="sd">    :param grid:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param grid: list of combos</span>
+<span class="sd">    :return: data frame with one row per combo</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
@@ -651,34 +651,35 @@
     <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">ki</span><span class="p">:</span> <span class="p">[</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">ki</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">})</span>
 
 
-<span class="k">def</span> <span class="nf">eval_fn_per_row</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">eval_fn_per_row</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    evaluate f(row-as-map, x2) for rows in df</span>
 
-<span class="sd">    :param f:</span>
-<span class="sd">    :param x2:</span>
-<span class="sd">    :param df:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param f: function to evaluate</span>
+<span class="sd">    :param x2: extra argument</span>
+<span class="sd">    :param df: data frame to take rows from</span>
+<span class="sd">    :return: list of evaluations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">},</span> <span class="n">x2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 
 
-<span class="k">def</span> <span class="nf">perm_score_vars</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelvars</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">perm_score_vars</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelvars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    evaluate model~istrue on d permuting each of the modelvars and return variable importances</span>
 
-<span class="sd">    :param d:</span>
-<span class="sd">    :param istrue:</span>
-<span class="sd">    :param model:</span>
-<span class="sd">    :param modelvars:</span>
-<span class="sd">    :param k:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param d: data source (copied)</span>
+<span class="sd">    :param istrue: y-target</span>
+<span class="sd">    :param model: model to evaluate</span>
+<span class="sd">    :param modelvars: names of variables to permute</span>
+<span class="sd">    :param k: number of permutations</span>
+<span class="sd">    :return: score data frame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">d2</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">modelvars</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">d2</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">modelvars</span><span class="p">])</span>
     <span class="n">basedev</span> <span class="o">=</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">istrue</span><span class="p">)</span>
 
@@ -705,6 +706,7 @@
     <span class="n">vf</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">di</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">basedev</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">]</span>
     <span class="n">vf</span><span class="p">[</span><span class="s2">&quot;importance_dev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">di</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">]</span>
     <span class="n">vf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">vf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vf</span>
 
 
@@ -1230,17 +1232,17 @@
 
         
             <span class="def">def</span>
-            <span class="name">matching_roc_area_curve</span><span class="signature">(auc)</span>:
+            <span class="name">matching_roc_area_curve</span><span class="signature">(auc: float) -&gt; dict</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">matching_roc_area_curve</span><span class="p">(</span><span class="n">auc</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">matching_roc_area_curve</span><span class="p">(</span><span class="n">auc</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find an ROC curve with a given area.</span>
+<span class="sd">    Find an ROC curve with a given area with form of y = 1 - (1 - (1 - x) ** q) ** (1 / q).</span>
 
 <span class="sd">    :param auc: area to match</span>
-<span class="sd">    :return: tuple of ideal x, y series matching area</span>
+<span class="sd">    :return: dictionary of ideal x, y series matching area</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">step</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">eval_pts</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
@@ -1265,10 +1267,10 @@
 
         </details>
 
-            <div class="docstring"><p>Find an ROC curve with a given area.</p>
+            <div class="docstring"><p>Find an ROC curve with a given area with form of y = 1 - (1 - (1 - x) <em>* q) *</em> (1 / q).</p>
 
 <p>:param auc: area to match
-:return: tuple of ideal x, y series matching area</p>
+:return: dictionary of ideal x, y series matching area</p>
 </div>
 
 
@@ -1869,17 +1871,17 @@ import <a href="">wvpy.util</a></p>
 
         
             <span class="def">def</span>
-            <span class="name">search_grid</span><span class="signature">(inp)</span>:
+            <span class="name">search_grid</span><span class="signature">(inp: dict) -&gt; List</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">search_grid</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">search_grid</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    build a cross product of all named dictionary entries</span>
 
-<span class="sd">    :param inp:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param inp: dictionary of value lists</span>
+<span class="sd">    :return: list of value dictionaries</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">gen</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">values</span><span class="p">))</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">inp</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
@@ -1890,8 +1892,8 @@ import <a href="">wvpy.util</a></p>
 
             <div class="docstring"><p>build a cross product of all named dictionary entries</p>
 
-<p>:param inp:
-:return:</p>
+<p>:param inp: dictionary of value lists
+:return: list of value dictionaries</p>
 </div>
 
 
@@ -1901,17 +1903,17 @@ import <a href="">wvpy.util</a></p>
 
         
             <span class="def">def</span>
-            <span class="name">grid_to_df</span><span class="signature">(grid)</span>:
+            <span class="name">grid_to_df</span><span class="signature">(grid: List) -&gt; pandas.core.frame.DataFrame</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">grid_to_df</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">grid_to_df</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert a search_grid list of maps to a pandas data frame</span>
 
-<span class="sd">    :param grid:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param grid: list of combos</span>
+<span class="sd">    :return: data frame with one row per combo</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
@@ -1923,8 +1925,8 @@ import <a href="">wvpy.util</a></p>
 
             <div class="docstring"><p>convert a search_grid list of maps to a pandas data frame</p>
 
-<p>:param grid:
-:return:</p>
+<p>:param grid: list of combos
+:return: data frame with one row per combo</p>
 </div>
 
 
@@ -1934,21 +1936,22 @@ import <a href="">wvpy.util</a></p>
 
         
             <span class="def">def</span>
-            <span class="name">eval_fn_per_row</span><span class="signature">(f, x2, df)</span>:
+            <span class="name">eval_fn_per_row</span><span class="signature">(f, x2, df: pandas.core.frame.DataFrame) -&gt; List</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">eval_fn_per_row</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">eval_fn_per_row</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    evaluate f(row-as-map, x2) for rows in df</span>
 
-<span class="sd">    :param f:</span>
-<span class="sd">    :param x2:</span>
-<span class="sd">    :param df:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param f: function to evaluate</span>
+<span class="sd">    :param x2: extra argument</span>
+<span class="sd">    :param df: data frame to take rows from</span>
+<span class="sd">    :return: list of evaluations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">},</span> <span class="n">x2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 </pre></div>
 
@@ -1956,10 +1959,10 @@ import <a href="">wvpy.util</a></p>
 
             <div class="docstring"><p>evaluate f(row-as-map, x2) for rows in df</p>
 
-<p>:param f:
-:param x2:
-:param df:
-:return:</p>
+<p>:param f: function to evaluate
+:param x2: extra argument
+:param df: data frame to take rows from
+:return: list of evaluations</p>
 </div>
 
 
@@ -1969,26 +1972,32 @@ import <a href="">wvpy.util</a></p>
 
         
             <span class="def">def</span>
-            <span class="name">perm_score_vars</span><span class="signature">(d: pandas.core.frame.DataFrame, istrue, model, modelvars, k=5)</span>:
+            <span class="name">perm_score_vars</span><span class="signature">(
+    d: pandas.core.frame.DataFrame,
+    istrue,
+    model,
+    modelvars: List[str],
+    k=5
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">perm_score_vars</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelvars</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">perm_score_vars</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelvars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    evaluate model~istrue on d permuting each of the modelvars and return variable importances</span>
 
-<span class="sd">    :param d:</span>
-<span class="sd">    :param istrue:</span>
-<span class="sd">    :param model:</span>
-<span class="sd">    :param modelvars:</span>
-<span class="sd">    :param k:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param d: data source (copied)</span>
+<span class="sd">    :param istrue: y-target</span>
+<span class="sd">    :param model: model to evaluate</span>
+<span class="sd">    :param modelvars: names of variables to permute</span>
+<span class="sd">    :param k: number of permutations</span>
+<span class="sd">    :return: score data frame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">d2</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">modelvars</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">d2</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">modelvars</span><span class="p">])</span>
     <span class="n">basedev</span> <span class="o">=</span> <span class="n">mean_deviance</span><span class="p">(</span><span class="n">preds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">istrue</span><span class="p">)</span>
 
@@ -2015,6 +2024,7 @@ import <a href="">wvpy.util</a></p>
     <span class="n">vf</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">di</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">basedev</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">]</span>
     <span class="n">vf</span><span class="p">[</span><span class="s2">&quot;importance_dev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">di</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">]</span>
     <span class="n">vf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">vf</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vf</span>
 </pre></div>
 
@@ -2022,12 +2032,12 @@ import <a href="">wvpy.util</a></p>
 
             <div class="docstring"><p>evaluate model~istrue on d permuting each of the modelvars and return variable importances</p>
 
-<p>:param d:
-:param istrue:
-:param model:
-:param modelvars:
-:param k:
-:return:</p>
+<p>:param d: data source (copied)
+:param istrue: y-target
+:param model: model to evaluate
+:param modelvars: names of variables to permute
+:param k: number of permutations
+:return: score data frame</p>
 </div>
 
 
