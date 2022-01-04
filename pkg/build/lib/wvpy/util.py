@@ -44,7 +44,7 @@ def cross_predict_model(fitter, X: pandas.DataFrame, y: pandas.Series, plan: Lis
 
 
 # noinspection PyPep8Naming
-def cross_predict_model_prob(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> pandas.DataFrame:
+def cross_predict_model_proba(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> pandas.DataFrame:
     """
     train a model y~X using the cross validation plan and return probability matrix
 
@@ -70,6 +70,9 @@ def cross_predict_model_prob(fitter, X: pandas.DataFrame, y: pandas.Series, plan
     preds = pandas.DataFrame(preds)
     preds.columns = list(fitter.classes_)
     return preds
+
+
+cross_predict_model_prob = cross_predict_model_proba  # old name
 
 
 def mean_deviance(predictions, istrue, *, eps=1.0e-6):
