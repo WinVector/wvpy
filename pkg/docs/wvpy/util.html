@@ -329,9 +329,8 @@
 <span class="sd">        })</span>
 <span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">prediction</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prediction</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">truth_target</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_curve</span><span class="p">(</span><span class="n">istrue</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
     <span class="n">auc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
     <span class="n">ideal_curve</span> <span class="o">=</span> <span class="kc">None</span>
@@ -417,9 +416,8 @@
 <span class="sd">        istrue=d[&#39;y&#39;],</span>
 <span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">probs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">truth_target</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -437,19 +435,34 @@
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">dual_hist_plot</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dual Histogram Plot&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dual_hist_plot</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dual Histogram Plot&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">truth_target</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot a dual histogram plot of numeric prediction probs against boolean istrue</span>
 
 <span class="sd">    :param probs: vector of numeric predictions.</span>
 <span class="sd">    :param istrue: truth vector</span>
 <span class="sd">    :param title: title of plot</span>
+<span class="sd">    :param truth_target: value to consider in class</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    import pandas</span>
+<span class="sd">    import wvpy.util</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.dual_hist_plot(</span>
+<span class="sd">        probs=d[&#39;x&#39;],</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">probs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="n">probs</span><span class="p">,</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">})</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">seaborn</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;istrue&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -475,7 +488,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.</span>
 
-<span class="sd">    :param probs: vector of numeric predictions</span>
+<span class="sd">    :param probs: matrix of numeric predictions (as returned from predict_proba())</span>
 <span class="sd">    :param istrue: truth target</span>
 <span class="sd">    :param title: title of plot</span>
 <span class="sd">    :param truth_target: value considered true</span>
@@ -487,7 +500,7 @@
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -515,7 +528,7 @@
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">}</span>
@@ -1346,9 +1359,8 @@
 <span class="sd">        })</span>
 <span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">prediction</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prediction</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">truth_target</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_curve</span><span class="p">(</span><span class="n">istrue</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
     <span class="n">auc</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
     <span class="n">ideal_curve</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1497,9 +1509,8 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">        istrue=d[&#39;y&#39;],</span>
 <span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">probs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">truth_target</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -1555,24 +1566,46 @@ import <a href="">wvpy.util</a></p>
 
         
             <span class="def">def</span>
-            <span class="name">dual_hist_plot</span><span class="signature">(probs, istrue, title=&#39;Dual Histogram Plot&#39;, *, show=True)</span>:
+            <span class="name">dual_hist_plot</span><span class="signature">(
+    probs,
+    istrue,
+    title=&#39;Dual Histogram Plot&#39;,
+    *,
+    truth_target=True,
+    show=True
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dual_hist_plot</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dual Histogram Plot&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dual_hist_plot</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">istrue</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dual Histogram Plot&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">truth_target</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plot a dual histogram plot of numeric prediction probs against boolean istrue</span>
 
 <span class="sd">    :param probs: vector of numeric predictions.</span>
 <span class="sd">    :param istrue: truth vector</span>
 <span class="sd">    :param title: title of plot</span>
+<span class="sd">    :param truth_target: value to consider in class</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    import pandas</span>
+<span class="sd">    import wvpy.util</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.dual_hist_plot(</span>
+<span class="sd">        probs=d[&#39;x&#39;],</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
-    <span class="n">probs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span> <span class="o">==</span> <span class="n">truth_target</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="n">probs</span><span class="p">,</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">})</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">seaborn</span><span class="o">.</span><span class="n">FacetGrid</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;istrue&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -1590,8 +1623,24 @@ import <a href="">wvpy.util</a></p>
 <p>:param probs: vector of numeric predictions.
 :param istrue: truth vector
 :param title: title of plot
+:param truth_target: value to consider in class
 :param show: logical, if True call matplotlib.pyplot.show()
 :return: None</p>
+
+<p>Example:</p>
+
+<p>import pandas
+import <a href="">wvpy.util</a></p>
+
+<p>d = pandas.DataFrame({
+    'x': [.1, .2, .3, .4, .5],
+    'y': [False, False, True, True, False]
+})</p>
+
+<p><a href="#dual_hist_plot">wvpy.util.dual_hist_plot</a>(
+    probs=d['x'],
+    istrue=d['y'],
+)</p>
 </div>
 
 
@@ -1632,7 +1681,7 @@ import <a href="">wvpy.util</a></p>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.</span>
 
-<span class="sd">    :param probs: vector of numeric predictions</span>
+<span class="sd">    :param probs: matrix of numeric predictions (as returned from predict_proba())</span>
 <span class="sd">    :param istrue: truth target</span>
 <span class="sd">    :param title: title of plot</span>
 <span class="sd">    :param truth_target: value considered true</span>
@@ -1644,7 +1693,7 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -1666,7 +1715,7 @@ import <a href="">wvpy.util</a></p>
 
             <div class="docstring"><p>Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.</p>
 
-<p>:param probs: vector of numeric predictions
+<p>:param probs: matrix of numeric predictions (as returned from predict_proba())
 :param istrue: truth target
 :param title: title of plot
 :param truth_target: value considered true
@@ -1700,7 +1749,7 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: vectorize</span>
-    <span class="n">istrue</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">istrue</span><span class="p">]</span>
+    <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">}</span>

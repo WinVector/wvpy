@@ -213,9 +213,8 @@ def plot_roc(
         })
     )
     """
-    # TODO: vectorize
-    prediction = [v for v in prediction]
-    istrue = [v == truth_target for v in istrue]
+    prediction = numpy.asarray(prediction)
+    istrue = numpy.asarray(istrue) == truth_target
     fpr, tpr, _ = sklearn.metrics.roc_curve(istrue, prediction)
     auc = sklearn.metrics.auc(fpr, tpr)
     ideal_curve = None
@@ -301,9 +300,8 @@ def dual_density_plot(
         istrue=d['y'],
     )
     """
-    # TODO: vectorize
-    probs = [v for v in probs]
-    istrue = [v == truth_target for v in istrue]
+    probs = numpy.asarray(probs)
+    istrue = numpy.asarray(istrue) == truth_target
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [
         probs[i] for i in range(len(probs)) if istrue[i] == truth_target
@@ -321,19 +319,34 @@ def dual_density_plot(
         matplotlib.pyplot.show()
 
 
-def dual_hist_plot(probs, istrue, title="Dual Histogram Plot", *, show=True):
+def dual_hist_plot(probs, istrue, title="Dual Histogram Plot", *, truth_target=True, show=True):
     """
     plot a dual histogram plot of numeric prediction probs against boolean istrue
 
     :param probs: vector of numeric predictions.
     :param istrue: truth vector
     :param title: title of plot
+    :param truth_target: value to consider in class
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
+
+    Example:
+
+    import pandas
+    import wvpy.util
+
+    d = pandas.DataFrame({
+        'x': [.1, .2, .3, .4, .5],
+        'y': [False, False, True, True, False]
+    })
+
+    wvpy.util.dual_hist_plot(
+        probs=d['x'],
+        istrue=d['y'],
+    )
     """
-    # TODO: vectorize
-    probs = [v for v in probs]
-    istrue = [v for v in istrue]
+    probs = numpy.asarray(probs)
+    istrue = numpy.asarray(istrue) == truth_target
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame({"prob": probs, "istrue": istrue})
     g = seaborn.FacetGrid(pf, row="istrue", height=4, aspect=3)
@@ -359,7 +372,7 @@ def dual_density_plot_proba1(
     """
     Plot a dual density plot of numeric prediction probs[:,1] against boolean istrue.
 
-    :param probs: vector of numeric predictions
+    :param probs: matrix of numeric predictions (as returned from predict_proba())
     :param istrue: truth target
     :param title: title of plot
     :param truth_target: value considered true
@@ -371,7 +384,7 @@ def dual_density_plot_proba1(
     :return: None
     """
     # TODO: vectorize
-    istrue = [v for v in istrue]
+    istrue = numpy.asarray(istrue)
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [
         probs[i, 1] for i in range(len(probs)) if istrue[i] == truth_target
@@ -399,7 +412,7 @@ def dual_hist_plot_proba1(probs, istrue, *, show=True):
     :return: None
     """
     # TODO: vectorize
-    istrue = [v for v in istrue]
+    istrue = numpy.asarray(istrue)
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
         {"prob": [probs[i, 1] for i in range(probs.shape[0])], "istrue": istrue}
