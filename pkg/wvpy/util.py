@@ -20,7 +20,9 @@ from data_algebra.cdata import *
 
 
 # noinspection PyPep8Naming
-def cross_predict_model(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> numpy.ndarray:
+def cross_predict_model(
+    fitter, X: pandas.DataFrame, y: pandas.Series, plan: List
+) -> numpy.ndarray:
     """
     train a model y~X using the cross validation plan and return predictions
 
@@ -40,15 +42,15 @@ def cross_predict_model(fitter, X: pandas.DataFrame, y: pandas.Series, plan: Lis
         predg = model.predict(X.iloc[pi["test"]])
         # patch results in
         if preds is None:
-            preds = numpy.asarray(
-                [None] * X.shape[0],
-                dtype=numpy.asarray(predg).dtype)
+            preds = numpy.asarray([None] * X.shape[0], dtype=numpy.asarray(predg).dtype)
         preds[pi["test"]] = predg
     return preds
 
 
 # noinspection PyPep8Naming
-def cross_predict_model_proba(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> pandas.DataFrame:
+def cross_predict_model_proba(
+    fitter, X: pandas.DataFrame, y: pandas.Series, plan: List
+) -> pandas.DataFrame:
     """
     train a model y~X using the cross validation plan and return probability matrix
 
@@ -88,7 +90,7 @@ def mean_deviance(predictions, istrue, *, eps=1.0e-6):
 
     istrue = numpy.asarray(istrue)
     predictions = numpy.asarray(predictions)
-    mass_on_correct = numpy.where(istrue, predictions, 1-predictions)
+    mass_on_correct = numpy.where(istrue, predictions, 1 - predictions)
     mass_on_correct = numpy.maximum(mass_on_correct, eps)
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
