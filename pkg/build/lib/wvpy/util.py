@@ -382,9 +382,23 @@ def dual_density_plot_proba1(
     :param xlabel=x axis label
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
+
+    Example:
+
+    d = pandas.DataFrame({
+        'x': [.1, .2, .3, .4, .5],
+        'y': [False, False, True, True, False]
+    })
+    d['x0'] = 1 - d['x']
+    pmat = numpy.asarray(d.loc[:, ['x0', 'x']])
+
+    wvpy.util.dual_density_plot_proba1(
+        probs=pmat,
+        istrue=d['y'],
+    )
     """
-    # TODO: vectorize
     istrue = numpy.asarray(istrue)
+    probs = numpy.asarray(probs)
     matplotlib.pyplot.gcf().clear()
     preds_on_positive = [
         probs[i, 1] for i in range(len(probs)) if istrue[i] == truth_target
@@ -410,9 +424,23 @@ def dual_hist_plot_proba1(probs, istrue, *, show=True):
     :param istrue: vector of ground truth to condition on
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
+
+    Example:
+
+    d = pandas.DataFrame({
+        'x': [.1, .2, .3, .4, .5],
+        'y': [False, False, True, True, False]
+    })
+    d['x0'] = 1 - d['x']
+    pmat = numpy.asarray(d.loc[:, ['x0', 'x']])
+
+    wvpy.util.dual_hist_plot_proba1(
+        probs=pmat,
+        istrue=d['y'],
+    )
     """
-    # TODO: vectorize
     istrue = numpy.asarray(istrue)
+    probs = numpy.asarray(probs)
     matplotlib.pyplot.gcf().clear()
     pf = pandas.DataFrame(
         {"prob": [probs[i, 1] for i in range(probs.shape[0])], "istrue": istrue}
@@ -433,6 +461,18 @@ def gain_curve_plot(prediction, outcome, title="Gain curve plot", *, show=True):
     :param title: plot title
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
+
+    Example:
+
+    d = pandas.DataFrame({
+        'x': [.1, .2, .3, .4, .5],
+        'y': [0, 0, 1, 1, 0]
+    })
+
+    wvpy.util.gain_curve_plot(
+        prediction=d['x'],
+        outcome=d['y'],
+    )
     """
 
     df = pandas.DataFrame(
@@ -494,6 +534,18 @@ def lift_curve_plot(prediction, outcome, title="Lift curve plot", *, show=True):
     :param title: plot title
     :param show: logical, if True call matplotlib.pyplot.show()
     :return: None
+
+    Example:
+
+    d = pandas.DataFrame({
+        'x': [.1, .2, .3, .4, .5],
+        'y': [0, 0, 1, 1, 0]
+    })
+
+    wvpy.util.lift_curve_plot(
+        prediction=d['x'],
+        outcome=d['y'],
+    )
     """
 
     df = pandas.DataFrame(

@@ -498,9 +498,23 @@
 <span class="sd">    :param xlabel=x axis label</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+<span class="sd">    d[&#39;x0&#39;] = 1 - d[&#39;x&#39;]</span>
+<span class="sd">    pmat = numpy.asarray(d.loc[:, [&#39;x0&#39;, &#39;x&#39;]])</span>
+
+<span class="sd">    wvpy.util.dual_density_plot_proba1(</span>
+<span class="sd">        probs=pmat,</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
     <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -526,9 +540,23 @@
 <span class="sd">    :param istrue: vector of ground truth to condition on</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+<span class="sd">    d[&#39;x0&#39;] = 1 - d[&#39;x&#39;]</span>
+<span class="sd">    pmat = numpy.asarray(d.loc[:, [&#39;x0&#39;, &#39;x&#39;]])</span>
+
+<span class="sd">    wvpy.util.dual_hist_plot_proba1(</span>
+<span class="sd">        probs=pmat,</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
     <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">}</span>
@@ -549,6 +577,18 @@
 <span class="sd">    :param title: plot title</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [0, 0, 1, 1, 0]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.gain_curve_plot(</span>
+<span class="sd">        prediction=d[&#39;x&#39;],</span>
+<span class="sd">        outcome=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -610,6 +650,18 @@
 <span class="sd">    :param title: plot title</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [0, 0, 1, 1, 0]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.lift_curve_plot(</span>
+<span class="sd">        prediction=d[&#39;x&#39;],</span>
+<span class="sd">        outcome=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -1691,9 +1743,23 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :param xlabel=x axis label</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+<span class="sd">    d[&#39;x0&#39;] = 1 - d[&#39;x&#39;]</span>
+<span class="sd">    pmat = numpy.asarray(d.loc[:, [&#39;x0&#39;, &#39;x&#39;]])</span>
+
+<span class="sd">    wvpy.util.dual_density_plot_proba1(</span>
+<span class="sd">        probs=pmat,</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
     <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">preds_on_positive</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span> <span class="k">if</span> <span class="n">istrue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">truth_target</span>
@@ -1725,6 +1791,20 @@ import <a href="">wvpy.util</a></p>
 :param xlabel=x axis label
 :param show: logical, if True call matplotlib.pyplot.show()
 :return: None</p>
+
+<p>Example:</p>
+
+<p>d = pandas.DataFrame({
+    'x': [.1, .2, .3, .4, .5],
+    'y': [False, False, True, True, False]
+})
+d['x0'] = 1 - d['x']
+pmat = numpy.asarray(d.loc[:, ['x0', 'x']])</p>
+
+<p><a href="#dual_density_plot_proba1">wvpy.util.dual_density_plot_proba1</a>(
+    probs=pmat,
+    istrue=d['y'],
+)</p>
 </div>
 
 
@@ -1747,9 +1827,23 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :param istrue: vector of ground truth to condition on</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [False, False, True, True, False]</span>
+<span class="sd">    })</span>
+<span class="sd">    d[&#39;x0&#39;] = 1 - d[&#39;x&#39;]</span>
+<span class="sd">    pmat = numpy.asarray(d.loc[:, [&#39;x0&#39;, &#39;x&#39;]])</span>
+
+<span class="sd">    wvpy.util.dual_hist_plot_proba1(</span>
+<span class="sd">        probs=pmat,</span>
+<span class="sd">        istrue=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: vectorize</span>
     <span class="n">istrue</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">istrue</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;prob&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="s2">&quot;istrue&quot;</span><span class="p">:</span> <span class="n">istrue</span><span class="p">}</span>
@@ -1769,6 +1863,20 @@ import <a href="">wvpy.util</a></p>
 :param istrue: vector of ground truth to condition on
 :param show: logical, if True call matplotlib.pyplot.show()
 :return: None</p>
+
+<p>Example:</p>
+
+<p>d = pandas.DataFrame({
+    'x': [.1, .2, .3, .4, .5],
+    'y': [False, False, True, True, False]
+})
+d['x0'] = 1 - d['x']
+pmat = numpy.asarray(d.loc[:, ['x0', 'x']])</p>
+
+<p><a href="#dual_hist_plot_proba1">wvpy.util.dual_hist_plot_proba1</a>(
+    probs=pmat,
+    istrue=d['y'],
+)</p>
 </div>
 
 
@@ -1792,6 +1900,18 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :param title: plot title</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [0, 0, 1, 1, 0]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.gain_curve_plot(</span>
+<span class="sd">        prediction=d[&#39;x&#39;],</span>
+<span class="sd">        outcome=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -1853,6 +1973,18 @@ import <a href="">wvpy.util</a></p>
 :param title: plot title
 :param show: logical, if True call matplotlib.pyplot.show()
 :return: None</p>
+
+<p>Example:</p>
+
+<p>d = pandas.DataFrame({
+    'x': [.1, .2, .3, .4, .5],
+    'y': [0, 0, 1, 1, 0]
+})</p>
+
+<p><a href="#gain_curve_plot">wvpy.util.gain_curve_plot</a>(
+    prediction=d['x'],
+    outcome=d['y'],
+)</p>
 </div>
 
 
@@ -1876,6 +2008,18 @@ import <a href="">wvpy.util</a></p>
 <span class="sd">    :param title: plot title</span>
 <span class="sd">    :param show: logical, if True call matplotlib.pyplot.show()</span>
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    d = pandas.DataFrame({</span>
+<span class="sd">        &#39;x&#39;: [.1, .2, .3, .4, .5],</span>
+<span class="sd">        &#39;y&#39;: [0, 0, 1, 1, 0]</span>
+<span class="sd">    })</span>
+
+<span class="sd">    wvpy.util.lift_curve_plot(</span>
+<span class="sd">        prediction=d[&#39;x&#39;],</span>
+<span class="sd">        outcome=d[&#39;y&#39;],</span>
+<span class="sd">    )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -1915,6 +2059,18 @@ import <a href="">wvpy.util</a></p>
 :param title: plot title
 :param show: logical, if True call matplotlib.pyplot.show()
 :return: None</p>
+
+<p>Example:</p>
+
+<p>d = pandas.DataFrame({
+    'x': [.1, .2, .3, .4, .5],
+    'y': [0, 0, 1, 1, 0]
+})</p>
+
+<p><a href="#lift_curve_plot">wvpy.util.lift_curve_plot</a>(
+    prediction=d['x'],
+    outcome=d['y'],
+)</p>
 </div>
 
 
