@@ -34,11 +34,15 @@ def cross_predict_model(fitter, X: pandas.DataFrame, y: pandas.Series, plan: Lis
     assert isinstance(X, pandas.DataFrame)
     assert isinstance(y, pandas.Series)
     assert isinstance(plan, List)
-    preds = numpy.NaN * numpy.zeros(X.shape[0])
+    preds = None
     for pi in plan:
         model = fitter.fit(X.iloc[pi["train"]], y.iloc[pi["train"]])
         predg = model.predict(X.iloc[pi["test"]])
         # patch results in
+        if preds is None:
+            preds = numpy.asarray(
+                [None] * X.shape[0],
+                dtype=numpy.asarray(predg).dtype)
         preds[pi["test"]] = predg
     return preds
 
