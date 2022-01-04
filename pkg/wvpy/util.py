@@ -828,7 +828,7 @@ def fit_onehot_enc(
     def replace_col_name(v):
         """Replace x[0-9]+_level with var_level"""
         v_prefix = re.sub(r"_.*$", "", v)
-        v_suffix = re.sub(r"^.*_", "", v)
+        v_suffix = re.sub(r"^x[0-9]+_", "", v)
         v_index = int(re.sub(r"^x", "", v_prefix))
         return f"{categorical_var_names[v_index]}_{v_suffix}"
 
