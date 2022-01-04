@@ -206,6 +206,7 @@ def plot_roc(
     wvpy.util.plot_roc(
         prediction=d['x'],
         istrue=d['y'],
+        ideal_line_color='lightgrey',
         extra_points=pandas.DataFrame({
             'tpr': [0, 1],
             'fpr': [0, 1],
@@ -235,7 +236,7 @@ def plot_roc(
     matplotlib.pyplot.fill_between(fpr, tpr, color="orange", alpha=0.3)
     matplotlib.pyplot.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     if extra_points is not None:
-        matplotlib.pyplot.plot(extra_points.fpr, extra_points.tpr, "bo", color="red")
+        matplotlib.pyplot.scatter(extra_points.fpr, extra_points.tpr, color="red")
         if "label" in extra_points.columns:
             tpr = extra_points.tpr.to_list()
             fpr = extra_points.fpr.to_list()

@@ -2,16 +2,17 @@
 platform darwin -- Python 3.9.7, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: cov-2.12.1, anyio-2.2.0, typeguard-2.13.0
-collected 13 items
+collected 14 items
 
 tests/test_cross_plan1.py .                                              [  7%]
-tests/test_cross_predict.py ..                                           [ 23%]
-tests/test_deviance_calc.py .                                            [ 30%]
-tests/test_eval_fn_pre_row.py .                                          [ 38%]
-tests/test_match_auc.py .                                                [ 46%]
-tests/test_onehot.py ..                                                  [ 61%]
-tests/test_perm_score_vars.py .                                          [ 69%]
-tests/test_search_grid.py ..                                             [ 84%]
+tests/test_cross_predict.py ..                                           [ 21%]
+tests/test_deviance_calc.py .                                            [ 28%]
+tests/test_eval_fn_pre_row.py .                                          [ 35%]
+tests/test_match_auc.py .                                                [ 42%]
+tests/test_onehot.py ..                                                  [ 57%]
+tests/test_perm_score_vars.py .                                          [ 64%]
+tests/test_plots.py .                                                    [ 71%]
+tests/test_search_grid.py ..                                             [ 85%]
 tests/test_stats1.py .                                                   [ 92%]
 tests/test_threshold_stats.py .                                          [100%]
 
@@ -19,9 +20,9 @@ tests/test_threshold_stats.py .                                          [100%]
 Name               Stmts   Miss  Cover
 --------------------------------------
 wvpy/__init__.py       3      0   100%
-wvpy/util.py         307    137    55%
+wvpy/util.py         307      7    98%
 --------------------------------------
-TOTAL                310    137    56%
+TOTAL                310      7    98%
 
 
-============================== 13 passed in 5.59s ==============================
+============================== 14 passed in 7.09s ==============================

@@ -3,7 +3,6 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
-examples/example_graphs.ipynb
 wvpy/__init__.py
 wvpy/util.py
 wvpy.egg-info/PKG-INFO
