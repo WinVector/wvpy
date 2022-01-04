@@ -20,46 +20,55 @@ from data_algebra.cdata import *
 
 
 # noinspection PyPep8Naming
-def cross_predict_model(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
+def cross_predict_model(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> numpy.ndarray:
     """
-    train a model Y~X using the cross validation plan and return predictions
+    train a model y~X using the cross validation plan and return predictions
 
     :param fitter: sklearn model we can call .fit() on
-    :param X: explanatory variables (matrix or data frame)
-    :param Y: dependent variable (vector or series)
+    :param X: explanatory variables, pandas DataFrame
+    :param y: dependent variable, pandas Series
     :param plan: cross validation plan from mk_cross_plan()
     :return: vector of simulated out of sample predictions
     """
 
+    assert isinstance(X, pandas.DataFrame)
+    assert isinstance(y, pandas.Series)
+    assert isinstance(plan, List)
     preds = numpy.NaN * numpy.zeros(X.shape[0])
-    for g in range(len(plan)):
-        pi = plan[g]
-        model = fitter.fit(X.iloc[pi["train"]], Y.iloc[pi["train"]])
+    for pi in plan:
+        model = fitter.fit(X.iloc[pi["train"]], y.iloc[pi["train"]])
         predg = model.predict(X.iloc[pi["test"]])
+        # patch results in
         preds[pi["test"]] = predg
     return preds
 
 
 # noinspection PyPep8Naming
-def cross_predict_model_prob(fitter, X: pandas.DataFrame, Y: pandas.Series, plan):
+def cross_predict_model_prob(fitter, X: pandas.DataFrame, y: pandas.Series, plan: List) -> pandas.DataFrame:
     """
-    train a model Y~X using the cross validation plan and return probability matrix
+    train a model y~X using the cross validation plan and return probability matrix
 
     :param fitter: sklearn model we can call .fit() on
-    :param X: explanatory variables (matrix or data frame)
-    :param Y: dependent variable (vector or series)
+    :param X: explanatory variables, pandas DataFrame
+    :param y: dependent variable, pandas Series
     :param plan: cross validation plan from mk_cross_plan()
     :return: matrix of simulated out of sample predictions
     """
-    # TODO: vectorize and switch to Pandas
-    preds = numpy.zeros((X.shape[0], 2))
-    for g in range(len(plan)):
-        pi = plan[g]
-        model = fitter.fit(X.iloc[pi["train"]], Y.iloc[pi["train"]])
+
+    assert isinstance(X, pandas.DataFrame)
+    assert isinstance(y, pandas.Series)
+    assert isinstance(plan, List)
+    preds = None
+    for pi in plan:
+        model = fitter.fit(X.iloc[pi["train"]], y.iloc[pi["train"]])
         predg = model.predict_proba(X.iloc[pi["test"]])
-        for i in range(len(pi["test"])):
-            preds[pi["test"][i], 0] = predg[i, 0]
-            preds[pi["test"][i], 1] = predg[i, 1]
+        # patch results in
+        if preds is None:
+            preds = numpy.zeros((X.shape[0], predg.shape[1]))
+        for j in range(preds.shape[1]):
+            preds[pi["test"], j] = predg[:, j]
+    preds = pandas.DataFrame(preds)
+    preds.columns = list(fitter.classes_)
     return preds
 
 
@@ -103,7 +112,7 @@ def mean_null_deviance(istrue, *, eps=1.0e-6):
     return -2 * sum(numpy.log(mass_on_correct)) / len(istrue)
 
 
-def mk_cross_plan(n: int, k: int):
+def mk_cross_plan(n: int, k: int) -> List:
     """
     Randomly split range(n) into k train/test groups such that test groups partition range(n).
 

@@ -3,10 +3,6 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
-tests/__init__.py
-tests/test_cross_plan1.py
-tests/test_onehot.py
-tests/test_stats1.py
 wvpy/__init__.py
 wvpy/util.py
 wvpy.egg-info/PKG-INFO
