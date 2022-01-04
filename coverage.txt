@@ -5,33 +5,9 @@ plugins: cov-2.12.1, anyio-2.2.0, typeguard-2.13.0
 collected 6 items
 
 tests/test_cross_plan1.py .                                              [ 16%]
-tests/test_cross_predict.py .F                                           [ 50%]
+tests/test_cross_predict.py ..                                           [ 50%]
 tests/test_onehot.py ..                                                  [ 83%]
 tests/test_stats1.py .                                                   [100%]
-
-=================================== FAILURES ===================================
-__________________________ test_cross_predict_prob_1 ___________________________
-
-    def test_cross_predict_prob_1():
-        d = pandas.DataFrame({
-            'x': numpy.random.normal(size=100),
-        })
-        d['y'] = numpy.where((d['x'] + numpy.random.normal(size=d.shape[0])) > 0.0, 'b', 'a')
-        plan = wvpy.util.mk_cross_plan(n=d.shape[0], k=3)
-        fitter = sklearn.linear_model.LogisticRegression()
-        preds_cross = wvpy.util.cross_predict_model_prob(fitter=fitter, X=d.loc[:, ['x']], y=d['y'], plan=plan)
-        fitter.fit(X=d.loc[:, ['x']], y=d['y'])
-        preds_regular = fitter.predict_proba(d.loc[:,['x']])
->       assert numpy.max(numpy.max(numpy.abs(preds_regular - preds_cross))) < 0.1
-E       AssertionError: assert 0.10049074817449288 < 0.1
-E        +  where 0.10049074817449288 = <function amax at 0x7f7ee83afca0>(a    0.100491\nb    0.100491\ndtype: float64)
-E        +    where <function amax at 0x7f7ee83afca0> = numpy.max
-E        +    and   a    0.100491\nb    0.100491\ndtype: float64 = <function amax at 0x7f7ee83afca0>(           a         b\n0   0.013082  0.013082\n1   0.056436  0.056436\n2   0.015152  0.015152\n3   0.017709  0.017709\n4  ...839\n96  0.003698  0.003698\n97  0.064202  0.064202\n98  0.058598  0.058598\n99  0.026647  0.026647\n\n[100 rows x 2 columns])
-E        +      where <function amax at 0x7f7ee83afca0> = numpy.max
-E        +      and              a         b\n0   0.013082  0.013082\n1   0.056436  0.056436\n2   0.015152  0.015152\n3   0.017709  0.017709\n4  ...839\n96  0.003698  0.003698\n97  0.064202  0.064202\n98  0.058598  0.058598\n99  0.026647  0.026647\n\n[100 rows x 2 columns] = <ufunc 'absolute'>((array([[0.44490314, 0.55509686],\n       [0.1976381 , 0.8023619 ],\n       [0.46714489, 0.53285511],\n       [0.20119288,...75117, 0.92424883],\n       [0.42105778, 0.57894222],\n       [0.49346312, 0.50653688],\n       [0.61609631, 0.38390369]]) -            a         b\n0   0.457985  0.542015\n1   0.254074  0.745926\n2   0.482296  0.517704\n3   0.183484  0.816516\n4  ...750\n96  0.079449  0.920551\n97  0.356855  0.643145\n98  0.552061  0.447939\n99  0.642743  0.357257\n\n[100 rows x 2 columns]))
-E        +        where <ufunc 'absolute'> = numpy.abs
-
-tests/test_cross_predict.py:33: AssertionError
 
 ---------- coverage: platform darwin, python 3.9.7-final-0 -----------
 Name               Stmts   Miss  Cover
@@ -41,6 +17,5 @@ wvpy/util.py         305    189    38%
 --------------------------------------
 TOTAL                308    189    39%
 
-=========================== short test summary info ============================
-FAILED tests/test_cross_predict.py::test_cross_predict_prob_1 - AssertionErro...
-========================= 1 failed, 5 passed in 5.08s ==========================
+
+============================== 6 passed in 3.69s ===============================

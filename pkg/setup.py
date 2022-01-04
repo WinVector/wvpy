@@ -12,7 +12,7 @@ setuptools.setup(
     author="John Mount",
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
-    packages=setuptools.find_packages(exclude=("tests",)),
+    packages=setuptools.find_packages(exclude=['tests', 'Examples']),
     install_requires=[
         "numpy",
         "pandas",
