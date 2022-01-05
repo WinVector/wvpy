@@ -2,7 +2,7 @@
 Utility functions for teaching data science.
 """
 
-from typing import Iterable, Tuple
+from typing import Iterable, List, Tuple
 
 import re
 import numpy
@@ -16,7 +16,7 @@ import sklearn.preprocessing
 import itertools
 import pandas
 import math
-from data_algebra.cdata import *
+from data_algebra.cdata import RecordMap, RecordSpecification
 
 
 # noinspection PyPep8Naming
@@ -146,8 +146,8 @@ def matching_roc_area_curve(auc: float) -> dict:
     step = 0.01
     eval_pts = numpy.arange(0, 1 + step, step)
     q_eps = 1e-6
-    q_low = 0
-    q_high = 1
+    q_low = 0.0
+    q_high = 1.0
     while q_low + q_eps < q_high:
         q_mid = (q_low + q_high) / 2.0
         q_mid_area = numpy.mean(1 - (1 - (1 - eval_pts) ** q_mid) ** (1 / q_mid))
@@ -778,8 +778,8 @@ def threshold_plot(
     pred_var: str,
     truth_var: str,
     truth_target: bool = True,
-    threshold_range: Tuple[float, float] = (-math.inf, math.inf),
-    plotvars: Tuple = ("precision", "recall"),
+    threshold_range: Iterable[float] = (-math.inf, math.inf),
+    plotvars: Iterable[str] = ("precision", "recall"),
     title: str = "Measures as a function of threshold",
     *,
     show: bool = True,
@@ -820,10 +820,12 @@ def threshold_plot(
     if isinstance(plotvars, str):
         plotvars = [plotvars]
     else:
-        plotvars = [v for v in plotvars]
+        plotvars = list(plotvars)
     assert isinstance(plotvars, list)
     assert len(plotvars) > 0
     assert all([isinstance(v, str) for v in plotvars])
+    threshold_range = list(threshold_range)
+    assert len(threshold_range) == 2
     frame = d[[pred_var, truth_var]].copy()
     frame.reset_index(inplace=True, drop=True)
     frame["outcol"] = frame[truth_var] == truth_target
