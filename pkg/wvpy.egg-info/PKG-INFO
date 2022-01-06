@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wvpy
-Version: 0.2.9
+Version: 0.3.0
 Summary: Simple utilities for teaching Pandas and scikit learn.
 Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
