@@ -38,8 +38,8 @@ def cross_predict_model(
     assert isinstance(plan, List)
     preds = None
     for pi in plan:
-        model = fitter.fit(X.iloc[pi["train"]], y.iloc[pi["train"]])
-        predg = model.predict(X.iloc[pi["test"]])
+        model = fitter.fit(X.iloc[pi["train"], :], y.iloc[pi["train"]])
+        predg = model.predict(X.iloc[pi["test"], :])
         # patch results in
         if preds is None:
             preds = numpy.asarray([None] * X.shape[0], dtype=numpy.asarray(predg).dtype)
@@ -66,8 +66,8 @@ def cross_predict_model_proba(
     assert isinstance(plan, List)
     preds = None
     for pi in plan:
-        model = fitter.fit(X.iloc[pi["train"]], y.iloc[pi["train"]])
-        predg = model.predict_proba(X.iloc[pi["test"]])
+        model = fitter.fit(X.iloc[pi["train"], :], y.iloc[pi["train"]])
+        predg = model.predict_proba(X.iloc[pi["test"], :])
         # patch results in
         if preds is None:
             preds = numpy.zeros((X.shape[0], predg.shape[1]))
