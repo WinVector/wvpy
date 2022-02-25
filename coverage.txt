@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.7, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
+platform darwin -- Python 3.7.4, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
-plugins: cov-2.12.1, anyio-2.2.0, typeguard-2.13.0
+plugins: cov-2.12.1, anyio-3.5.0, arraydiff-0.3, remotedata-0.3.2, doctestplus-0.4.0, openfiles-0.4.0
 collected 14 items
 
 tests/test_cross_plan1.py .                                              [  7%]
@@ -16,7 +16,14 @@ tests/test_search_grid.py ..                                             [ 85%]
 tests/test_stats1.py .                                                   [ 92%]
 tests/test_threshold_stats.py .                                          [100%]
 
----------- coverage: platform darwin, python 3.9.7-final-0 -----------
+=============================== warnings summary ===============================
+tests/test_onehot.py::test_onehot
+  /Users/johnmount/opt/anaconda3/lib/python3.7/site-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.
+    warnings.warn(msg, category=FutureWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+
+---------- coverage: platform darwin, python 3.7.4-final-0 -----------
 Name               Stmts   Miss  Cover
 --------------------------------------
 wvpy/__init__.py       3      0   100%
@@ -24,5 +31,4 @@ wvpy/util.py         309      7    98%
 --------------------------------------
 TOTAL                312      7    98%
 
-
-============================== 14 passed in 7.27s ==============================
+======================== 14 passed, 1 warning in 7.96s =========================
