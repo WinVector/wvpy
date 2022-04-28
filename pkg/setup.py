@@ -3,7 +3,7 @@ import setuptools
 
 DESCRIPTION = "Simple utilities for teaching Pandas and scikit learn."
 LONG_DESCRIPTION = """
-Simple utilities for teaching Pandas and scikit learn.
+Simple utilities for teaching Pandas, Jupyter, seaborn, and sklearn.
 """
 
 setuptools.setup(
@@ -20,7 +20,9 @@ setuptools.setup(
         "seaborn",
         "matplotlib",
         "vtreat>=1.1.1",
-        "data_algebra>=1.2.0"
+        "data_algebra>=1.2.0",
+        "nbformat",
+        "nbconvert"
     ],
     platforms=["any"],
     license="License :: OSI Approved :: BSD 3-clause License",

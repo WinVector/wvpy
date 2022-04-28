@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.7.4, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
-plugins: cov-2.12.1, anyio-3.5.0, arraydiff-0.3, remotedata-0.3.2, doctestplus-0.4.0, openfiles-0.4.0
+plugins: anyio-3.5.0, cov-3.0.0
 collected 14 items
 
 tests/test_cross_plan1.py .                                              [  7%]
@@ -17,18 +17,32 @@ tests/test_stats1.py .                                                   [ 92%]
 tests/test_threshold_stats.py .                                          [100%]
 
 =============================== warnings summary ===============================
+../../../../opt/anaconda3/envs/research_env/lib/python3.9/site-packages/seaborn/rcmod.py:82
+  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/seaborn/rcmod.py:82: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    if LooseVersion(mpl.__version__) >= "3.0":
+
+../../../../opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351
+  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    other = LooseVersion(other)
+
+tests/test_cross_predict.py::test_cross_predict_proba_1
+  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/numpy/core/fromnumeric.py:84: FutureWarning: In a future version, DataFrame.max(axis=None) will return a scalar max over the entire DataFrame. To retain the old behavior, use 'frame.max(axis=0)' or just 'frame.max()'
+    return reduction(axis=axis, out=out, **passkwargs)
+
 tests/test_onehot.py::test_onehot
-  /Users/johnmount/opt/anaconda3/lib/python3.7/site-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.
+  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.
     warnings.warn(msg, category=FutureWarning)
 
--- Docs: https://docs.pytest.org/en/stable/warnings.html
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
----------- coverage: platform darwin, python 3.7.4-final-0 -----------
+---------- coverage: platform darwin, python 3.9.12-final-0 ----------
 Name               Stmts   Miss  Cover
 --------------------------------------
 wvpy/__init__.py       3      0   100%
+wvpy/jtools.py       113    113     0%
+wvpy/pysheet.py       11     11     0%
 wvpy/util.py         309      7    98%
 --------------------------------------
-TOTAL                312      7    98%
+TOTAL                436    131    70%
 
-======================== 14 passed, 1 warning in 7.96s =========================
+======================= 14 passed, 4 warnings in 10.44s ========================

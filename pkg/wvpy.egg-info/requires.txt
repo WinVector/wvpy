@@ -5,3 +5,5 @@ seaborn
 matplotlib
 vtreat>=1.1.1
 data_algebra>=1.2.0
+nbformat
+nbconvert

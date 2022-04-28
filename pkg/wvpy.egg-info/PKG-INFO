@@ -20,6 +20,6 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 
 
-Simple utilities for teaching Pandas and scikit learn.
+Simple utilities for teaching Pandas, Jupyter, seaborn, and sklearn.
 
 
