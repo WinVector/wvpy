@@ -39,10 +39,10 @@ tests/test_onehot.py::test_onehot
 Name               Stmts   Miss  Cover
 --------------------------------------
 wvpy/__init__.py       3      0   100%
-wvpy/jtools.py       113    113     0%
+wvpy/jtools.py       115    115     0%
 wvpy/pysheet.py       11     11     0%
 wvpy/util.py         309      7    98%
 --------------------------------------
-TOTAL                436    131    70%
+TOTAL                438    133    70%
 
-======================= 14 passed, 4 warnings in 10.45s ========================
+======================= 14 passed, 4 warnings in 10.25s ========================

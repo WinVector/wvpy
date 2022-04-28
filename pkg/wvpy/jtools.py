@@ -12,8 +12,9 @@ from typing import Optional
 def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode:
     """
     Convert python text to a notebook. 
-    "''' begin text" starts text
-    "''' # end text" ends text
+    "''' begin text" ends any open blocks, and starts a new markdown block
+    "''' # end text" ends text, and starts a new code block
+    "'''end code'''" ends code blocks, and starts a new code block
 
     :param text: Python text to convert.
     :return: a notebook 
@@ -21,9 +22,11 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
     assert isinstance(text, str)
     lines = text.splitlines()
     begin_text_regexp = re.compile(r"^r?'''\s*begin\s+text\s*$")
-    end_text_regexp = re.compile(r"'''\s*#\s*end\s+text\s*$")
+    end_text_regexp = re.compile(r"^'''\s*#\s*end\s+text\s*$")
+    end_code_regexp = re.compile(r"^r?'''\s*end\s+code\s*'''\s*$")
     nbf_v = nbformat.v4
     nb = nbf_v.new_notebook()
+    # run a little code collecting state machine
     cells = []
     collecting_python = []
     collecting_text = None
@@ -34,11 +37,13 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
             is_end = True
             text_start = False
             code_start = False
+            code_end = False
         else:
             is_end = False
             text_start = begin_text_regexp.match(line)
             code_start = end_text_regexp.match(line)
-        if is_end or text_start or code_start:
+            code_end = end_code_regexp.match(line)
+        if is_end or text_start or code_start or code_end:
             if collecting_python is not None:
                 txt_block = '\n'.join(collecting_python) + '\n'
                 cells.append(nbf_v.new_code_cell(txt_block))
@@ -49,7 +54,7 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
             collecting_text = None
             if text_start:
                 collecting_text = []
-            if code_start:
+            else:
                 collecting_python = []
         else:
             if collecting_python is not None:
@@ -62,9 +67,10 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
 
 def convert_py_file_to_notebook(py_file: str, ipynb_file: str) -> None:
     """
-    Convert python file to a notebook file.
-    "''' begin text" starts text
-    "''' # end text" ends text
+    Convert python text to a notebook. 
+    "''' begin text" ends any open blocks, and starts a new markdown block
+    "''' # end text" ends text, and starts a new code block
+    "'''end code'''" ends code blocks, and starts a new code block
 
     :param py_file: Path to python source file.
     :param ipynb_file: Path to notebook result file.
