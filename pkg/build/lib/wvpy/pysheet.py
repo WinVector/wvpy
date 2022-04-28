@@ -14,8 +14,12 @@ def main() -> int:
     parser.add_argument('-out', dest='output_file_name', type=str, nargs=1,
         help='name of output file')
     args = parser.parse_args()
+    assert len(args.input_file_name) == 1
+    assert len(args.output_file_name) == 1
     input_file_name = args.input_file_name[0]
-    output_file_name= args.output_file_name[0]
+    output_file_name = args.output_file_name[0]
+    assert isinstance(input_file_name, str)
+    assert isinstance(output_file_name, str)
     assert input_file_name != output_file_name
     assert os.path.exists(input_file_name)
     if input_file_name.endswith('.py'):
