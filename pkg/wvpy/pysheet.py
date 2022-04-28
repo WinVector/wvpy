@@ -1,10 +1,11 @@
 
 # run with:
 #    python -m wvpy.pysheet -in test.py -out test.ipynb
+#    python -m wvpy.pysheet -in test.ipynb -out test_2.py
 import argparse
 import sys
 import os
-from wvpy.jtools import convert_py_file_to_notebook
+from wvpy.jtools import convert_py_file_to_notebook, convert_notebook_file_to_py
 
 
 def main() -> int:
@@ -30,7 +31,9 @@ def main() -> int:
         )
     elif input_file_name.endswith('.ipynb'):
         assert output_file_name.endswith('.py')
-        raise ValueError("not implemented yet")
+        convert_notebook_file_to_py(
+            ipynb_file=input_file_name,
+            py_file=output_file_name)
     else:
         raise ValueError("input file must end with .py or .ipynb")
     return 0

@@ -52,10 +52,11 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
                 cells.append(nbf_v.new_markdown_cell(txt_block))
             collecting_python = None
             collecting_text = None
-            if text_start:
-                collecting_text = []
-            else:
-                collecting_python = []
+            if not is_end:
+                if text_start:
+                    collecting_text = []
+                else:
+                    collecting_python = []
         else:
             if collecting_python is not None:
                 collecting_python.append(line)
@@ -65,7 +66,7 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
     return nb
 
 
-def convert_py_file_to_notebook(py_file: str, ipynb_file: str) -> None:
+def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
     """
     Convert python text to a notebook. 
     "''' begin text" ends any open blocks, and starts a new markdown block
@@ -74,7 +75,7 @@ def convert_py_file_to_notebook(py_file: str, ipynb_file: str) -> None:
 
     :param py_file: Path to python source file.
     :param ipynb_file: Path to notebook result file.
-    :return: a notebook 
+    :return: nothing 
     """
     assert isinstance(py_file, str)
     assert isinstance(ipynb_file, str)
@@ -84,6 +85,56 @@ def convert_py_file_to_notebook(py_file: str, ipynb_file: str) -> None:
     nb = convert_py_code_to_notebook(text)
     with open(ipynb_file, 'w') as f:
         nbformat.write(nb, f)
+
+
+def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
+    """
+    Convert ipython notebook inputs to a py code. 
+    "''' begin text" ends any open blocks, and starts a new markdown block
+    "''' # end text" ends text, and starts a new code block
+    "'''end code'''" ends code blocks, and starts a new code block
+
+    :param nb: notebook
+    :return: Python source code
+    """
+    res = []
+    code_needs_end = False
+    for cell in nb.cells:
+        if cell.cell_type == 'code':
+            if code_needs_end:
+                res.append("\n'''end code'''\n")
+            else:
+                res.append("\n")
+            res.append(cell.source)
+            code_needs_end = True
+        else:
+            res.append("\n''' begin text")
+            res.append(cell.source)
+            res.append("'''  # end text\n")
+            code_needs_end = False
+    res_text = '\n'.join(res) + '\n'
+    return res_text
+
+
+def convert_notebook_file_to_py(*, ipynb_file: str, py_file: str) -> None:
+    """
+    Convert ipython notebook inputs to a py file. 
+    "''' begin text" ends any open blocks, and starts a new markdown block
+    "''' # end text" ends text, and starts a new code block
+    "'''end code'''" ends code blocks, and starts a new code block
+
+    :param ipynb_file: Path to notebook input file.
+    :param py_file: Path to python result file.
+    :return: nothing
+    """
+    assert isinstance(py_file, str)
+    assert isinstance(ipynb_file, str)
+    assert py_file != ipynb_file  # prevent clobber
+    with open(ipynb_file, "rb") as f:
+        nb = nbformat.read(f, as_version=4)
+    py_source = convert_notebook_code_to_py(nb)
+    with open(py_file, 'w') as f:
+        f.write(py_source)        
 
 
 # https://nbconvert.readthedocs.io/en/latest/execute_api.html
