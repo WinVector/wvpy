@@ -1,4 +1,6 @@
 
+# run with:
+#    python -m wvpy.pysheet test.py test.ipynb
 import sys
 from wvpy.jtools import convert_py_file_to_notebook
 

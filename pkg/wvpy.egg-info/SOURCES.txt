@@ -4,9 +4,6 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
-docs/index.html
-docs/wvpy.html
-docs/wvpy/util.html
 tests/__init__.py
 tests/test_cross_plan1.py
 tests/test_cross_predict.py
