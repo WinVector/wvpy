@@ -2,7 +2,7 @@
 Utility functions for teaching data science.
 """
 
-from typing import Iterable, List, Tuple
+from typing import Dict, Iterable, List, Tuple
 
 import re
 import os
@@ -18,6 +18,25 @@ import itertools
 import pandas
 import math
 from data_algebra.cdata import RecordMap, RecordSpecification
+
+
+def types_in_frame(d: pandas.DataFrame) -> Dict[str, List[type]]:
+    """
+    Report what type as seen as values in a Pandas data frame.
+    
+    :param d: Pandas data frame to inspect, not altered.
+    :return: dictionary mapping column names to order lists of types found in column.
+    """
+    assert isinstance(d, pandas.DataFrame)
+    type_dict_map = {
+        col_name: {str(type(v)): type(v) for v in d[col_name]}
+            for col_name in d.columns
+    }
+    type_dict = {
+        col_name: [type_set[k] for k in sorted(list(type_set.keys()))]
+            for col_name, type_set in type_dict_map.items()
+    }
+    return type_dict
 
 
 # noinspection PyPep8Naming
