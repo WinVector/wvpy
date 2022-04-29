@@ -32,4 +32,5 @@ def test_cross_predict_proba_1():
     )
     fitter.fit(X=d.loc[:, ["x"]], y=d["y"])
     preds_regular = fitter.predict_proba(d.loc[:, ["x"]])
-    assert numpy.max(numpy.max(numpy.abs(preds_regular - preds_cross))) < 0.1
+    assert numpy.abs(preds_regular - preds_cross).max(axis=0).max() < 0.1
+    

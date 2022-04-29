@@ -27,10 +27,6 @@ tests/test_threshold_stats.py .                                          [100%]
   /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     other = LooseVersion(other)
 
-tests/test_cross_predict.py::test_cross_predict_proba_1
-  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/numpy/core/fromnumeric.py:84: FutureWarning: In a future version, DataFrame.max(axis=None) will return a scalar max over the entire DataFrame. To retain the old behavior, use 'frame.max(axis=0)' or just 'frame.max()'
-    return reduction(axis=axis, out=out, **passkwargs)
-
 tests/test_onehot.py::test_onehot
   /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.
     warnings.warn(msg, category=FutureWarning)
@@ -48,4 +44,4 @@ wvpy/util.py                322      7    98%
 ---------------------------------------------
 TOTAL                       523    103    80%
 
-======================= 18 passed, 4 warnings in 15.06s ========================
+======================= 18 passed, 3 warnings in 14.78s ========================
