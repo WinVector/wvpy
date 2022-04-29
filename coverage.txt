@@ -27,10 +27,6 @@ tests/test_threshold_stats.py .                                          [100%]
   /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     other = LooseVersion(other)
 
-tests/test_onehot.py::test_onehot
-  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.
-    warnings.warn(msg, category=FutureWarning)
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 ---------- coverage: platform darwin, python 3.9.12-final-0 ----------
@@ -40,8 +36,8 @@ wvpy/__init__.py              3      0   100%
 wvpy/jtools.py              136     34    75%
 wvpy/pysheet.py              33     33     0%
 wvpy/render_workbook.py      29     29     0%
-wvpy/util.py                322      7    98%
+wvpy/util.py                316      7    98%
 ---------------------------------------------
-TOTAL                       523    103    80%
+TOTAL                       517    103    80%
 
-======================= 18 passed, 3 warnings in 14.78s ========================
+======================= 18 passed, 2 warnings in 15.55s ========================

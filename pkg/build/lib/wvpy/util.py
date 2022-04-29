@@ -899,17 +899,7 @@ def fit_onehot_enc(
         categories="auto", drop=None, sparse=False, handle_unknown="ignore"  # default
     )
     enc.fit(d[categorical_var_names])
-    produced_column_names = list(enc.get_feature_names())
-    # map back to original column names
-
-    def replace_col_name(v):
-        """Replace x[0-9]+_level with var_level"""
-        v_prefix = re.sub(r"_.*$", "", v)
-        v_suffix = re.sub(r"^x[0-9]+_", "", v)
-        v_index = int(re.sub(r"^x", "", v_prefix))
-        return f"{categorical_var_names[v_index]}_{v_suffix}"
-
-    produced_column_names = [replace_col_name(v) for v in produced_column_names]
+    produced_column_names = list(enc.get_feature_names_out())
     # return the structure
     encoder_bundle = {
         "categorical_var_names": categorical_var_names,
