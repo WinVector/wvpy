@@ -20,6 +20,7 @@ tests/test_se.py
 tests/test_search_grid.py
 tests/test_stats1.py
 tests/test_threshold_stats.py
+tests/test_typs_in_frame.py
 wvpy/__init__.py
 wvpy/jtools.py
 wvpy/pysheet.py

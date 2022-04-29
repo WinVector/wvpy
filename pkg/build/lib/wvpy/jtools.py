@@ -230,4 +230,4 @@ def render_as_html(
     if caught is not None:
         raise caught
     if verbose:
-        print(f'\tdone render_as_html "{html_name}"" {datetime.datetime.now()}')
+        print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
