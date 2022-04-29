@@ -3,7 +3,7 @@ import os
 import pytest
 from nbconvert.preprocessors.execute import CellExecutionError
 
-from wvpy.jtools import render_as_html
+from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py
 
 
 # Was seeing:
@@ -34,3 +34,32 @@ def test_jupyter_notebook_bad():
         )
     os.chdir(orig_wd)
 
+
+
+ex_txt = """
+1 + 2
+
+'''end code'''
+
+6 - 7
+
+''' begin text
+*hello* 
+world
+'''  # end text
+
+
+''' begin text
+txt2
+'''  # end text
+
+(3
+ + 4)
+"""
+
+
+def test_nb_convert():
+    nb = convert_py_code_to_notebook(ex_txt)
+    res_txt = convert_notebook_code_to_py(nb)
+    # TODO: compare to orignal text
+    
