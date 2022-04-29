@@ -2,18 +2,20 @@
 platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-3.0.0
-collected 14 items
+collected 17 items
 
-tests/test_cross_plan1.py .                                              [  7%]
-tests/test_cross_predict.py ..                                           [ 21%]
-tests/test_deviance_calc.py .                                            [ 28%]
-tests/test_eval_fn_pre_row.py .                                          [ 35%]
-tests/test_match_auc.py .                                                [ 42%]
-tests/test_onehot.py ..                                                  [ 57%]
+tests/test_cross_plan1.py .                                              [  5%]
+tests/test_cross_predict.py ..                                           [ 17%]
+tests/test_deviance_calc.py .                                            [ 23%]
+tests/test_eval_fn_pre_row.py .                                          [ 29%]
+tests/test_match_auc.py .                                                [ 35%]
+tests/test_nb_fns.py ..                                                  [ 47%]
+tests/test_onehot.py ..                                                  [ 58%]
 tests/test_perm_score_vars.py .                                          [ 64%]
-tests/test_plots.py .                                                    [ 71%]
-tests/test_search_grid.py ..                                             [ 85%]
-tests/test_stats1.py .                                                   [ 92%]
+tests/test_plots.py .                                                    [ 70%]
+tests/test_se.py .                                                       [ 76%]
+tests/test_search_grid.py ..                                             [ 88%]
+tests/test_stats1.py .                                                   [ 94%]
 tests/test_threshold_stats.py .                                          [100%]
 
 =============================== warnings summary ===============================
@@ -39,11 +41,11 @@ tests/test_onehot.py::test_onehot
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              136    136     0%
+wvpy/jtools.py              136     91    33%
 wvpy/pysheet.py              33     33     0%
 wvpy/render_workbook.py      29     29     0%
-wvpy/util.py                322     15    95%
+wvpy/util.py                322      7    98%
 ---------------------------------------------
-TOTAL                       523    213    59%
+TOTAL                       523    160    69%
 
-======================== 14 passed, 4 warnings in 9.89s ========================
+======================= 17 passed, 4 warnings in 17.14s ========================
