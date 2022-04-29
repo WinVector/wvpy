@@ -44,12 +44,14 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
             code_start = end_text_regexp.match(line)
             code_end = end_code_regexp.match(line)
         if is_end or text_start or code_start or code_end:
-            if collecting_python is not None:
-                txt_block = '\n'.join(collecting_python) + '\n'
-                cells.append(nbf_v.new_code_cell(txt_block))
-            if collecting_text is not None:
-                txt_block = '\n'.join(collecting_text) + '\n'
-                cells.append(nbf_v.new_markdown_cell(txt_block))
+            if (collecting_python is not None) and (len(collecting_python) > 0):
+                txt_block = ('\n'.join(collecting_python)).strip('\n') + '\n'
+                if len(txt_block.strip()) > 0:
+                    cells.append(nbf_v.new_code_cell(txt_block))
+            if (collecting_text is not None) and (len(collecting_text) > 0):
+                txt_block = ('\n'.join(collecting_text)).strip('\n') + '\n'
+                if len(txt_block.strip()) > 0:
+                    cells.append(nbf_v.new_markdown_cell(txt_block))
             collecting_python = None
             collecting_text = None
             if not is_end:
@@ -100,19 +102,18 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
     res = []
     code_needs_end = False
     for cell in nb.cells:
-        if cell.cell_type == 'code':
-            if code_needs_end:
-                res.append("\n'''end code'''\n")
+        if len(cell.source.strip()) > 0:
+            if cell.cell_type == 'code':
+                if code_needs_end:
+                    res.append("\n'''end code'''\n")
+                res.append(cell.source.strip('\n'))
+                code_needs_end = True
             else:
-                res.append("\n")
-            res.append(cell.source)
-            code_needs_end = True
-        else:
-            res.append("\n''' begin text")
-            res.append(cell.source)
-            res.append("'''  # end text\n")
-            code_needs_end = False
-    res_text = '\n'.join(res) + '\n'
+                res.append("\n''' begin text")
+                res.append(cell.source.strip('\n'))
+                res.append("'''  # end text\n")
+                code_needs_end = False
+    res_text = '\n' + ('\n'.join(res)).strip('\n') + '\n\n'
     return res_text
 
 

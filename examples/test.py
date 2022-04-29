@@ -10,6 +10,10 @@
 world
 ''' # end text
 
+''' begin text
+txt2
+''' # end text
+
 (3
  + 4)
 
