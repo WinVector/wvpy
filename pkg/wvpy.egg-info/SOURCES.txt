@@ -4,12 +4,6 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
-docs/index.html
-docs/search.js
-docs/wvpy.html
-docs/wvpy/jtools.html
-docs/wvpy/pysheet.html
-docs/wvpy/util.html
 tests/__init__.py
 tests/test_cross_plan1.py
 tests/test_cross_predict.py
@@ -25,6 +19,7 @@ tests/test_threshold_stats.py
 wvpy/__init__.py
 wvpy/jtools.py
 wvpy/pysheet.py
+wvpy/render_workbook.py
 wvpy/util.py
 wvpy.egg-info/PKG-INFO
 wvpy.egg-info/SOURCES.txt

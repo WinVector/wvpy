@@ -36,13 +36,14 @@ tests/test_onehot.py::test_onehot
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
 ---------- coverage: platform darwin, python 3.9.12-final-0 ----------
-Name               Stmts   Miss  Cover
---------------------------------------
-wvpy/__init__.py       3      0   100%
-wvpy/jtools.py       131    131     0%
-wvpy/pysheet.py       33     33     0%
-wvpy/util.py         322     15    95%
---------------------------------------
-TOTAL                489    179    63%
+Name                      Stmts   Miss  Cover
+---------------------------------------------
+wvpy/__init__.py              3      0   100%
+wvpy/jtools.py              136    136     0%
+wvpy/pysheet.py              33     33     0%
+wvpy/render_workbook.py      29     29     0%
+wvpy/util.py                322     15    95%
+---------------------------------------------
+TOTAL                       523    213    59%
 
-======================== 14 passed, 4 warnings in 9.91s ========================
+======================== 14 passed, 4 warnings in 9.89s ========================

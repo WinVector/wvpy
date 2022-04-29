@@ -158,7 +158,7 @@ def render_as_html(
     Render a Jupyter notebook in the current directory as HTML.
     Exceptions raised in the rendering notebook are allowed to pass trough.
 
-    :param notebook_file_name: name of source file.
+    :param notebook_file_name: name of source file, must end with .ipynb or .py
     :param output_suffix: optional name to add to result name
     :param timeout: Maximum time in seconds each notebook cell is allowed to run.
                     passed to nbconvert.preprocessors.ExecutePreprocessor.
@@ -167,13 +167,22 @@ def render_as_html(
     :param parameters: arbitrary object to write to paramater_file_name
     :param parameter_file_name: file name to pickle parameters to
     :param exclude_input: if True, exclude input cells
-    :param prompt_strip_regexp: regexp to strip prompts
+    :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
     :return: None
     """
     assert isinstance(notebook_file_name, str)
-    suffix = ".ipynb"
-    assert notebook_file_name.endswith(suffix)
-    html_name = notebook_file_name[: -len(suffix)]
+    if notebook_file_name.endswith(".ipynb"):
+        suffix = ".ipynb"
+        with open(notebook_file_name, "rb") as f:
+            nb = nbformat.read(f, as_version=4)
+    elif notebook_file_name.endswith(".py"):
+        suffix = ".py"
+        with open(notebook_file_name, 'r') as f:
+            text = f.read()
+        nb = convert_py_code_to_notebook(text)
+    else:
+        raise ValueError("file name must end with .ipynb or .py")
+    html_name = notebook_file_name.removesuffix(suffix)
     exec_note = ""
     if output_suffix is not None:
         assert isinstance(output_suffix, str)
@@ -184,9 +193,6 @@ def render_as_html(
         os.remove(html_name)
     except FileNotFoundError:
         pass
-    notebook_file_path = notebook_file_name
-    with open(notebook_file_path, "rb") as f:
-        nb = nbformat.read(f, as_version=4)
     if parameter_file_name is not None:
         assert isinstance(parameter_file_name, str)
         with open(parameter_file_name, "wb") as f:
@@ -195,7 +201,7 @@ def render_as_html(
     try:
         if verbose:
             print(
-                f'start render_as_html "{notebook_file_path}" {exec_note} {datetime.datetime.now()}'
+                f'start render_as_html "{notebook_file_name}" {exec_note} {datetime.datetime.now()}'
             )
         if kernel_name is not None:
             ep = nbconvert.preprocessors.ExecutePreprocessor(
@@ -206,7 +212,7 @@ def render_as_html(
         nb_res, nb_resources = ep.preprocess(nb)
         html_exporter = nbconvert.HTMLExporter(exclude_input=exclude_input)
         html_body, html_resources = html_exporter.from_notebook_node(nb_res)
-        if prompt_strip_regexp is not None:
+        if exclude_input and (prompt_strip_regexp is not None):
             # strip output prompts
             html_body = re.sub(
                 prompt_strip_regexp,
