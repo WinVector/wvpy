@@ -18,6 +18,10 @@ d = pd.DataFrame({
 })
 d['y'] = np.sin(d['x'])
 
+'''end code'''
+
+# disply data
+
 d
 
 ''' begin text

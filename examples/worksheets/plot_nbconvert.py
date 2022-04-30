@@ -23,6 +23,12 @@ d = pd.DataFrame({
 })
 d['y'] = np.sin(d['x'])
 
+
+# In[3]:
+
+
+# disply data
+
 d
 
 
