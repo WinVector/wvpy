@@ -1,0 +1,21 @@
+
+
+# standard jupyter notebook convert
+# creates plot_nbconvert.ipynb
+jupyter nbconvert --to script --stdout plot.ipynb > plot_nbconvert.py
+
+# wvpy convert
+# creates plot.py
+python -m wvpy.pysheet plot.ipynb
+
+# convert .py by back to .ipnyb
+# creates plot_copy.ipynb
+cp plot.py plot_copy.py
+python -m wvpy.pysheet plot_copy.py
+
+# execute and render to html
+# creates plot.html
+python -m wvpy.render_workbook --strip_input plot.py
+
+
+
