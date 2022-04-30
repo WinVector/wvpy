@@ -27,7 +27,7 @@ d['y'] = np.sin(d['x'])
 # In[3]:
 
 
-# disply data
+# display data
 
 d
 

@@ -20,7 +20,7 @@ d['y'] = np.sin(d['x'])
 
 '''end code'''
 
-# disply data
+# display data
 
 d
 
