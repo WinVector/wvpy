@@ -12,16 +12,16 @@ from wvpy.jtools import render_as_html
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Render .py or .ipynb to .html by executing in Jupyter")
-    parser.add_argument('infile', metavar='infile', type=str, nargs=1,
-        help='name of input file')
+    parser.add_argument('infile', metavar='infile', type=str, nargs='+',
+        help='name of input file(s)')
     parser.add_argument('--strip_input', action='store_true')
     parser.add_argument('--quiet', action='store_true')
     args = parser.parse_args()
-    assert len(args.infile) == 1
-    input_file_name = args.infile[0]
-    assert isinstance(input_file_name, str)
-    assert os.path.exists(input_file_name)
-    render_as_html(input_file_name, exclude_input=args.strip_input, verbose=args.quiet == False)
+    assert len(args.infile) > 0
+    for input_file_name in args.infile:
+        assert isinstance(input_file_name, str)
+        assert os.path.exists(input_file_name)
+        render_as_html(input_file_name, exclude_input=args.strip_input, verbose=args.quiet == False)
     return 0
 
 
