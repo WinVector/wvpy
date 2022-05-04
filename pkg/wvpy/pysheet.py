@@ -14,14 +14,22 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Convert between .py and .ipynb")
     parser.add_argument('--quiet', action='store_true', help='delete input file')
     parser.add_argument('--delete', action='store_true', help='delete input file')
-    parser.add_argument('infile', metavar='infile', type=str, nargs='+',
+    parser.add_argument(
+        'infile', 
+        metavar='infile', 
+        type=str, 
+        nargs='+',
         help='name of input file(s)')
     args = parser.parse_args()
-    assert len(args.infile) > 0
     # some pre-checks
+    assert len(args.infile) > 0
+    assert len(set(args.infile)) == len(args.infile)
+    assert isinstance(args.quiet, bool)
+    assert isinstance(args.delete, bool)
     input_suffices_seen = set()
     for input_file_name in args.infile:
         assert isinstance(input_file_name, str)
+        assert len(input_file_name) > 0
         assert os.path.exists(input_file_name)
         if input_file_name.endswith('.py'):
             input_suffices_seen.add('.py')
