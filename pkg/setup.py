@@ -8,7 +8,7 @@ Simple utilities for teaching Pandas, Jupyter, seaborn, and sklearn.
 
 setuptools.setup(
     name="wvpy",
-    version="0.3.1",
+    version="0.3.2",
     author="John Mount",
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
