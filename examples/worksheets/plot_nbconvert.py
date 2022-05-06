@@ -3,7 +3,7 @@
 
 # Example of a Python Jupyter worksheet.
 
-# In[1]:
+# In[ ]:
 
 
 # import our packages
@@ -11,11 +11,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from IPython.display import display, Markdown
 
 
 # Makes some example data.
 
-# In[2]:
+# In[ ]:
 
 
 d = pd.DataFrame({
@@ -24,7 +25,7 @@ d = pd.DataFrame({
 d['y'] = np.sin(d['x'])
 
 
-# In[3]:
+# In[ ]:
 
 
 # display data
@@ -34,7 +35,7 @@ d
 
 # Plot our data.
 
-# In[4]:
+# In[ ]:
 
 
 sns.lineplot(
@@ -44,6 +45,14 @@ sns.lineplot(
 )
 plt.title('example plot')
 plt.show()
+
+
+# In[ ]:
+
+
+display(Markdown(f"""
+Our example dataframe has {d.shape[0]} rows.
+"""))
 
 
 # And that is our example.

@@ -21,6 +21,7 @@ setuptools.setup(
         "matplotlib",
         "vtreat>=1.1.1",
         "data_algebra>=1.2.0",
+        "IPython",
         "nbformat",
         "nbconvert"
     ],

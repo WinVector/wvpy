@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from IPython.display import display, Markdown
 
 ''' begin text
 Makes some example data.
@@ -35,6 +36,12 @@ sns.lineplot(
 )
 plt.title('example plot')
 plt.show()
+
+'''end code'''
+
+display(Markdown(f"""
+Our example dataframe has {d.shape[0]} rows.
+"""))
 
 ''' begin text
 And that is our example.
