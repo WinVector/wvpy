@@ -52,7 +52,7 @@ def main() -> int:
         if len(input_suffices_seen) != 1:
             raise ValueError(f"saw more than one input suffix: {input_suffices_seen}")
         assert os.path.exists(input_file_name)
-        output_file_name = input_file_name.removesuffix(suffix_seen) + other_suffix(suffix_seen)
+        output_file_name = input_file_name.removesuffix(suffix_seen) + other_suffix[suffix_seen]
         if os.path.exists(output_file_name):
             if os.path.getmtime(output_file_name) > os.path.getmtime(input_file_name):
                 raise ValueError(f"output {output_file_name} is already newer than input f{input_file_name}")
