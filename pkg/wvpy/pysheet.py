@@ -11,7 +11,7 @@ from wvpy.jtools import convert_py_file_to_notebook, convert_notebook_file_to_py
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Convert between .py and .ipynb")
+    parser = argparse.ArgumentParser(description="Convert between .py and .ipynb (can have suffix, or guess suffix)")
     parser.add_argument('--quiet', action='store_true', help='delete input file')
     parser.add_argument('--delete', action='store_true', help='delete input file')
     parser.add_argument(
@@ -27,27 +27,41 @@ def main() -> int:
     assert isinstance(args.quiet, bool)
     assert isinstance(args.delete, bool)
     input_suffices_seen = set()
+    tasks = []
+    other_suffix = {'.py': '.ipynb', '.ipynb': '.py'}
     for input_file_name in args.infile:
         assert isinstance(input_file_name, str)
         assert len(input_file_name) > 0
-        assert os.path.exists(input_file_name)
+        suffix_seen = 'error'  # placeholder
         if input_file_name.endswith('.py'):
-            input_suffices_seen.add('.py')
-            output_file_name = input_file_name.removesuffix('.py') + '.ipynb'
+            suffix_seen = '.py'
         elif input_file_name.endswith('.ipynb'):
-            input_suffices_seen.add('.ipynb')
-            output_file_name = input_file_name.removesuffix('.ipynb') + '.py'
+            suffix_seen = '.ipynb'
         else:
-            raise ValueError(f"input file name {input_file_name} must end with .py or .ipynb")
+            py_exists = os.path.exists(input_file_name + '.py')
+            ipynb_exists = os.path.exists(input_file_name + '.ipynb')
+            if py_exists == ipynb_exists:
+                raise ValueError("if no suffix is specified, then exactly one of the .py or ipynb file must be present")
+            if py_exists:
+                suffix_seen = '.py'
+            else:
+                suffix_seen = '.ipynb'
+            input_file_name = input_file_name + suffix_seen
+        assert suffix_seen in other_suffix.keys()
+        input_suffices_seen.add(suffix_seen)
+        if len(input_suffices_seen) != 1:
+            raise ValueError(f"saw more than one input suffix: {input_suffices_seen}")
+        assert os.path.exists(input_file_name)
+        output_file_name = input_file_name.removesuffix(suffix_seen) + other_suffix(suffix_seen)
         if os.path.exists(output_file_name):
             if os.path.getmtime(output_file_name) > os.path.getmtime(input_file_name):
                 raise ValueError(f"output {output_file_name} is already newer than input f{input_file_name}")
+        tasks.append((input_file_name, output_file_name))
     if len(input_suffices_seen) != 1:
-        raise ValueError(f"saw more than one input suffix: {input_suffices_seen}")
+        raise ValueError(f"expected only one input suffix: {input_suffices_seen}")
     # do the work
-    for input_file_name in args.infile:
+    for input_file_name, output_file_name in tasks:
         if input_file_name.endswith('.py'):
-            output_file_name = input_file_name.removesuffix('.py') + '.ipynb'
             if not args.quiet:
                 print(f"converting {input_file_name} to {output_file_name}")
             convert_py_file_to_notebook(
@@ -55,7 +69,6 @@ def main() -> int:
                 ipynb_file=output_file_name,
             )
         elif input_file_name.endswith('.ipynb'):
-            output_file_name = input_file_name.removesuffix('.ipynb') + '.py'
             if not args.quiet:
                 print(f"converting {input_file_name} to {output_file_name}")
             convert_notebook_file_to_py(
@@ -65,10 +78,10 @@ def main() -> int:
             raise ValueError("input file name must end with .py or .ipynb")
     # do any deletions
     if args.delete:
-        for input_file_name in args.infile:
+        for input_file_name, output_file_name in tasks:
             if not args.quiet:
                 print(f"removing {input_file_name}")
-            os.remove(input_file_name)
+            os.remove(input_file_name)  # Note: we remove input as we are replacing it with output
     return 0
 
 
