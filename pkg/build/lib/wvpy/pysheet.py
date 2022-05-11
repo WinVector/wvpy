@@ -41,7 +41,7 @@ def main() -> int:
             py_exists = os.path.exists(input_file_name + '.py')
             ipynb_exists = os.path.exists(input_file_name + '.ipynb')
             if py_exists == ipynb_exists:
-                raise ValueError("if no suffix is specified, then exactly one of the .py or ipynb file must be present")
+                raise ValueError("if no suffix is specified, then exactly one of the .py or ipynb file forms must be present")
             if py_exists:
                 suffix_seen = '.py'
             else:
