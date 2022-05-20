@@ -19,6 +19,8 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
     :param text: Python text to convert.
     :return: a notebook 
     """
+    # https://stackoverflow.com/a/23729611/6901725
+    # https://nbviewer.org/gist/fperez/9716279
     assert isinstance(text, str)
     lines = text.splitlines()
     begin_text_regexp = re.compile(r"^r?'''\s*begin\s+text\s*$")
@@ -66,6 +68,24 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
                 collecting_text.append(line)
     nb['cells'] = cells
     return nb
+
+
+def prepend_code_cell_to_notebook(
+    nb: nbformat.notebooknode.NotebookNode,
+    *,
+    code_text: str,
+) -> nbformat.notebooknode.NotebookNode:
+    """
+    Prepend a code cell to a Jupyter notebook.
+
+    :param nb: Jupyter notebook to alter
+    :param code_text: Python source code to add
+    :return: new notebook
+    """
+    nbf_v = nbformat.v4
+    nb_out = nbf_v.new_notebook()
+    nb_out['cells'] = [nbf_v.new_code_cell(code_text)] + list(nb.cells)
+    return nb_out
 
 
 def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
@@ -149,8 +169,7 @@ def render_as_html(
     timeout:int = 60000,
     kernel_name: Optional[str] = None,
     verbose: bool = True,
-    parameters = None,
-    parameter_file_name: Optional[str] = None,
+    init_code: Optional[str] = None,
     exclude_input: bool = False,
     prompt_strip_regexp: Optional[str] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
 ) -> None:
@@ -164,8 +183,7 @@ def render_as_html(
                     passed to nbconvert.preprocessors.ExecutePreprocessor.
     :param kernel_name: Jupyter kernel to use. passed to nbconvert.preprocessors.ExecutePreprocessor.
     :param verbose logical, if True print while running 
-    :param parameters: arbitrary object to write to paramater_file_name
-    :param parameter_file_name: file name to pickle parameters to
+    :param init_code: Python init code for first cell
     :param exclude_input: if True, exclude input cells
     :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
     :return: None
@@ -182,6 +200,9 @@ def render_as_html(
         nb = convert_py_code_to_notebook(text)
     else:
         raise ValueError("file name must end with .ipynb or .py")
+    if init_code is not None:
+        assert isinstance(init_code, str)
+        nb = prepend_code_cell_to_notebook(nb, code_text=init_code)
     html_name = notebook_file_name.removesuffix(suffix)
     exec_note = ""
     if output_suffix is not None:
@@ -193,10 +214,6 @@ def render_as_html(
         os.remove(html_name)
     except FileNotFoundError:
         pass
-    if parameter_file_name is not None:
-        assert isinstance(parameter_file_name, str)
-        with open(parameter_file_name, "wb") as f:
-            pickle.dump(parameters, f)
     caught = None
     try:
         if verbose:
@@ -222,11 +239,6 @@ def render_as_html(
             f.write(html_body)
     except Exception as e:
         caught = e
-    if parameter_file_name is not None:
-        try:
-            os.remove(parameter_file_name)
-        except FileNotFoundError:
-            pass
     if caught is not None:
         raise caught
     if verbose:

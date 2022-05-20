@@ -57,6 +57,19 @@ txt2
  + 4)
 """
 
+@pytest.mark.filterwarnings("ignore:")
+def test_jupyter_notebook_parameterized_good():
+    orig_wd = os.getcwd()
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(source_dir)
+    render_as_html(
+        "example_parameterized_notebook.ipynb",
+        init_code='x = 2',
+    )
+    os.remove("example_parameterized_notebook.html")
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
 
 def test_nb_convert():
     nb = convert_py_code_to_notebook(ex_txt)
