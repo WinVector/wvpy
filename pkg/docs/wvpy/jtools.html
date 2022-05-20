@@ -34,6 +34,9 @@
                     <a class="function" href="#convert_py_code_to_notebook">convert_py_code_to_notebook</a>
             </li>
             <li>
+                    <a class="function" href="#prepend_code_cell_to_notebook">prepend_code_cell_to_notebook</a>
+            </li>
+            <li>
                     <a class="function" href="#convert_py_file_to_notebook">convert_py_file_to_notebook</a>
             </li>
             <li>
@@ -83,6 +86,8 @@
 <span class="sd">    :param text: Python text to convert.</span>
 <span class="sd">    :return: a notebook </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># https://stackoverflow.com/a/23729611/6901725</span>
+    <span class="c1"># https://nbviewer.org/gist/fperez/9716279</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
     <span class="n">begin_text_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^r?&#39;&#39;&#39;\s*begin\s+text\s*$&quot;</span><span class="p">)</span>
@@ -130,6 +135,24 @@
                 <span class="n">collecting_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
     <span class="n">nb</span><span class="p">[</span><span class="s1">&#39;cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cells</span>
     <span class="k">return</span> <span class="n">nb</span>
+
+
+<span class="k">def</span> <span class="nf">prepend_code_cell_to_notebook</span><span class="p">(</span>
+    <span class="n">nb</span><span class="p">:</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">code_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepend a code cell to a Jupyter notebook.</span>
+
+<span class="sd">    :param nb: Jupyter notebook to alter</span>
+<span class="sd">    :param code_text: Python source code to add</span>
+<span class="sd">    :return: new notebook</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbf_v</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span>
+    <span class="n">nb_out</span> <span class="o">=</span> <span class="n">nbf_v</span><span class="o">.</span><span class="n">new_notebook</span><span class="p">()</span>
+    <span class="n">nb_out</span><span class="p">[</span><span class="s1">&#39;cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbf_v</span><span class="o">.</span><span class="n">new_code_cell</span><span class="p">(</span><span class="n">code_text</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nb_out</span>
 
 
 <span class="k">def</span> <span class="nf">convert_py_file_to_notebook</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">py_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ipynb_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -213,8 +236,7 @@
     <span class="n">timeout</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">60000</span><span class="p">,</span>
     <span class="n">kernel_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parameter_file_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">init_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">exclude_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prompt_strip_regexp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&lt;\s*div\s+class\s*=\s*&quot;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\s*/div\s*&gt;&#39;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -228,8 +250,7 @@
 <span class="sd">                    passed to nbconvert.preprocessors.ExecutePreprocessor.</span>
 <span class="sd">    :param kernel_name: Jupyter kernel to use. passed to nbconvert.preprocessors.ExecutePreprocessor.</span>
 <span class="sd">    :param verbose logical, if True print while running </span>
-<span class="sd">    :param parameters: arbitrary object to write to paramater_file_name</span>
-<span class="sd">    :param parameter_file_name: file name to pickle parameters to</span>
+<span class="sd">    :param init_code: Python init code for first cell</span>
 <span class="sd">    :param exclude_input: if True, exclude input cells</span>
 <span class="sd">    :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True</span>
 <span class="sd">    :return: None</span>
@@ -246,6 +267,9 @@
         <span class="n">nb</span> <span class="o">=</span> <span class="n">convert_py_code_to_notebook</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;file name must end with .ipynb or .py&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">init_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="n">prepend_code_cell_to_notebook</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span> <span class="n">code_text</span><span class="o">=</span><span class="n">init_code</span><span class="p">)</span>
     <span class="n">html_name</span> <span class="o">=</span> <span class="n">notebook_file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
     <span class="n">exec_note</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">if</span> <span class="n">output_suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -257,10 +281,6 @@
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">html_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
         <span class="k">pass</span>
-    <span class="k">if</span> <span class="n">parameter_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
     <span class="n">caught</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -286,11 +306,6 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">caught</span> <span class="o">=</span> <span class="n">e</span>
-    <span class="k">if</span> <span class="n">parameter_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="k">pass</span>
     <span class="k">if</span> <span class="n">caught</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">caught</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -320,6 +335,8 @@
 <span class="sd">    :param text: Python text to convert.</span>
 <span class="sd">    :return: a notebook </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># https://stackoverflow.com/a/23729611/6901725</span>
+    <span class="c1"># https://nbviewer.org/gist/fperez/9716279</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
     <span class="n">begin_text_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^r?&#39;&#39;&#39;\s*begin\s+text\s*$&quot;</span><span class="p">)</span>
@@ -378,6 +395,49 @@
 
 <p>:param text: Python text to convert.
 :return: a notebook</p>
+</div>
+
+
+                </section>
+                <section id="prepend_code_cell_to_notebook">
+                            <div class="attr function"><a class="headerlink" href="#prepend_code_cell_to_notebook">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">prepend_code_cell_to_notebook</span><span class="signature">(
+    nb: nbformat.notebooknode.NotebookNode,
+    *,
+    code_text: str
+) -&gt; nbformat.notebooknode.NotebookNode</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">prepend_code_cell_to_notebook</span><span class="p">(</span>
+    <span class="n">nb</span><span class="p">:</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">code_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepend a code cell to a Jupyter notebook.</span>
+
+<span class="sd">    :param nb: Jupyter notebook to alter</span>
+<span class="sd">    :param code_text: Python source code to add</span>
+<span class="sd">    :return: new notebook</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbf_v</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span>
+    <span class="n">nb_out</span> <span class="o">=</span> <span class="n">nbf_v</span><span class="o">.</span><span class="n">new_notebook</span><span class="p">()</span>
+    <span class="n">nb_out</span><span class="p">[</span><span class="s1">&#39;cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">nbf_v</span><span class="o">.</span><span class="n">new_code_cell</span><span class="p">(</span><span class="n">code_text</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nb_out</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Prepend a code cell to a Jupyter notebook.</p>
+
+<p>:param nb: Jupyter notebook to alter
+:param code_text: Python source code to add
+:return: new notebook</p>
 </div>
 
 
@@ -535,8 +595,7 @@
     timeout: int = 60000,
     kernel_name: Optional[str] = None,
     verbose: bool = True,
-    parameters=None,
-    parameter_file_name: Optional[str] = None,
+    init_code: Optional[str] = None,
     exclude_input: bool = False,
     prompt_strip_regexp: Optional[str] = &#39;&lt;\\s*div\\s+class\\s*=\\s*&#34;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\\s*/div\\s*&gt;&#39;
 ) -&gt; None</span>:
@@ -551,8 +610,7 @@
     <span class="n">timeout</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">60000</span><span class="p">,</span>
     <span class="n">kernel_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">parameter_file_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">init_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">exclude_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prompt_strip_regexp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&lt;\s*div\s+class\s*=\s*&quot;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\s*/div\s*&gt;&#39;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -566,8 +624,7 @@
 <span class="sd">                    passed to nbconvert.preprocessors.ExecutePreprocessor.</span>
 <span class="sd">    :param kernel_name: Jupyter kernel to use. passed to nbconvert.preprocessors.ExecutePreprocessor.</span>
 <span class="sd">    :param verbose logical, if True print while running </span>
-<span class="sd">    :param parameters: arbitrary object to write to paramater_file_name</span>
-<span class="sd">    :param parameter_file_name: file name to pickle parameters to</span>
+<span class="sd">    :param init_code: Python init code for first cell</span>
 <span class="sd">    :param exclude_input: if True, exclude input cells</span>
 <span class="sd">    :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True</span>
 <span class="sd">    :return: None</span>
@@ -584,6 +641,9 @@
         <span class="n">nb</span> <span class="o">=</span> <span class="n">convert_py_code_to_notebook</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;file name must end with .ipynb or .py&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">init_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="n">prepend_code_cell_to_notebook</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span> <span class="n">code_text</span><span class="o">=</span><span class="n">init_code</span><span class="p">)</span>
     <span class="n">html_name</span> <span class="o">=</span> <span class="n">notebook_file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
     <span class="n">exec_note</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">if</span> <span class="n">output_suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -595,10 +655,6 @@
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">html_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
         <span class="k">pass</span>
-    <span class="k">if</span> <span class="n">parameter_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
     <span class="n">caught</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -624,11 +680,6 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">caught</span> <span class="o">=</span> <span class="n">e</span>
-    <span class="k">if</span> <span class="n">parameter_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">parameter_file_name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="k">pass</span>
     <span class="k">if</span> <span class="n">caught</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">caught</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -646,8 +697,7 @@ Exceptions raised in the rendering notebook are allowed to pass trough.</p>
                 passed to nbconvert.preprocessors.ExecutePreprocessor.
 :param kernel_name: Jupyter kernel to use. passed to nbconvert.preprocessors.ExecutePreprocessor.
 :param verbose logical, if True print while running 
-:param parameters: arbitrary object to write to paramater_file_name
-:param parameter_file_name: file name to pickle parameters to
+:param init_code: Python init code for first cell
 :param exclude_input: if True, exclude input cells
 :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
 :return: None</p>
