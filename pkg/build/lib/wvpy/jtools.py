@@ -203,7 +203,8 @@ def render_as_html(
     if init_code is not None:
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(nb, code_text=init_code)
-    html_name = notebook_file_name.removesuffix(suffix)
+    html_name = os.path.basename(notebook_file_name)
+    html_name = html_name.removesuffix(suffix)
     exec_note = ""
     if output_suffix is not None:
         assert isinstance(output_suffix, str)

@@ -34,11 +34,11 @@ tests/test_typs_in_frame.py .                                            [100%]
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              135     27    80%
+wvpy/jtools.py              136     27    80%
 wvpy/pysheet.py              74     74     0%
 wvpy/render_workbook.py      46     46     0%
 wvpy/util.py                321      7    98%
 ---------------------------------------------
-TOTAL                       579    154    73%
+TOTAL                       580    154    73%
 
-======================= 20 passed, 2 warnings in 17.47s ========================
+======================= 20 passed, 2 warnings in 16.89s ========================
