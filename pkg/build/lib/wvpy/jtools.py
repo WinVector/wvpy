@@ -5,10 +5,16 @@ import datetime
 import os
 import nbformat
 import nbconvert.preprocessors
-import pdfkit
+
 from typing import Optional
 
-from numpy import isin
+have_pdf_kit = False
+try:
+    import pdfkit
+    have_pdf_kit = True
+except ModuleNotFoundError:
+    pass
+
 
 
 def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode:
@@ -245,6 +251,7 @@ def render_as_html(
             with open(html_name, "wt") as f:
                 f.write(html_body)
         else:
+            assert have_pdf_kit
             pdf_name = html_name.removesuffix('.html') + '.pdf'
             pdfkit.from_string(html_body, pdf_name)
     except Exception as e:

@@ -23,9 +23,11 @@ setuptools.setup(
         "data_algebra>=1.2.0",
         "IPython",
         "nbformat",
-        "nbconvert",
-        "pdfkit"
+        "nbconvert"
     ],
+    extras_require = {
+        'pdf_export': ["pdfkit"]
+    },
     platforms=["any"],
     license="License :: OSI Approved :: BSD 3-clause License",
     description=DESCRIPTION,

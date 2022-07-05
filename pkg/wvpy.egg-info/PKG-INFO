@@ -17,6 +17,7 @@ Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Classifier: License :: OSI Approved :: BSD License
 Description-Content-Type: text/markdown
+Provides-Extra: pdf_export
 License-File: LICENSE
 
 
