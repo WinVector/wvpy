@@ -8,3 +8,4 @@ data_algebra>=1.2.0
 IPython
 nbformat
 nbconvert
+pdfkit

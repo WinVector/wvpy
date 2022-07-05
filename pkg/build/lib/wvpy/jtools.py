@@ -5,8 +5,10 @@ import datetime
 import os
 import nbformat
 import nbconvert.preprocessors
-import pickle
+import pdfkit
 from typing import Optional
+
+from numpy import isin
 
 
 def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode:
@@ -172,6 +174,7 @@ def render_as_html(
     init_code: Optional[str] = None,
     exclude_input: bool = False,
     prompt_strip_regexp: Optional[str] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
+    convert_to_pdf: bool = False,
 ) -> None:
     """
     Render a Jupyter notebook in the current directory as HTML.
@@ -186,9 +189,11 @@ def render_as_html(
     :param init_code: Python init code for first cell
     :param exclude_input: if True, exclude input cells
     :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
+    :param convert_to_pdf: if True convert HTML to PDF, and delete HTML
     :return: None
     """
     assert isinstance(notebook_file_name, str)
+    assert isinstance(convert_to_pdf, bool)
     if notebook_file_name.endswith(".ipynb"):
         suffix = ".ipynb"
         with open(notebook_file_name, "rb") as f:
@@ -236,8 +241,12 @@ def render_as_html(
                 prompt_strip_regexp,
                 ' ',
                 html_body)
-        with open(html_name, "wt") as f:
-            f.write(html_body)
+        if not convert_to_pdf:
+            with open(html_name, "wt") as f:
+                f.write(html_body)
+        else:
+            pdf_name = html_name.removesuffix('.html') + '.pdf'
+            pdfkit.from_string(html_body, pdf_name)
     except Exception as e:
         caught = e
     if caught is not None:

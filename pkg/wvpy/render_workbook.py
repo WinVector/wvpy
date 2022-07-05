@@ -31,6 +31,7 @@ def main() -> int:
         assert isinstance(input_file_name, str)
         assert len(input_file_name) > 0
         assert not input_file_name.endswith('.html')
+        assert not input_file_name.endswith('.pdf')
         if not (input_file_name.endswith('.py') or input_file_name.endswith('.ipynb')):
             py_exists = os.path.exists(input_file_name + '.py')
             ipynb_exists = os.path.exists(input_file_name + '.ipynb')
@@ -45,7 +46,10 @@ def main() -> int:
         tasks.append(input_file_name)
     # do the work
     for input_file_name in tasks:
-        render_as_html(input_file_name, exclude_input=args.strip_input, verbose=args.quiet == False)
+        render_as_html(
+            input_file_name, 
+            exclude_input=args.strip_input, 
+            verbose=args.quiet == False)
     return 0
 
 

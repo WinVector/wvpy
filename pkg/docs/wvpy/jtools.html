@@ -72,8 +72,10 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">nbformat</span>
 <span class="kn">import</span> <span class="nn">nbconvert.preprocessors</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pdfkit</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">isin</span>
 
 
 <span class="k">def</span> <span class="nf">convert_py_code_to_notebook</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">:</span>
@@ -239,6 +241,7 @@
     <span class="n">init_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">exclude_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prompt_strip_regexp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&lt;\s*div\s+class\s*=\s*&quot;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\s*/div\s*&gt;&#39;</span><span class="p">,</span>
+    <span class="n">convert_to_pdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render a Jupyter notebook in the current directory as HTML.</span>
@@ -253,9 +256,11 @@
 <span class="sd">    :param init_code: Python init code for first cell</span>
 <span class="sd">    :param exclude_input: if True, exclude input cells</span>
 <span class="sd">    :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True</span>
+<span class="sd">    :param convert_to_pdf: if True convert HTML to PDF, and delete HTML</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">notebook_file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">convert_to_pdf</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">notebook_file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ipynb&quot;</span><span class="p">):</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;.ipynb&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">notebook_file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -303,8 +308,12 @@
                 <span class="n">prompt_strip_regexp</span><span class="p">,</span>
                 <span class="s1">&#39; &#39;</span><span class="p">,</span>
                 <span class="n">html_body</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">html_name</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">convert_to_pdf</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">html_name</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdf_name</span> <span class="o">=</span> <span class="n">html_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.pdf&#39;</span>
+            <span class="n">pdfkit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">html_body</span><span class="p">,</span> <span class="n">pdf_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">caught</span> <span class="o">=</span> <span class="n">e</span>
     <span class="k">if</span> <span class="n">caught</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -598,7 +607,8 @@
     verbose: bool = True,
     init_code: Optional[str] = None,
     exclude_input: bool = False,
-    prompt_strip_regexp: Optional[str] = &#39;&lt;\\s*div\\s+class\\s*=\\s*&#34;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\\s*/div\\s*&gt;&#39;
+    prompt_strip_regexp: Optional[str] = &#39;&lt;\\s*div\\s+class\\s*=\\s*&#34;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\\s*/div\\s*&gt;&#39;,
+    convert_to_pdf: bool = False
 ) -&gt; None</span>:
     </div>
 
@@ -614,6 +624,7 @@
     <span class="n">init_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">exclude_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prompt_strip_regexp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&lt;\s*div\s+class\s*=\s*&quot;jp-OutputPrompt[^&lt;&gt;]*&gt;[^&lt;&gt;]*Out[^&lt;&gt;]*&lt;\s*/div\s*&gt;&#39;</span><span class="p">,</span>
+    <span class="n">convert_to_pdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render a Jupyter notebook in the current directory as HTML.</span>
@@ -628,9 +639,11 @@
 <span class="sd">    :param init_code: Python init code for first cell</span>
 <span class="sd">    :param exclude_input: if True, exclude input cells</span>
 <span class="sd">    :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True</span>
+<span class="sd">    :param convert_to_pdf: if True convert HTML to PDF, and delete HTML</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">notebook_file_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">convert_to_pdf</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">notebook_file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ipynb&quot;</span><span class="p">):</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;.ipynb&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">notebook_file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -678,8 +691,12 @@
                 <span class="n">prompt_strip_regexp</span><span class="p">,</span>
                 <span class="s1">&#39; &#39;</span><span class="p">,</span>
                 <span class="n">html_body</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">html_name</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">convert_to_pdf</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">html_name</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_body</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdf_name</span> <span class="o">=</span> <span class="n">html_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.pdf&#39;</span>
+            <span class="n">pdfkit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">html_body</span><span class="p">,</span> <span class="n">pdf_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">caught</span> <span class="o">=</span> <span class="n">e</span>
     <span class="k">if</span> <span class="n">caught</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -702,6 +719,7 @@ Exceptions raised in the rendering notebook are allowed to pass trough.</p>
 :param init_code: Python init code for first cell
 :param exclude_input: if True, exclude input cells
 :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
+:param convert_to_pdf: if True convert HTML to PDF, and delete HTML
 :return: None</p>
 </div>
 
