@@ -213,7 +213,9 @@ def render_as_html(
         raise ValueError("file name must end with .ipynb or .py")
     if init_code is not None:
         assert isinstance(init_code, str)
-        nb = prepend_code_cell_to_notebook(nb, code_text=init_code)
+        nb = prepend_code_cell_to_notebook(
+            nb, 
+            code_text=f'\n{init_code}\n')
     html_name = os.path.basename(notebook_file_name)
     html_name = html_name.removesuffix(suffix)
     exec_note = ""
