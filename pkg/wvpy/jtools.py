@@ -31,9 +31,9 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
     # https://nbviewer.org/gist/fperez/9716279
     assert isinstance(text, str)
     lines = text.splitlines()
-    begin_text_regexp = re.compile(r"^r?'''\s*begin\s+text\s*$")
-    end_text_regexp = re.compile(r"^'''\s*#\s*end\s+text\s*$")
-    end_code_regexp = re.compile(r"^r?'''\s*end\s+code\s*'''\s*$")
+    begin_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*begin\s+text\s*$")
+    end_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*#\s*end\s+text\s*$")
+    end_code_regexp = re.compile(r"(^\s*r?'''\s*end\s+code\s*'''\s*$)|(^\s*r?\"\"\"\s*end\s+code\s*\"\"\"\s*$)")
     nbf_v = nbformat.v4
     nb = nbf_v.new_notebook()
     # run a little code collecting state machine

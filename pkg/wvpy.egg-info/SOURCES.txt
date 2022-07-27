@@ -4,13 +4,6 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
-docs/index.html
-docs/search.js
-docs/wvpy.html
-docs/wvpy/jtools.html
-docs/wvpy/pysheet.html
-docs/wvpy/render_workbook.html
-docs/wvpy/util.html
 tests/__init__.py
 tests/example_bad_notebook.ipynb
 tests/example_good_notebook.ipynb
