@@ -89,9 +89,9 @@
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">def</span> <span class="nf">convert_py_code_to_notebook</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Convert python text to a notebook. </span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    :param text: Python text to convert.</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    :return: a notebook </span>
@@ -168,9 +168,9 @@
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">def</span> <span class="nf">convert_py_file_to_notebook</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">py_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ipynb_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    Convert python text to a notebook. </span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    :param py_file: Path to python source file.</span>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    :param ipynb_file: Path to notebook result file.</span>
@@ -189,9 +189,9 @@
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="k">def</span> <span class="nf">convert_notebook_code_to_py</span><span class="p">(</span><span class="n">nb</span><span class="p">:</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">    Convert ipython notebook inputs to a py code. </span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">    :param nb: notebook</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">    :return: Python source code</span>
@@ -202,13 +202,13 @@
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">cell_type</span> <span class="o">==</span> <span class="s1">&#39;code&#39;</span><span class="p">:</span>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>                <span class="k">if</span> <span class="n">code_needs_end</span><span class="p">:</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&#39;&#39;&#39;end code&#39;&#39;&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot;end code&quot;&quot;&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>                <span class="n">code_needs_end</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&#39;&#39;&#39; begin text&quot;</span><span class="p">)</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot; begin text&#39;</span><span class="p">)</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&#39;&#39;&#39;  # end text</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&quot;&quot;&quot;  # end text</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>                <span class="n">code_needs_end</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">res_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
 </span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">return</span> <span class="n">res_text</span>
@@ -217,9 +217,9 @@
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="k">def</span> <span class="nf">convert_notebook_file_to_py</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ipynb_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">py_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">    Convert ipython notebook inputs to a py file. </span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    :param ipynb_file: Path to notebook input file.</span>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    :param py_file: Path to python result file.</span>
@@ -349,9 +349,9 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="convert_py_code_to_notebook-21"><a href="#convert_py_code_to_notebook-21"><span class="linenos">21</span></a><span class="k">def</span> <span class="nf">convert_py_code_to_notebook</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">:</span>
 </span><span id="convert_py_code_to_notebook-22"><a href="#convert_py_code_to_notebook-22"><span class="linenos">22</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="convert_py_code_to_notebook-23"><a href="#convert_py_code_to_notebook-23"><span class="linenos">23</span></a><span class="sd">    Convert python text to a notebook. </span>
-</span><span id="convert_py_code_to_notebook-24"><a href="#convert_py_code_to_notebook-24"><span class="linenos">24</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="convert_py_code_to_notebook-25"><a href="#convert_py_code_to_notebook-25"><span class="linenos">25</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="convert_py_code_to_notebook-26"><a href="#convert_py_code_to_notebook-26"><span class="linenos">26</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="convert_py_code_to_notebook-24"><a href="#convert_py_code_to_notebook-24"><span class="linenos">24</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="convert_py_code_to_notebook-25"><a href="#convert_py_code_to_notebook-25"><span class="linenos">25</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="convert_py_code_to_notebook-26"><a href="#convert_py_code_to_notebook-26"><span class="linenos">26</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="convert_py_code_to_notebook-27"><a href="#convert_py_code_to_notebook-27"><span class="linenos">27</span></a>
 </span><span id="convert_py_code_to_notebook-28"><a href="#convert_py_code_to_notebook-28"><span class="linenos">28</span></a><span class="sd">    :param text: Python text to convert.</span>
 </span><span id="convert_py_code_to_notebook-29"><a href="#convert_py_code_to_notebook-29"><span class="linenos">29</span></a><span class="sd">    :return: a notebook </span>
@@ -409,9 +409,9 @@
 
 
             <div class="docstring"><p>Convert python text to a notebook. 
-"''' begin text" ends any open blocks, and starts a new markdown block
-"''' # end text" ends text, and starts a new code block
-"'''end code'''" ends code blocks, and starts a new code block</p>
+"''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+"''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+"'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -490,9 +490,9 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="convert_py_file_to_notebook-100"><a href="#convert_py_file_to_notebook-100"><span class="linenos">100</span></a><span class="k">def</span> <span class="nf">convert_py_file_to_notebook</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">py_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ipynb_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="convert_py_file_to_notebook-101"><a href="#convert_py_file_to_notebook-101"><span class="linenos">101</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="convert_py_file_to_notebook-102"><a href="#convert_py_file_to_notebook-102"><span class="linenos">102</span></a><span class="sd">    Convert python text to a notebook. </span>
-</span><span id="convert_py_file_to_notebook-103"><a href="#convert_py_file_to_notebook-103"><span class="linenos">103</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="convert_py_file_to_notebook-104"><a href="#convert_py_file_to_notebook-104"><span class="linenos">104</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="convert_py_file_to_notebook-105"><a href="#convert_py_file_to_notebook-105"><span class="linenos">105</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="convert_py_file_to_notebook-103"><a href="#convert_py_file_to_notebook-103"><span class="linenos">103</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="convert_py_file_to_notebook-104"><a href="#convert_py_file_to_notebook-104"><span class="linenos">104</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="convert_py_file_to_notebook-105"><a href="#convert_py_file_to_notebook-105"><span class="linenos">105</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="convert_py_file_to_notebook-106"><a href="#convert_py_file_to_notebook-106"><span class="linenos">106</span></a>
 </span><span id="convert_py_file_to_notebook-107"><a href="#convert_py_file_to_notebook-107"><span class="linenos">107</span></a><span class="sd">    :param py_file: Path to python source file.</span>
 </span><span id="convert_py_file_to_notebook-108"><a href="#convert_py_file_to_notebook-108"><span class="linenos">108</span></a><span class="sd">    :param ipynb_file: Path to notebook result file.</span>
@@ -510,9 +510,9 @@
 
 
             <div class="docstring"><p>Convert python text to a notebook. 
-"''' begin text" ends any open blocks, and starts a new markdown block
-"''' # end text" ends text, and starts a new code block
-"'''end code'''" ends code blocks, and starts a new code block</p>
+"''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+"''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+"'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -544,9 +544,9 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="convert_notebook_code_to_py-121"><a href="#convert_notebook_code_to_py-121"><span class="linenos">121</span></a><span class="k">def</span> <span class="nf">convert_notebook_code_to_py</span><span class="p">(</span><span class="n">nb</span><span class="p">:</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">notebooknode</span><span class="o">.</span><span class="n">NotebookNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="convert_notebook_code_to_py-122"><a href="#convert_notebook_code_to_py-122"><span class="linenos">122</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="convert_notebook_code_to_py-123"><a href="#convert_notebook_code_to_py-123"><span class="linenos">123</span></a><span class="sd">    Convert ipython notebook inputs to a py code. </span>
-</span><span id="convert_notebook_code_to_py-124"><a href="#convert_notebook_code_to_py-124"><span class="linenos">124</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="convert_notebook_code_to_py-125"><a href="#convert_notebook_code_to_py-125"><span class="linenos">125</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="convert_notebook_code_to_py-126"><a href="#convert_notebook_code_to_py-126"><span class="linenos">126</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="convert_notebook_code_to_py-124"><a href="#convert_notebook_code_to_py-124"><span class="linenos">124</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="convert_notebook_code_to_py-125"><a href="#convert_notebook_code_to_py-125"><span class="linenos">125</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="convert_notebook_code_to_py-126"><a href="#convert_notebook_code_to_py-126"><span class="linenos">126</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="convert_notebook_code_to_py-127"><a href="#convert_notebook_code_to_py-127"><span class="linenos">127</span></a>
 </span><span id="convert_notebook_code_to_py-128"><a href="#convert_notebook_code_to_py-128"><span class="linenos">128</span></a><span class="sd">    :param nb: notebook</span>
 </span><span id="convert_notebook_code_to_py-129"><a href="#convert_notebook_code_to_py-129"><span class="linenos">129</span></a><span class="sd">    :return: Python source code</span>
@@ -557,13 +557,13 @@
 </span><span id="convert_notebook_code_to_py-134"><a href="#convert_notebook_code_to_py-134"><span class="linenos">134</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 </span><span id="convert_notebook_code_to_py-135"><a href="#convert_notebook_code_to_py-135"><span class="linenos">135</span></a>            <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">cell_type</span> <span class="o">==</span> <span class="s1">&#39;code&#39;</span><span class="p">:</span>
 </span><span id="convert_notebook_code_to_py-136"><a href="#convert_notebook_code_to_py-136"><span class="linenos">136</span></a>                <span class="k">if</span> <span class="n">code_needs_end</span><span class="p">:</span>
-</span><span id="convert_notebook_code_to_py-137"><a href="#convert_notebook_code_to_py-137"><span class="linenos">137</span></a>                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&#39;&#39;&#39;end code&#39;&#39;&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="convert_notebook_code_to_py-137"><a href="#convert_notebook_code_to_py-137"><span class="linenos">137</span></a>                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot;end code&quot;&quot;&quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </span><span id="convert_notebook_code_to_py-138"><a href="#convert_notebook_code_to_py-138"><span class="linenos">138</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
 </span><span id="convert_notebook_code_to_py-139"><a href="#convert_notebook_code_to_py-139"><span class="linenos">139</span></a>                <span class="n">code_needs_end</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="convert_notebook_code_to_py-140"><a href="#convert_notebook_code_to_py-140"><span class="linenos">140</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="convert_notebook_code_to_py-141"><a href="#convert_notebook_code_to_py-141"><span class="linenos">141</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&#39;&#39;&#39; begin text&quot;</span><span class="p">)</span>
+</span><span id="convert_notebook_code_to_py-141"><a href="#convert_notebook_code_to_py-141"><span class="linenos">141</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&quot;&quot;&quot; begin text&#39;</span><span class="p">)</span>
 </span><span id="convert_notebook_code_to_py-142"><a href="#convert_notebook_code_to_py-142"><span class="linenos">142</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
-</span><span id="convert_notebook_code_to_py-143"><a href="#convert_notebook_code_to_py-143"><span class="linenos">143</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&#39;&#39;&#39;  # end text</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="convert_notebook_code_to_py-143"><a href="#convert_notebook_code_to_py-143"><span class="linenos">143</span></a>                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&quot;&quot;&quot;  # end text</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </span><span id="convert_notebook_code_to_py-144"><a href="#convert_notebook_code_to_py-144"><span class="linenos">144</span></a>                <span class="n">code_needs_end</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="convert_notebook_code_to_py-145"><a href="#convert_notebook_code_to_py-145"><span class="linenos">145</span></a>    <span class="n">res_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
 </span><span id="convert_notebook_code_to_py-146"><a href="#convert_notebook_code_to_py-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">res_text</span>
@@ -571,9 +571,9 @@
 
 
             <div class="docstring"><p>Convert ipython notebook inputs to a py code. 
-"''' begin text" ends any open blocks, and starts a new markdown block
-"''' # end text" ends text, and starts a new code block
-"'''end code'''" ends code blocks, and starts a new code block</p>
+"''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+"''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+"'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)</p>
 
 <h6 id="parameters">Parameters</h6>
 
@@ -604,9 +604,9 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="convert_notebook_file_to_py-149"><a href="#convert_notebook_file_to_py-149"><span class="linenos">149</span></a><span class="k">def</span> <span class="nf">convert_notebook_file_to_py</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ipynb_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">py_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="convert_notebook_file_to_py-150"><a href="#convert_notebook_file_to_py-150"><span class="linenos">150</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="convert_notebook_file_to_py-151"><a href="#convert_notebook_file_to_py-151"><span class="linenos">151</span></a><span class="sd">    Convert ipython notebook inputs to a py file. </span>
-</span><span id="convert_notebook_file_to_py-152"><a href="#convert_notebook_file_to_py-152"><span class="linenos">152</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block</span>
-</span><span id="convert_notebook_file_to_py-153"><a href="#convert_notebook_file_to_py-153"><span class="linenos">153</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block</span>
-</span><span id="convert_notebook_file_to_py-154"><a href="#convert_notebook_file_to_py-154"><span class="linenos">154</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block</span>
+</span><span id="convert_notebook_file_to_py-152"><a href="#convert_notebook_file_to_py-152"><span class="linenos">152</span></a><span class="sd">    &quot;&#39;&#39;&#39; begin text&quot; ends any open blocks, and starts a new markdown block (triple double quotes also allowed)</span>
+</span><span id="convert_notebook_file_to_py-153"><a href="#convert_notebook_file_to_py-153"><span class="linenos">153</span></a><span class="sd">    &quot;&#39;&#39;&#39; # end text&quot; ends text, and starts a new code block (triple double quotes also allowed)</span>
+</span><span id="convert_notebook_file_to_py-154"><a href="#convert_notebook_file_to_py-154"><span class="linenos">154</span></a><span class="sd">    &quot;&#39;&#39;&#39;end code&#39;&#39;&#39;&quot; ends code blocks, and starts a new code block (triple double quotes also allowed)</span>
 </span><span id="convert_notebook_file_to_py-155"><a href="#convert_notebook_file_to_py-155"><span class="linenos">155</span></a>
 </span><span id="convert_notebook_file_to_py-156"><a href="#convert_notebook_file_to_py-156"><span class="linenos">156</span></a><span class="sd">    :param ipynb_file: Path to notebook input file.</span>
 </span><span id="convert_notebook_file_to_py-157"><a href="#convert_notebook_file_to_py-157"><span class="linenos">157</span></a><span class="sd">    :param py_file: Path to python result file.</span>
@@ -624,9 +624,9 @@
 
 
             <div class="docstring"><p>Convert ipython notebook inputs to a py file. 
-"''' begin text" ends any open blocks, and starts a new markdown block
-"''' # end text" ends text, and starts a new code block
-"'''end code'''" ends code blocks, and starts a new code block</p>
+"''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+"''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+"'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)</p>
 
 <h6 id="parameters">Parameters</h6>
 

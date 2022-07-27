@@ -20,9 +20,9 @@ except ModuleNotFoundError:
 def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode:
     """
     Convert python text to a notebook. 
-    "''' begin text" ends any open blocks, and starts a new markdown block
-    "''' # end text" ends text, and starts a new code block
-    "'''end code'''" ends code blocks, and starts a new code block
+    "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+    "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+    "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param text: Python text to convert.
     :return: a notebook 
@@ -99,9 +99,9 @@ def prepend_code_cell_to_notebook(
 def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
     """
     Convert python text to a notebook. 
-    "''' begin text" ends any open blocks, and starts a new markdown block
-    "''' # end text" ends text, and starts a new code block
-    "'''end code'''" ends code blocks, and starts a new code block
+    "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+    "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+    "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param py_file: Path to python source file.
     :param ipynb_file: Path to notebook result file.
@@ -120,9 +120,9 @@ def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
 def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
     """
     Convert ipython notebook inputs to a py code. 
-    "''' begin text" ends any open blocks, and starts a new markdown block
-    "''' # end text" ends text, and starts a new code block
-    "'''end code'''" ends code blocks, and starts a new code block
+    "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+    "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+    "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param nb: notebook
     :return: Python source code
@@ -133,13 +133,13 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
         if len(cell.source.strip()) > 0:
             if cell.cell_type == 'code':
                 if code_needs_end:
-                    res.append("\n'''end code'''\n")
+                    res.append('\n"""end code"""\n')
                 res.append(cell.source.strip('\n'))
                 code_needs_end = True
             else:
-                res.append("\n''' begin text")
+                res.append('\n""" begin text')
                 res.append(cell.source.strip('\n'))
-                res.append("'''  # end text\n")
+                res.append('"""  # end text\n')
                 code_needs_end = False
     res_text = '\n' + ('\n'.join(res)).strip('\n') + '\n\n'
     return res_text
@@ -148,9 +148,9 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
 def convert_notebook_file_to_py(*, ipynb_file: str, py_file: str) -> None:
     """
     Convert ipython notebook inputs to a py file. 
-    "''' begin text" ends any open blocks, and starts a new markdown block
-    "''' # end text" ends text, and starts a new code block
-    "'''end code'''" ends code blocks, and starts a new code block
+    "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
+    "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
+    "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param ipynb_file: Path to notebook input file.
     :param py_file: Path to python result file.
