@@ -79,9 +79,14 @@ def main() -> int:
     # do any deletions
     if args.delete:
         for input_file_name, output_file_name in tasks:
+            input_backup_file = f'{input_file_name}~'
             if not args.quiet:
-                print(f"removing {input_file_name}")
-            os.remove(input_file_name)  # Note: we remove input as we are replacing it with output
+                print(f"moving {input_file_name} to {input_backup_file}")
+            try:
+                os.remove(input_backup_file)
+            except FileNotFoundError:
+                pass
+            os.rename(input_file_name, input_backup_file)
     return 0
 
 
