@@ -2,7 +2,7 @@
 set of utilities for teaching data science and machine learning methods.
 They are not replacements for the obvious methods in sklearn.
 
-
+Some notes on the Jupyter sheet runner can be found [here](https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/)
 
 
 ```python
