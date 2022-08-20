@@ -186,7 +186,7 @@ def render_as_html(
     Render a Jupyter notebook in the current directory as HTML.
     Exceptions raised in the rendering notebook are allowed to pass trough.
 
-    :param notebook_file_name: name of source file, must end with .ipynb or .py
+    :param notebook_file_name: name of source file, must end with .ipynb or .py (or type gotten from file system)
     :param output_suffix: optional name to add to result name
     :param timeout: Maximum time in seconds each notebook cell is allowed to run.
                     passed to nbconvert.preprocessors.ExecutePreprocessor.
@@ -200,6 +200,19 @@ def render_as_html(
     """
     assert isinstance(notebook_file_name, str)
     assert isinstance(convert_to_pdf, bool)
+    # deal with no suffix case
+    if (not notebook_file_name.endswith(".ipynb")) and (not notebook_file_name.endswith(".py")):
+        py_name = notebook_file_name + ".py"
+        py_exists = os.path.exists(py_name)
+        ipynb_name = notebook_file_name + ".ipynb"
+        ipynb_exists = os.path.exists(ipynb_name)
+        if (py_exists + ipynb_exists) != 1:
+            raise ValueError('{ipynb_exists}: if file suffix is not specified then exactly one of .py or .ipynb file must exist')
+        if ipynb_exists:
+            notebook_file_name = notebook_file_name + '.ipynb'
+        else:
+            notebook_file_name = notebook_file_name + '.py'
+    # get the input
     if notebook_file_name.endswith(".ipynb"):
         suffix = ".ipynb"
         with open(notebook_file_name, "rb") as f:
@@ -210,12 +223,13 @@ def render_as_html(
             text = f.read()
         nb = convert_py_code_to_notebook(text)
     else:
-        raise ValueError("file name must end with .ipynb or .py")
+        raise ValueError('{ipynb_exists}: file must end with .py or .ipynb')
+    # do the conversion
     if init_code is not None:
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(
             nb, 
-            code_text=f'\n{init_code}\n')
+            code_text=f'\n\n{init_code}\n\n')
     html_name = os.path.basename(notebook_file_name)
     html_name = html_name.removesuffix(suffix)
     exec_note = ""

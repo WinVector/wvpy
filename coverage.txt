@@ -1,5 +1,5 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0
+platform darwin -- Python 3.9.7, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-3.0.0
 collected 20 items
@@ -19,26 +19,16 @@ tests/test_stats1.py .                                                   [ 90%]
 tests/test_threshold_stats.py .                                          [ 95%]
 tests/test_typs_in_frame.py .                                            [100%]
 
-=============================== warnings summary ===============================
-../../../../opt/anaconda3/envs/research_env/lib/python3.9/site-packages/seaborn/rcmod.py:82
-  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/seaborn/rcmod.py:82: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(mpl.__version__) >= "3.0":
-
-../../../../opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351
-  /Users/johnmount/opt/anaconda3/envs/research_env/lib/python3.9/site-packages/setuptools/_distutils/version.py:351: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    other = LooseVersion(other)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
----------- coverage: platform darwin, python 3.9.12-final-0 ----------
+---------- coverage: platform darwin, python 3.9.7-final-0 -----------
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              146     32    78%
+wvpy/jtools.py              156     41    74%
 wvpy/pysheet.py              89     89     0%
 wvpy/render_workbook.py      47     47     0%
 wvpy/util.py                321      7    98%
 ---------------------------------------------
-TOTAL                       606    175    71%
+TOTAL                       616    184    70%
 
-======================= 20 passed, 2 warnings in 16.87s ========================
+
+============================= 20 passed in 13.17s ==============================
