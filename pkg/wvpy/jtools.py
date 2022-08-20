@@ -276,3 +276,44 @@ def render_as_html(
         raise caught
     if verbose:
         print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
+
+
+class JTask:
+    def __init__(
+        self,
+        sheet_name: str,
+        output_suffix: Optional[str] = None,
+        exclude_input: bool = True,
+        init_code: Optional[str] = None,
+        path_prefix: str = "",
+    ) -> None:
+        assert isinstance(sheet_name, str)
+        assert isinstance(output_suffix, (str, type(None)))
+        assert isinstance(exclude_input, bool)
+        assert isinstance(init_code, (str, type(None)))
+        assert isinstance(path_prefix, str)
+        self.sheet_name = sheet_name
+        self.output_suffix = output_suffix
+        self.exclude_input = exclude_input
+        self.init_code = init_code
+        self.path_prefix = path_prefix
+
+    def __str__(self) -> str:
+        return f'JTask(sheet_name="{self.sheet_name}", output_suffix="{self.output_suffix}", exclude_input="{self.exclude_input}", init_code="""{self.init_code}""", path_prefix="{self.path_prefix}")'
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+
+def job_fn(arg: JTask):
+    assert isinstance(arg, JTask)
+    # render notebook
+    try:
+        render_as_html(
+            arg.path_prefix + arg.sheet_name,
+            exclude_input=arg.exclude_input,
+            output_suffix=arg.output_suffix,
+            init_code=arg.init_code,
+        )
+    except Exception as e:
+        print(f"{arg} caught {e}")
