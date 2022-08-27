@@ -15,9 +15,41 @@ try:
 except ModuleNotFoundError:
     pass
 
+have_black = False
+try:
+    import black
+    have_black = True
+except ModuleNotFoundError:
+    pass
 
 
-def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode:
+# noinspection PyBroadException
+def pretty_format_python(python_txt: str, *, black_mode=None) -> str:
+    """
+    Format Python code, using black.
+
+    :param python_txt: Python code
+    :param black_mode: options for black
+    :return: formatted Python code
+    """
+    assert have_black
+    assert isinstance(python_txt, str)
+    formatted_python = python_txt.strip('\n') + '\n'
+    if len(formatted_python.strip()) > 0:
+        if black_mode is None:
+            black_mode = black.FileMode()
+        try:
+            formatted_python = black.format_str(formatted_python, mode=black_mode)
+            formatted_python = formatted_python.strip('\n') + '\n'
+        except Exception:
+            pass
+    return formatted_python
+
+
+def convert_py_code_to_notebook(
+    text: str,
+    *,
+    use_black:bool = False) -> nbformat.notebooknode.NotebookNode:
     """
     Convert python text to a notebook. 
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
@@ -25,11 +57,13 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param text: Python text to convert.
+    :param use_black: if True use black to re-format Python code
     :return: a notebook 
     """
     # https://stackoverflow.com/a/23729611/6901725
     # https://nbviewer.org/gist/fperez/9716279
     assert isinstance(text, str)
+    assert isinstance(use_black, bool)
     lines = text.splitlines()
     begin_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*begin\s+text\s*$")
     end_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*#\s*end\s+text\s*$")
@@ -55,9 +89,11 @@ def convert_py_code_to_notebook(text: str) -> nbformat.notebooknode.NotebookNode
             code_end = end_code_regexp.match(line)
         if is_end or text_start or code_start or code_end:
             if (collecting_python is not None) and (len(collecting_python) > 0):
-                txt_block = ('\n'.join(collecting_python)).strip('\n') + '\n'
-                if len(txt_block.strip()) > 0:
-                    cells.append(nbf_v.new_code_cell(txt_block))
+                python_block = ('\n'.join(collecting_python)).strip('\n') + '\n'
+                if len(python_block.strip()) > 0:
+                    if use_black and have_black:
+                        python_block = pretty_format_python(python_block)
+                    cells.append(nbf_v.new_code_cell(python_block))
             if (collecting_text is not None) and (len(collecting_text) > 0):
                 txt_block = ('\n'.join(collecting_text)).strip('\n') + '\n'
                 if len(txt_block.strip()) > 0:
@@ -96,7 +132,12 @@ def prepend_code_cell_to_notebook(
     return nb_out
 
 
-def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
+def convert_py_file_to_notebook(
+    py_file: str, 
+    *,
+    ipynb_file: str,
+    use_black: bool = False,
+    ) -> None:
     """
     Convert python text to a notebook. 
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
@@ -105,19 +146,25 @@ def convert_py_file_to_notebook(*, py_file: str, ipynb_file: str) -> None:
 
     :param py_file: Path to python source file.
     :param ipynb_file: Path to notebook result file.
+    :param use_black: if True use black to re-format Python code
     :return: nothing 
     """
     assert isinstance(py_file, str)
     assert isinstance(ipynb_file, str)
+    assert isinstance(use_black, bool)
     assert py_file != ipynb_file  # prevent clobber
     with open(py_file, 'r') as f:
         text = f.read()
-    nb = convert_py_code_to_notebook(text)
+    nb = convert_py_code_to_notebook(text, use_black=use_black)
     with open(ipynb_file, 'w') as f:
         nbformat.write(nb, f)
 
 
-def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
+def convert_notebook_code_to_py(
+    nb: nbformat.notebooknode.NotebookNode,
+    *,
+    use_black: bool = False,
+    ) -> str:
     """
     Convert ipython notebook inputs to a py code. 
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
@@ -125,8 +172,10 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param nb: notebook
+    :param use_black: if True use black to re-format Python code
     :return: Python source code
     """
+    assert isinstance(use_black, bool)
     res = []
     code_needs_end = False
     for cell in nb.cells:
@@ -134,7 +183,10 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
             if cell.cell_type == 'code':
                 if code_needs_end:
                     res.append('\n"""end code"""\n')
-                res.append(cell.source.strip('\n'))
+                py_text = cell.source.strip('\n') + '\n'
+                if use_black and have_black:
+                    py_text = pretty_format_python(py_text)
+                res.append(py_text)
                 code_needs_end = True
             else:
                 res.append('\n""" begin text')
@@ -145,7 +197,12 @@ def convert_notebook_code_to_py(nb: nbformat.notebooknode.NotebookNode) -> str:
     return res_text
 
 
-def convert_notebook_file_to_py(*, ipynb_file: str, py_file: str) -> None:
+def convert_notebook_file_to_py(
+    ipynb_file: str,
+    *,  
+    py_file: str,
+    use_black: bool = False,
+    ) -> None:
     """
     Convert ipython notebook inputs to a py file. 
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
@@ -154,14 +211,16 @@ def convert_notebook_file_to_py(*, ipynb_file: str, py_file: str) -> None:
 
     :param ipynb_file: Path to notebook input file.
     :param py_file: Path to python result file.
+    :param use_black: if True use black to re-format Python code
     :return: nothing
     """
     assert isinstance(py_file, str)
     assert isinstance(ipynb_file, str)
+    assert isinstance(use_black, bool)
     assert py_file != ipynb_file  # prevent clobber
     with open(ipynb_file, "rb") as f:
         nb = nbformat.read(f, as_version=4)
-    py_source = convert_notebook_code_to_py(nb)
+    py_source = convert_notebook_code_to_py(nb, use_black=use_black)
     with open(py_file, 'w') as f:
         f.write(py_source)        
 

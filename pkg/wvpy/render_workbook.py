@@ -18,8 +18,8 @@ def main() -> int:
         type=str, 
         nargs='+',
         help='name of input file(s)')
-    parser.add_argument('--strip_input', action='store_true')
-    parser.add_argument('--quiet', action='store_true')
+    parser.add_argument('--strip_input', action='store_true', help="strip input cells and cell markers")
+    parser.add_argument('--quiet', action='store_true', help='quiet operation')
     args = parser.parse_args()
     # checks
     assert isinstance(args.quiet, bool)

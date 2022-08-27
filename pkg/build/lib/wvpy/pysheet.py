@@ -13,8 +13,9 @@ from wvpy.jtools import convert_py_file_to_notebook, convert_notebook_file_to_py
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Convert between .py and .ipynb or back (can have suffix, or guess suffix)")
-    parser.add_argument('--quiet', action='store_true', help='delete input file')
+    parser.add_argument('--quiet', action='store_true', help='quite operation')
     parser.add_argument('--delete', action='store_true', help='delete input file')
+    parser.add_argument('--black', action='store_true', help='use black to re-format cells')
     parser.add_argument(
         'infile', 
         metavar='infile', 
@@ -27,6 +28,7 @@ def main() -> int:
     assert len(set(args.infile)) == len(args.infile)
     assert isinstance(args.quiet, bool)
     assert isinstance(args.delete, bool)
+    assert isinstance(args.black, bool)
     # set up the work request
     base_names_seen = set()
     input_suffices_seen = set()
@@ -79,13 +81,16 @@ def main() -> int:
             convert_py_file_to_notebook(
                 py_file=input_file_name,
                 ipynb_file=output_file_name,
+                use_black=args.black,
             )
         elif input_file_name.endswith('.ipynb'):
             if not args.quiet:
                 print(f'   converting Jupyter notebook "{input_file_name}" to Python "{output_file_name}"')
             convert_notebook_file_to_py(
                 ipynb_file=input_file_name,
-                py_file=output_file_name)
+                py_file=output_file_name,
+                use_black=args.black,
+            )
         else:
             raise ValueError("input file name must end with .py or .ipynb")
         # do any deletions
