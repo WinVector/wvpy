@@ -3,31 +3,18 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - numpy
-  - pandas
-  - lark
-  - scipy
   - jupyterlab
   - python=3.9.*
-  - scikit-learn
-  - seaborn
-  - matplotlib
-  - PyYAML
   - black
   - twine
   - pytest
   - pytest-cov
-  - pyarrow
-  - sqlalchemy
-  - psycopg2
-  - pymysql
-  - pyspark
   - pylint
   - pip
   - pip:
     - pdoc
-    - data_algebra
-    - vtreat
-    - google.cloud
-    - google-cloud-bigquery
-
+    - IPython
+    - nbformat
+    - nbconvert
+    - pdfkit
+ 

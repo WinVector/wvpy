@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: wvpy
 Version: 0.3.6
-Summary: Simple utilities for teaching Pandas and scikit learn.
+Summary: Convert Jupyter notebooks to and from Python files.
 Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
 Author-email: jmount@win-vector.com
@@ -22,6 +22,6 @@ Provides-Extra: code_format
 License-File: LICENSE
 
 
-Simple utilities for teaching Pandas, Jupyter, seaborn, and sklearn.
+Convert Jupyter notebooks to and from Python files.
 
 

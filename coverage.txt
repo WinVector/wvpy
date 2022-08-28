@@ -1,34 +1,20 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.7, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-3.0.0
-collected 20 items
+collected 4 items
 
-tests/test_cross_plan1.py .                                              [  5%]
-tests/test_cross_predict.py ..                                           [ 15%]
-tests/test_deviance_calc.py .                                            [ 20%]
-tests/test_eval_fn_pre_row.py .                                          [ 25%]
-tests/test_match_auc.py .                                                [ 30%]
-tests/test_nb_fns.py ....                                                [ 50%]
-tests/test_onehot.py ..                                                  [ 60%]
-tests/test_perm_score_vars.py .                                          [ 65%]
-tests/test_plots.py .                                                    [ 70%]
-tests/test_se.py .                                                       [ 75%]
-tests/test_search_grid.py ..                                             [ 85%]
-tests/test_stats1.py .                                                   [ 90%]
-tests/test_threshold_stats.py .                                          [ 95%]
-tests/test_typs_in_frame.py .                                            [100%]
+tests/test_nb_fns.py ....                                                [100%]
 
----------- coverage: platform darwin, python 3.9.7-final-0 -----------
+---------- coverage: platform darwin, python 3.9.12-final-0 ----------
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
 wvpy/jtools.py              206     76    63%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
-wvpy/util.py                321      7    98%
 ---------------------------------------------
-TOTAL                       683    236    65%
+TOTAL                       362    229    37%
 
 
-============================= 20 passed in 12.71s ==============================
+============================== 4 passed in 8.92s ===============================

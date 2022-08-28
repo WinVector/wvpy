@@ -1,9 +1,9 @@
 # setup.py
 import setuptools
 
-DESCRIPTION = "Simple utilities for teaching Pandas and scikit learn."
+DESCRIPTION = "Convert Jupyter notebooks to and from Python files."
 LONG_DESCRIPTION = """
-Simple utilities for teaching Pandas, Jupyter, seaborn, and sklearn.
+Convert Jupyter notebooks to and from Python files.
 """
 
 setuptools.setup(
@@ -14,13 +14,6 @@ setuptools.setup(
     url="https://github.com/WinVector/wvpy",
     packages=setuptools.find_packages(exclude=['tests', 'Examples']),
     install_requires=[
-        "numpy",
-        "pandas",
-        "sklearn",
-        "seaborn",
-        "matplotlib",
-        "vtreat>=1.1.1",
-        "data_algebra>=1.2.0",
         "IPython",
         "nbformat",
         "nbconvert"
