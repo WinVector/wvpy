@@ -24,11 +24,11 @@ Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
 wvpy/jtools.py              206     76    63%
-wvpy/pysheet.py              91     91     0%
-wvpy/render_workbook.py      47     47     0%
+wvpy/pysheet.py              99     99     0%
+wvpy/render_workbook.py      54     54     0%
 wvpy/util.py                321      7    98%
 ---------------------------------------------
-TOTAL                       668    221    67%
+TOTAL                       683    236    65%
 
 
-============================= 20 passed in 13.26s ==============================
+============================= 20 passed in 12.71s ==============================
