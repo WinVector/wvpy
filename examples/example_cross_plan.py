@@ -1,6 +1,6 @@
 
-import wvpy.util
+import wvu.util
 
-wvpy.util.mk_cross_plan(10, 3)
+wvu.util.mk_cross_plan(10, 3)
 
 
