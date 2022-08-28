@@ -1,5 +1,5 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.12, pytest-7.1.1, pluggy-1.0.0
+platform darwin -- Python 3.9.12, pytest-7.1.2, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-3.0.0
 collected 4 items
@@ -17,4 +17,4 @@ wvpy/render_workbook.py      54     54     0%
 TOTAL                       362    229    37%
 
 
-============================== 4 passed in 8.92s ===============================
+============================== 4 passed in 9.13s ===============================
