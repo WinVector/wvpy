@@ -1,7 +1,7 @@
 
 <a href="https://github.com/WinVector/wvpy">wvpy</a> tools for converting Jupyter notebooks to and from Python files.
 
-Text and video tutotials here: [https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/](https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/).
+Video tutorial here: <a href="https://youtu.be/cQ-tCwD4moc">here</a>.
 
 Many of the data science functions have been moved to wvu [https://github.com/WinVector/wvu](https://github.com/WinVector/wvu).
 
@@ -15,9 +15,8 @@ Many of the data science functions have been moved to wvu [https://github.com/Wi
 
 The above issues are fortunately all <em>inessential difficulties</em>. Python is a very code-oriented work environment, so most tools expose a succinct programable interface. The tooling exposed by the Python packages <a href="https://pypi.org/project/ipython/">IPython</a>, <a href="https://pypi.org/project/nbformat/">nbformat</a>, and <a href="https://pypi.org/project/nbconvert/">nbconvert</a> are very powerful and convenient. With only a little organizing code we were able to build a very powerful personal data science workflow that we have found works very well for clients.
 
-We share this small amount of code in the package <a href="https://pypi.org/project/wvpy/">wvpy</a>. This is easiest to demonstrate in action, both in <a href="https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/">this article</a> and in a video demonstration <a href="https://youtu.be/cQ-tCwD4moc">here</a>.
 
-The first feature is: converting Jupyter notebooks (which are JSON files ending with a <code>.ipynb</code> suffix) to and from simple Python code that is more compatible with source control (such as Git).
+The first wvpy feature is: converting Jupyter notebooks (which are JSON files ending with a <code>.ipynb</code> suffix) to and from simple Python code that is more compatible with source control (such as Git).
 
 Let's start with a simple example Jupyter notebook: <a href="https://github.com/WinVector/wvpy/blob/main/examples/worksheets/plot.ipynb">plot.ipynb</a>. If we install (using a shell such as bask, or zsh) <a href="https://github.com/WinVector/wvpy">wvpy</a> <a href="https://pypi.org/project/wvpy/">from PyPi</a>.
 
