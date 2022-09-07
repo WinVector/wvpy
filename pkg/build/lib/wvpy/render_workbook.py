@@ -77,8 +77,8 @@ if __name__ == '__main__':
         assert len(args.infile) > 0
         assert len(set(args.infile)) == len(args.infile)
         ret = render_workbook(
-            quiet=quiet,
-            strip_input=strip_input,
+            quiet=args.quiet,
+            strip_input=args.strip_input,
             infiles=args.infile,
         )
         sys.exit(ret)
