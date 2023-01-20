@@ -8,10 +8,10 @@ from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_not
 
 # Was seeing:
 # nbconvert/filters/ansi.py:60: DeprecationWarning: 'jinja2.escape' is deprecated and will be removed in Jinja 3.1. Import 'markupsafe.escape' instead.
-@pytest.mark.filterwarnings("ignore:")
+# @pytest.mark.filterwarnings("ignore:")
 def test_jupyter_notebook_good():
-    orig_wd = os.getcwd()
     source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
     os.chdir(source_dir)
     render_as_html(
         "example_good_notebook.ipynb"
@@ -21,12 +21,9 @@ def test_jupyter_notebook_good():
     os.chdir(orig_wd)
 
 
-# Was seeing:
-# nbconvert/filters/ansi.py:60: DeprecationWarning: 'jinja2.escape' is deprecated and will be removed in Jinja 3.1. Import 'markupsafe.escape' instead.
-@pytest.mark.filterwarnings("ignore:")
 def test_jupyter_notebook_bad():
-    orig_wd = os.getcwd()
     source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
     os.chdir(source_dir)
     with pytest.raises(CellExecutionError):
         render_as_html(
@@ -57,10 +54,10 @@ txt2
  + 4)
 """
 
-@pytest.mark.filterwarnings("ignore:")
+# @pytest.mark.filterwarnings("ignore:")
 def test_jupyter_notebook_parameterized_good():
-    orig_wd = os.getcwd()
     source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
     os.chdir(source_dir)
     render_as_html(
         "example_parameterized_notebook.ipynb",
@@ -74,5 +71,6 @@ def test_jupyter_notebook_parameterized_good():
 def test_nb_convert():
     nb = convert_py_code_to_notebook(ex_txt)
     res_txt = convert_notebook_code_to_py(nb)
-    # TODO: compare to orignal text
+    assert isinstance(res_txt, str)
+    # TODO: compare to original text
     

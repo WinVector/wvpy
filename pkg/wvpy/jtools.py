@@ -1,4 +1,5 @@
 
+"""Jupyter tools"""
 
 import re
 import datetime
@@ -69,7 +70,6 @@ def convert_py_code_to_notebook(
     end_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*#\s*end\s+text\s*$")
     end_code_regexp = re.compile(r"(^\s*r?'''\s*end\s+code\s*'''\s*$)|(^\s*r?\"\"\"\s*end\s+code\s*\"\"\"\s*$)")
     nbf_v = nbformat.v4
-    nb = nbf_v.new_notebook()
     # run a little code collecting state machine
     cells = []
     collecting_python = []
@@ -110,7 +110,8 @@ def convert_py_code_to_notebook(
                 collecting_python.append(line)
             if collecting_text is not None:
                 collecting_text.append(line)
-    nb['cells'] = cells
+    nb = nbf_v.new_notebook(cells=cells)
+    nb = nbformat.validator.normalize(nb)[1]
     return nb
 
 
@@ -127,8 +128,11 @@ def prepend_code_cell_to_notebook(
     :return: new notebook
     """
     nbf_v = nbformat.v4
-    nb_out = nbf_v.new_notebook()
-    nb_out['cells'] = [nbf_v.new_code_cell(code_text)] + list(nb.cells)
+    cells = [nbf_v.new_code_cell(code_text)] + list(nb.cells)
+    nb_out = nbf_v.new_notebook(
+        cells=cells
+    )
+    nb_out = nbformat.validator.normalize(nb_out)[1]
     return nb_out
 
 
@@ -344,13 +348,36 @@ class JTask:
         output_suffix: Optional[str] = None,
         exclude_input: bool = True,
         init_code: Optional[str] = None,
-        path_prefix: str = "",
+        path_prefix: Optional[str] = None,
+        strict: bool = True,
     ) -> None:
+        """
+        Create a Jupyter task.
+
+        :param sheet_name: name of sheet to run can be .ipynb or .py, and suffix can be omitted.
+        :param output_suffix: optional string to append to rendered HTML file name.
+        :param exclude_input: if True strip input cells out of HTML render.
+        :param init_code: optional code to insert at the top of the Jupyter sheet, used to pass parameters.
+        :param path_prefix: optional prefix to add to sheet_name to find Jupyter source. 
+        :param strict: if True check paths path_prefix and path_prefix/sheetname[.py|.ipynb] exist.
+        """
         assert isinstance(sheet_name, str)
         assert isinstance(output_suffix, (str, type(None)))
         assert isinstance(exclude_input, bool)
         assert isinstance(init_code, (str, type(None)))
-        assert isinstance(path_prefix, str)
+        assert isinstance(path_prefix, (str, type(None)))
+        if strict:
+            path = sheet_name
+            if (isinstance(path_prefix, str)) and (len(path_prefix) > 9):
+                assert os.path.exists(path_prefix)
+                path = os.path.join(path_prefix, sheet_name)
+            if path.endswith(".py"):
+                path = path.removesuffix(".py")
+            if path.endswith(".ipynb"):
+                path = path.removesuffix(".ipynb")
+            py_exists = os.path.exists(path + ".py")
+            ipynb_exists = os.path.exists(path + ".ipynb")
+            assert (py_exists + ipynb_exists) == 1
         self.sheet_name = sheet_name
         self.output_suffix = output_suffix
         self.exclude_input = exclude_input
@@ -368,8 +395,11 @@ def job_fn(arg: JTask):
     assert isinstance(arg, JTask)
     # render notebook
     try:
+        path = arg.sheet_name
+        if isinstance(arg.path_prefix, str) and (len(arg.path_prefix) > 0):
+            path = os.path.join(arg.path_prefix, arg.sheet_name)
         render_as_html(
-            arg.path_prefix + arg.sheet_name,
+            path,
             exclude_input=arg.exclude_input,
             output_suffix=arg.output_suffix,
             init_code=arg.init_code,
