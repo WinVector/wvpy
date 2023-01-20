@@ -1,20 +1,34 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.12, pytest-7.1.2, pluggy-1.0.0
+platform darwin -- Python 3.9.16, pytest-7.1.2, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-3.0.0
 collected 4 items
 
 tests/test_nb_fns.py ....                                                [100%]
 
----------- coverage: platform darwin, python 3.9.12-final-0 ----------
+=============================== warnings summary ===============================
+../../../../opt/anaconda3/envs/wvpy_dev_env/lib/python3.9/site-packages/jupyter_client/connect.py:27
+  /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.9/site-packages/jupyter_client/connect.py:27: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+  given by the platformdirs library.  To remove this warning and
+  see the appropriate new directories, set the environment variable
+  `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
+  The use of platformdirs will be the default in `jupyter_core` v6
+    from jupyter_core.paths import jupyter_data_dir
+
+tests/test_nb_fns.py::test_jupyter_notebook_parameterized_good
+  /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.9/site-packages/nbformat/v4/nbbase.py:40: MissingIDFieldWarning: Code cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+    return validate_orig(node, ref=ref, version=nbformat)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform darwin, python 3.9.16-final-0 ----------
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              206     76    63%
+wvpy/jtools.py              223     91    59%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
 ---------------------------------------------
-TOTAL                       362    229    37%
+TOTAL                       379    244    36%
 
-
-============================== 4 passed in 10.52s ==============================
+======================== 4 passed, 2 warnings in 8.72s =========================
