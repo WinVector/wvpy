@@ -73,4 +73,3 @@ def test_nb_convert():
     res_txt = convert_notebook_code_to_py(nb)
     assert isinstance(res_txt, str)
     # TODO: compare to original text
-    
