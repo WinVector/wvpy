@@ -25,8 +25,9 @@ except ModuleNotFoundError:
 
 nbf_v = nbformat.v4
 
-def _normalize(nb):
-    return nbformat.validator.normalize(nb, version=4, version_minor=5)[1]
+#def _normalize(nb):
+#    # try and work around version mismatches
+#    return nbformat.validator.normalize(nb, version=4, version_minor=5)[1]
 
 
 # noinspection PyBroadException
@@ -117,7 +118,7 @@ def convert_py_code_to_notebook(
     for i in range(len(cells)):
         cells[i]["id"] = f"cell{i}"
     nb = nbf_v.new_notebook(cells=cells)
-    nb = _normalize(nb)
+    # nb = _normalize(nb)
     return nb
 
 
@@ -144,7 +145,7 @@ def prepend_code_cell_to_notebook(
     nb_out = nbf_v.new_notebook(
         cells=cells
     )
-    nb_out = _normalize(nb_out)
+    # nb_out = _normalize(nb_out)
     return nb_out
 
 

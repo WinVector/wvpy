@@ -1,14 +1,37 @@
 
 import os
 import pytest
-from nbconvert.preprocessors.execute import CellExecutionError
+import warnings
+
+# importing nbconvert components such as nbconvert.preprocessors.execute
+# while in pytest causes the following warning:
+#
+# jupyter_client/connect.py:27: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+#   given by the platformdirs library.  To remove this warning and
+#   see the appropriate new directories, set the environment variable
+#   `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
+#   The use of platformdirs will be the default in `jupyter_core` v6
+#     from jupyter_core.paths import jupyter_data_dir
+# -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+#
+# likely this is from some environment isolation set up by pytest
+# the same code does not warn when executing directly
+#
+# so we are going to trigger the warning on first import, so it is caught
+# and does not reoccur when we import wvpy.jtools components
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from nbconvert.preprocessors.execute import CellExecutionError  # even importing this causes warning
 
 from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py
 
 
-# Was seeing:
-# nbconvert/filters/ansi.py:60: DeprecationWarning: 'jinja2.escape' is deprecated and will be removed in Jinja 3.1. Import 'markupsafe.escape' instead.
-# @pytest.mark.filterwarnings("ignore:")
+# confirm we have not killed all warnings
+def test_still_warns_even_after_monkeying():
+    with pytest.warns(DeprecationWarning):
+        warnings.warn(DeprecationWarning("test warning"))
+
+
 def test_jupyter_notebook_good():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
@@ -54,7 +77,7 @@ txt2
  + 4)
 """
 
-# @pytest.mark.filterwarnings("ignore:")
+
 def test_jupyter_notebook_parameterized_good():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
