@@ -8,7 +8,7 @@ Convert Jupyter notebooks to and from Python files.
 
 setuptools.setup(
     name="wvpy",
-    version="0.3.8",
+    version="0.3.9",
     author="John Mount",
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
