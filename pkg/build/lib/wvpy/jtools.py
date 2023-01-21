@@ -23,6 +23,12 @@ try:
 except ModuleNotFoundError:
     pass
 
+nbf_v = nbformat.v4
+
+#def _normalize(nb):
+#    # try and work around version mismatches
+#    return nbformat.validator.normalize(nb, version=4, version_minor=5)[1]
+
 
 # noinspection PyBroadException
 def pretty_format_python(python_txt: str, *, black_mode=None) -> str:
@@ -69,7 +75,6 @@ def convert_py_code_to_notebook(
     begin_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*begin\s+text\s*$")
     end_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*#\s*end\s+text\s*$")
     end_code_regexp = re.compile(r"(^\s*r?'''\s*end\s+code\s*'''\s*$)|(^\s*r?\"\"\"\s*end\s+code\s*\"\"\"\s*$)")
-    nbf_v = nbformat.v4
     # run a little code collecting state machine
     cells = []
     collecting_python = []
@@ -110,8 +115,10 @@ def convert_py_code_to_notebook(
                 collecting_python.append(line)
             if collecting_text is not None:
                 collecting_text.append(line)
+    for i in range(len(cells)):
+        cells[i]["id"] = f"cell{i}"
     nb = nbf_v.new_notebook(cells=cells)
-    nb = nbformat.validator.normalize(nb)[1]
+    # nb = _normalize(nb)
     return nb
 
 
@@ -127,12 +134,18 @@ def prepend_code_cell_to_notebook(
     :param code_text: Python source code to add
     :return: new notebook
     """
-    nbf_v = nbformat.v4
-    cells = [nbf_v.new_code_cell(code_text)] + list(nb.cells)
+    header_cell = nbf_v.new_code_cell(code_text)
+    # set cell ids to avoid:
+    # "MissingIDFieldWarning: Code cell is missing an id field, this will become a hard error in future nbformat versions."
+    header_cell["id"] = "wvpy_header_cell"
+    orig_cells = [c.copy() for c in nb.cells]
+    for i in range(len(orig_cells)):
+        orig_cells[i]["id"] = f"cell{i}"
+    cells = [header_cell] + orig_cells
     nb_out = nbf_v.new_notebook(
         cells=cells
     )
-    nb_out = nbformat.validator.normalize(nb_out)[1]
+    # nb_out = _normalize(nb_out)
     return nb_out
 
 
@@ -288,7 +301,7 @@ def render_as_html(
     else:
         raise ValueError('{ipynb_exists}: file must end with .py or .ipynb')
     # do the conversion
-    if init_code is not None:
+    if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(
             nb, 
