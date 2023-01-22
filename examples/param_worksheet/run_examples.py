@@ -5,6 +5,7 @@ from multiprocessing import Pool
 from wvpy.jtools import JTask, job_fn
 import imgkit
 import pdfkit
+import pprint
 
 
 if __name__ == "__main__":
@@ -25,6 +26,8 @@ worksheet_params = {repr(value_map)}
             {"n": 15, "d": datetime.date(2022, 8, 20)}, 
         ]
     ]
+    print("starting tasks:")
+    pprint.pprint(tasks)
     # do the work
     with Pool(4) as p:
         p.map(job_fn, tasks)

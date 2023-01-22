@@ -8,6 +8,7 @@ import nbformat
 import nbconvert.preprocessors
 
 from typing import Optional
+from functools import total_ordering
 
 have_pdf_kit = False
 try:
@@ -355,6 +356,7 @@ def render_as_html(
         print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
 
 
+@total_ordering
 class JTask:
     def __init__(
         self,
@@ -410,15 +412,43 @@ class JTask:
             init_code=self.init_code,
         )
 
+    def __getitem__(self, item):
+         return getattr(self, item)
+
+    def _is_valid_operand(self, other):
+        return isinstance(other, JTask)
+
+    def __eq__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        if str(type(self)) != str(type(other)):
+            return False
+        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+            if self[v] != other[v]:
+                return False
+        return True
+
+    def __lt__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        if str(type(self)) < str(type(other)):
+            return True
+        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+            v_self = self[v]
+            v_other = other[v]
+            # can't order compare None to None
+            if ((v_self is None) or (v_other is None)) and ((v_self is None) != (v_other is None)):
+                return v_self is None
+            if self[v] < other[v]:
+                return True
+        return False
+    
     def __str__(self) -> str:
         args_str = ",\n".join([
-            f" 'sheet_name': {repr(self.sheet_name)}",
-            f" 'output_suffix': {repr(self.output_suffix)}",
-            f" 'exclude_input': {repr(self.exclude_input)}",
-            f" 'init_code': {repr(self.init_code)}",
-            f" 'path_prefix': {repr(self.path_prefix)}",
+            f" {v}= {repr(self[v])}"
+            for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
         ])
-        return 'JTask(**{\n' + args_str + ",\n})"
+        return 'JTask(\n' + args_str + ",\n)"
 
     def __repr__(self) -> str:
         return self.__str__()
