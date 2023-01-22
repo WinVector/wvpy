@@ -14,7 +14,12 @@ if __name__ == "__main__":
             sheet_name="ParamExample",
             output_suffix=f"_{d}",
             exclude_input=True,
-            init_code=f'import datetime\ndate = {d.__repr__()}',
+            init_code=f"""
+import datetime
+worksheet_params = dict(
+    date= {d.__repr__()},
+)
+""",
         )
         for d in [datetime.date(2022, 8, 18), datetime.date(2022, 8, 19), datetime.date(2022, 8, 20)]
     ]
