@@ -13,17 +13,17 @@ if __name__ == "__main__":
     tasks = [
         JTask(
             sheet_name="ParamExample",
-            output_suffix=f"_{value_map['d']}_{value_map['n']}",
+            output_suffix=f"_{value_map['n']}_{value_map['run_date']}",
             exclude_input=True,
             init_code=f"""
 import datetime
 worksheet_params = {repr(value_map)}
-""", strict=False
+""",
         )
         for value_map in [
-            {"n": 5, "d": datetime.date(2022, 8, 18)}, 
-            {"n": 10, "d": datetime.date(2022, 8, 19)}, 
-            {"n": 15, "d": datetime.date(2022, 8, 20)}, 
+            {"n": 5, "run_date": datetime.date(2022, 8, 18)}, 
+            {"n": 10, "run_date": datetime.date(2022, 8, 19)}, 
+            {"n": 15, "run_date": datetime.date(2022, 8, 20)}, 
         ]
     ]
     print("starting tasks:")
