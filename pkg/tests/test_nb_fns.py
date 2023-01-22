@@ -2,6 +2,7 @@
 import os
 import pytest
 import warnings
+import multiprocessing
 
 # importing nbconvert components such as nbconvert.preprocessors.execute
 # while in pytest causes the following warning:
@@ -23,7 +24,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from nbconvert.preprocessors.execute import CellExecutionError  # even importing this causes warning
 
-from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py
+from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py, JTask, job_fn
 
 
 # confirm we have not killed all warnings
@@ -55,6 +56,61 @@ def test_jupyter_notebook_bad():
     os.chdir(orig_wd)
 
 
+def test_jupyter_notebook_parameterized_good():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    render_as_html(
+        "example_parameterized_notebook.ipynb",
+        init_code='x = 2',
+    )
+    os.remove("example_parameterized_notebook.html")
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
+
+def test_jupyter_notebook_parameterized_bad():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    with pytest.raises(CellExecutionError):
+        render_as_html(
+            "example_parameterized_notebook.ipynb",
+        )
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
+
+def test_jtask_param_good():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    task = JTask(
+        "example_parameterized_notebook.ipynb",
+        init_code='x = 2',
+        output_suffix="_z",
+    )
+    with multiprocessing.Pool(2) as p:
+        p.map(job_fn, [task])
+    os.remove("example_parameterized_notebook_z.html")
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
+
+def test_jtask_param_bad():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    task = JTask(
+        "example_parameterized_notebook.ipynb",
+        init_code='x = 1',
+    )
+    with pytest.raises(CellExecutionError):
+        with multiprocessing.Pool(2) as p:
+            p.map(job_fn, [task])
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
 
 ex_txt = """
 1 + 2
@@ -76,19 +132,6 @@ txt2
 (3
  + 4)
 """
-
-
-def test_jupyter_notebook_parameterized_good():
-    source_dir = os.path.dirname(os.path.realpath(__file__))
-    orig_wd = os.getcwd()
-    os.chdir(source_dir)
-    render_as_html(
-        "example_parameterized_notebook.ipynb",
-        init_code='x = 2',
-    )
-    os.remove("example_parameterized_notebook.html")
-    # want the raised issue if not present
-    os.chdir(orig_wd)
 
 
 def test_nb_convert():

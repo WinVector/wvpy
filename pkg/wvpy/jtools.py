@@ -289,6 +289,7 @@ def render_as_html(
         else:
             notebook_file_name = notebook_file_name + '.py'
     # get the input
+    assert os.path.exists(notebook_file_name)
     if notebook_file_name.endswith(".ipynb"):
         suffix = ".ipynb"
         with open(notebook_file_name, "rb") as f:
@@ -358,6 +359,7 @@ class JTask:
     def __init__(
         self,
         sheet_name: str,
+        *,
         output_suffix: Optional[str] = None,
         exclude_input: bool = True,
         init_code: Optional[str] = None,
@@ -397,25 +399,47 @@ class JTask:
         self.init_code = init_code
         self.path_prefix = path_prefix
 
+    def render_as_html(self) -> None:
+        path = self.sheet_name
+        if isinstance(self.path_prefix, str) and (len(self.path_prefix) > 0):
+            path = os.path.join(self.path_prefix, self.sheet_name)
+        render_as_html(
+            path,
+            exclude_input=self.exclude_input,
+            output_suffix=self.output_suffix,
+            init_code=self.init_code,
+        )
+
     def __str__(self) -> str:
-        return f'JTask(sheet_name="{self.sheet_name}", output_suffix="{self.output_suffix}", exclude_input="{self.exclude_input}", init_code="""{self.init_code}""", path_prefix="{self.path_prefix}")'
+        args_str = ",\n".join([
+            f" 'sheet_name': {repr(self.sheet_name)}",
+            f" 'output_suffix': {repr(self.output_suffix)}",
+            f" 'exclude_input': {repr(self.exclude_input)}",
+            f" 'init_code': {repr(self.init_code)}",
+            f" 'path_prefix': {repr(self.path_prefix)}",
+        ])
+        return 'JTask(**{\n' + args_str + ",\n})"
 
     def __repr__(self) -> str:
         return self.__str__()
 
 
 def job_fn(arg: JTask):
+    """
+    Function to run a JTask job
+    """
+    assert isinstance(arg, JTask)
+    # render notebook
+    arg.render_as_html()
+
+
+def job_fn_eat_exception(arg: JTask):
+    """
+    Function to run a JTask job, eating any exception
+    """
     assert isinstance(arg, JTask)
     # render notebook
     try:
-        path = arg.sheet_name
-        if isinstance(arg.path_prefix, str) and (len(arg.path_prefix) > 0):
-            path = os.path.join(arg.path_prefix, arg.sheet_name)
-        render_as_html(
-            path,
-            exclude_input=arg.exclude_input,
-            output_suffix=arg.output_suffix,
-            init_code=arg.init_code,
-        )
+        arg.render_as_html()
     except Exception as e:
         print(f"{arg} caught {e}")
