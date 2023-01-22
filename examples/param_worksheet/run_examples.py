@@ -30,5 +30,5 @@ worksheet_params = dict(
     for fname in os.listdir():
         if fname.startswith('ParamExample_') and fname.endswith('.html'):
             imgkit.from_file(fname, fname.removesuffix('.html') + ".png")
-            pdfkit.from_file(fname, fname.removesuffix('.html') + ".pdf")
+            # pdfkit.from_file(fname, fname.removesuffix('.html') + ".pdf")
     
