@@ -90,6 +90,10 @@ def test_jtask_param_good():
         init_code='x = 2',
         output_suffix="_z",
     )
+    task_str = str(task)
+    assert isinstance(task_str, str)
+    back = eval(task_str)
+    assert task == back
     with multiprocessing.Pool(2) as p:
         p.map(job_fn, [task])
     os.remove("example_parameterized_notebook_z.html")
