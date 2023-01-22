@@ -12,16 +12,18 @@ if __name__ == "__main__":
     tasks = [
         JTask(
             sheet_name="ParamExample",
-            output_suffix=f"_{d}",
+            output_suffix=f"_{value_map['d']}_{value_map['n']}",
             exclude_input=True,
             init_code=f"""
 import datetime
-worksheet_params = dict(
-    date= {d.__repr__()},
-)
-""",
+worksheet_params = {repr(value_map)}
+""", strict=False
         )
-        for d in [datetime.date(2022, 8, 18), datetime.date(2022, 8, 19), datetime.date(2022, 8, 20)]
+        for value_map in [
+            {"n": 5, "d": datetime.date(2022, 8, 18)}, 
+            {"n": 10, "d": datetime.date(2022, 8, 19)}, 
+            {"n": 15, "d": datetime.date(2022, 8, 20)}, 
+        ]
     ]
     # do the work
     with Pool(4) as p:
