@@ -15,8 +15,12 @@ Many of the data science functions have been moved to wvu [https://github.com/Wi
 
 The above issues are fortunately all <em>inessential difficulties</em>. Python is a very code-oriented work environment, so most tools expose a succinct programable interface. The tooling exposed by the Python packages <a href="https://pypi.org/project/ipython/">IPython</a>, <a href="https://pypi.org/project/nbformat/">nbformat</a>, and <a href="https://pypi.org/project/nbconvert/">nbconvert</a> are very powerful and convenient. With only a little organizing code we were able to build a very powerful personal data science workflow that we have found works very well for clients.
 
+The two features wvpy provides are:
 
-The first wvpy feature is: converting Jupyter notebooks (which are JSON files ending with a <code>.ipynb</code> suffix) to and from simple Python code that is more compatible with source control (such as Git).
+  * Converting Juypter notebooks to/from vanilla Python files. We have an article on the technique [here](https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/), and a short video demonstration [here](https://youtu.be/cQ-tCwD4moc).
+  * Running many Jupyter notebooks with many different inputs, or *parameterized*. We have a short video on the technique [here](w92jsKubNCk).
+
+The first wvpy feature is: converting Jupyter notebooks (which are JSON files ending with a <code>.ipynb</code> suffix) to and from simple Python code that is more compatible with source control (such as Git). A video describing
 
 Let's start with a simple example Jupyter notebook: <a href="https://github.com/WinVector/wvpy/blob/main/examples/worksheets/plot.ipynb">plot.ipynb</a>. If we install (using a shell such as bask, or zsh) <a href="https://github.com/WinVector/wvpy">wvpy</a> <a href="https://pypi.org/project/wvpy/">from PyPi</a>.
 
