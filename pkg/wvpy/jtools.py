@@ -6,8 +6,10 @@ import datetime
 import os
 import nbformat
 import nbconvert.preprocessors
+from multiprocessing import Pool
+import sys
 
-from typing import Optional
+from typing import Iterable, Optional
 from functools import total_ordering
 
 have_pdf_kit = False
@@ -454,7 +456,7 @@ class JTask:
         return self.__str__()
 
 
-def job_fn(arg: JTask):
+def job_fn(arg: JTask) -> None:
     """
     Function to run a JTask job
     """
@@ -463,7 +465,7 @@ def job_fn(arg: JTask):
     arg.render_as_html()
 
 
-def job_fn_eat_exception(arg: JTask):
+def job_fn_eat_exception(arg: JTask) -> None:
     """
     Function to run a JTask job, eating any exception
     """
@@ -473,3 +475,50 @@ def job_fn_eat_exception(arg: JTask):
         arg.render_as_html()
     except Exception as e:
         print(f"{arg} caught {e}")
+
+
+def run_pool(
+        tasks: Iterable, 
+        *, 
+        njobs: int = 4,
+        verbose: bool = True,
+        stop_on_error: bool = True,
+        ) -> None:
+    """
+    Run a pool of tasks.
+
+    :param tasks: iterable of tasks
+    :param njobs: degree of parallelism
+    :param verbose: if True, print on failure
+    :param stop_on_error: if True, stop pool on error
+    """
+    tasks = list(tasks)
+    assert isinstance(njobs, int)
+    assert njobs > 0
+    assert isinstance(verbose, bool)
+    assert isinstance(stop_on_error, bool)
+    if len(tasks) <= 0:
+        return
+    for task in tasks:
+        assert isinstance(task, JTask)
+    if stop_on_error:
+        # # complex way, allowing a stop on job failure
+        # https://stackoverflow.com/a/25791961/6901725
+        with Pool(njobs) as pool:
+            try:
+                list(pool.imap_unordered(job_fn, tasks))  # list is forcing iteration over tasks for side-effects
+            except Exception:
+                if verbose:
+                    sys.stdout.flush()
+                    print("!!! run_pool: a worker raised an Exception, aborting...")
+                    sys.stdout.flush()
+                pool.close()
+                pool.terminate()
+                raise  # re-raise Exception
+            else:
+                pool.close()
+                pool.join()
+    else:
+        # simple way, but doesn't exit until all jobs succeed or fail
+        with Pool(njobs) as pool:
+            pool.map(job_fn_eat_exception, tasks)

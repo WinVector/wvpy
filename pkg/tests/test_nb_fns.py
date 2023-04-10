@@ -24,7 +24,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from nbconvert.preprocessors.execute import CellExecutionError  # even importing this causes warning
 
-from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py, JTask, job_fn
+from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py, JTask, job_fn, run_pool
 
 
 # confirm we have not killed all warnings
@@ -52,6 +52,41 @@ def test_jupyter_notebook_bad():
     with pytest.raises(CellExecutionError):
         render_as_html(
             "example_bad_notebook.ipynb"
+        )
+    os.chdir(orig_wd)
+
+
+def test_pool_completes_bad():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    tasks = [
+        JTask("example_good_notebook.ipynb"),
+        JTask("example_parameterized_notebook.ipynb"),
+    ]
+    run_pool(
+        tasks,
+        njobs=2,
+        verbose=False,
+        stop_on_error=False,
+    )
+    os.chdir(orig_wd)
+
+
+def test_pool_stops_bad():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    tasks = [
+        JTask("example_good_notebook.ipynb"),
+        JTask("example_parameterized_notebook.ipynb"),
+    ]
+    with pytest.raises(CellExecutionError):
+        run_pool(
+            tasks,
+            njobs=2,
+            verbose=False,
+            stop_on_error=True,
         )
     os.chdir(orig_wd)
 

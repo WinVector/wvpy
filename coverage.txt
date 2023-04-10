@@ -1,20 +1,20 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.16, pytest-7.1.2, pluggy-1.0.0
+platform darwin -- Python 3.11.2, pytest-7.1.2, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
-plugins: anyio-3.5.0, cov-3.0.0
-collected 8 items
+plugins: anyio-3.5.0, cov-4.0.0
+collected 10 items
 
-tests/test_nb_fns.py ........                                            [100%]
+tests/test_nb_fns.py ..........                                          [100%]
 
----------- coverage: platform darwin, python 3.9.16-final-0 ----------
+---------- coverage: platform darwin, python 3.11.2-final-0 ----------
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              262     80    69%
+wvpy/jtools.py              290     95    67%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
 ---------------------------------------------
-TOTAL                       418    233    44%
+TOTAL                       446    248    44%
 
 
-============================== 8 passed in 21.18s ==============================
+============================= 10 passed in 30.12s ==============================
