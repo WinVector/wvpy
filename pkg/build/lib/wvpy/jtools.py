@@ -5,11 +5,12 @@ import re
 import datetime
 import os
 import nbformat
-import nbconvert.preprocessors
+from nbconvert import HTMLExporter
+from nbconvert.preprocessors import ExecutePreprocessor
 from multiprocessing import Pool
 import sys
 
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional
 from functools import total_ordering
 
 have_pdf_kit = False
@@ -245,6 +246,36 @@ def convert_notebook_file_to_py(
         f.write(py_source)        
 
 
+class OurExecutor(ExecutePreprocessor):
+    """Catch exception in notebook processing"""
+    def __init__(self, **kw):
+        """Initialize the preprocessor."""
+        ExecutePreprocessor.__init__(self, **kw)
+        self.caught_exception = None
+    
+    def preprocess_cell(self, cell, resources, index):
+        """
+        Override if you want to apply some preprocessing to each cell.
+        Must return modified cell and resource dictionary.
+
+        Parameters
+        ----------
+        cell : NotebookNode cell
+            Notebook cell being processed
+        resources : dictionary
+            Additional resources used in the conversion process.  Allows
+            preprocessors to pass variables into the Jinja engine.
+        index : int
+            Index of the cell being processed
+        """
+        if self.caught_exception is None:
+            try:
+                return ExecutePreprocessor.preprocess_cell(self, cell, resources, index)
+            except Exception as ex:
+                self.caught_exception = ex
+        return cell, self.resources
+
+
 # https://nbconvert.readthedocs.io/en/latest/execute_api.html
 # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
 # HTML element we are trying to delete: 
@@ -329,13 +360,13 @@ def render_as_html(
                 f'start render_as_html "{notebook_file_name}" {exec_note} {datetime.datetime.now()}'
             )
         if kernel_name is not None:
-            ep = nbconvert.preprocessors.ExecutePreprocessor(
+            ep = OurExecutor(
                 timeout=timeout, kernel_name=kernel_name
             )
         else:
-            ep = nbconvert.preprocessors.ExecutePreprocessor(timeout=timeout)
+            ep = OurExecutor(timeout=timeout)
         nb_res, nb_resources = ep.preprocess(nb)
-        html_exporter = nbconvert.HTMLExporter(exclude_input=exclude_input)
+        html_exporter = HTMLExporter(exclude_input=exclude_input)
         html_body, html_resources = html_exporter.from_notebook_node(nb_res)
         if exclude_input and (prompt_strip_regexp is not None):
             # strip output prompts
@@ -350,6 +381,7 @@ def render_as_html(
             assert have_pdf_kit
             pdf_name = html_name.removesuffix('.html') + '.pdf'
             pdfkit.from_string(html_body, pdf_name)
+        caught = ep.caught_exception
     except Exception as e:
         caught = e
     if caught is not None:
@@ -456,25 +488,26 @@ class JTask:
         return self.__str__()
 
 
-def job_fn(arg: JTask) -> None:
+def job_fn(arg: JTask):
     """
-    Function to run a JTask job
+    Function to run a JTask job. Exceptions pass through
     """
     assert isinstance(arg, JTask)
     # render notebook
-    arg.render_as_html()
+    return arg.render_as_html()
 
 
-def job_fn_eat_exception(arg: JTask) -> None:
+def job_fn_eat_exception(arg: JTask):
     """
-    Function to run a JTask job, eating any exception
+    Function to run a JTask job, catching any exception and returning it as a value
     """
     assert isinstance(arg, JTask)
     # render notebook
     try:
-        arg.render_as_html()
+        return arg.render_as_html()
     except Exception as e:
         print(f"{arg} caught {e}")
+        return (arg, e)
 
 
 def run_pool(
@@ -483,7 +516,7 @@ def run_pool(
         njobs: int = 4,
         verbose: bool = True,
         stop_on_error: bool = True,
-        ) -> None:
+        ) -> List:
     """
     Run a pool of tasks.
 
@@ -506,7 +539,7 @@ def run_pool(
         # https://stackoverflow.com/a/25791961/6901725
         with Pool(njobs) as pool:
             try:
-                list(pool.imap_unordered(job_fn, tasks))  # list is forcing iteration over tasks for side-effects
+                res = list(pool.imap_unordered(job_fn, tasks))  # list is forcing iteration over tasks for side-effects
             except Exception:
                 if verbose:
                     sys.stdout.flush()
@@ -521,4 +554,5 @@ def run_pool(
     else:
         # simple way, but doesn't exit until all jobs succeed or fail
         with Pool(njobs) as pool:
-            pool.map(job_fn_eat_exception, tasks)
+            res = list(pool.map(job_fn_eat_exception, tasks))
+        return res
