@@ -37,6 +37,10 @@ def test_jupyter_notebook_good():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    try:
+        os.remove("example_good_notebook.html")
+    except FileNotFoundError:
+        pass
     render_as_html(
         "example_good_notebook.ipynb"
     )
@@ -49,10 +53,15 @@ def test_jupyter_notebook_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    try:
+        os.remove("example_bad_notebook.html")
+    except FileNotFoundError:
+        pass
     with pytest.raises(CellExecutionError):
         render_as_html(
             "example_bad_notebook.ipynb"
         )
+    os.remove("example_bad_notebook.html")
     os.chdir(orig_wd)
 
 
@@ -60,6 +69,11 @@ def test_pool_completes_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
     tasks = [
         JTask("example_good_notebook.ipynb"),
         JTask("example_parameterized_notebook.ipynb"),
@@ -70,6 +84,8 @@ def test_pool_completes_bad():
         verbose=False,
         stop_on_error=False,
     )
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        os.remove(nm)
     os.chdir(orig_wd)
 
 
@@ -77,6 +93,11 @@ def test_pool_stops_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
     tasks = [
         JTask("example_good_notebook.ipynb"),
         JTask("example_parameterized_notebook.ipynb"),
@@ -88,6 +109,8 @@ def test_pool_stops_bad():
             verbose=False,
             stop_on_error=True,
         )
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        os.remove(nm)
     os.chdir(orig_wd)
 
 
@@ -95,6 +118,10 @@ def test_jupyter_notebook_parameterized_good():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    try:
+        os.remove("example_parameterized_notebook.html")
+    except FileNotFoundError:
+        pass
     render_as_html(
         "example_parameterized_notebook.ipynb",
         init_code='x = 2',
@@ -108,10 +135,15 @@ def test_jupyter_notebook_parameterized_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    try:
+        os.remove("example_parameterized_notebook.html")
+    except FileNotFoundError:
+        pass
     with pytest.raises(CellExecutionError):
         render_as_html(
             "example_parameterized_notebook.ipynb",
         )
+    os.remove("example_parameterized_notebook.html")
     # want the raised issue if not present
     os.chdir(orig_wd)
 
@@ -129,6 +161,10 @@ def test_jtask_param_good():
     assert isinstance(task_str, str)
     back = eval(task_str)
     assert task == back
+    try:
+        os.remove("example_parameterized_notebook_z.html")
+    except FileNotFoundError:
+        pass
     with multiprocessing.Pool(2) as p:
         p.map(job_fn, [task])
     os.remove("example_parameterized_notebook_z.html")
@@ -140,6 +176,10 @@ def test_jtask_param_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
+    try:
+        os.remove("example_parameterized_notebook.html")
+    except FileNotFoundError:
+        pass
     task = JTask(
         "example_parameterized_notebook.ipynb",
         init_code='x = 1',
@@ -147,6 +187,7 @@ def test_jtask_param_bad():
     with pytest.raises(CellExecutionError):
         with multiprocessing.Pool(2) as p:
             p.map(job_fn, [task])
+    os.remove("example_parameterized_notebook.html")
     # want the raised issue if not present
     os.chdir(orig_wd)
 
