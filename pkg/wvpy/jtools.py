@@ -457,7 +457,7 @@ class JTask:
 
     def __eq__(self, other):
         if not self._is_valid_operand(other):
-            return NotImplemented
+            return False
         if str(type(self)) != str(type(other)):
             return False
         for v in _jtask_comparison_attributes:
