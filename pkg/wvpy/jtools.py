@@ -390,6 +390,9 @@ def render_as_html(
         print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
 
 
+_jtask_comparison_attributes = [
+    "sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
+
 @total_ordering
 class JTask:
     def __init__(
@@ -457,7 +460,7 @@ class JTask:
             return NotImplemented
         if str(type(self)) != str(type(other)):
             return False
-        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+        for v in _jtask_comparison_attributes:
             if self[v] != other[v]:
                 return False
         return True
@@ -467,20 +470,22 @@ class JTask:
             return NotImplemented
         if str(type(self)) < str(type(other)):
             return True
-        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+        for v in _jtask_comparison_attributes:
             v_self = self[v]
             v_other = other[v]
             # can't order compare None to None
-            if ((v_self is None) or (v_other is None)) and ((v_self is None) != (v_other is None)):
-                return v_self is None
-            if self[v] < other[v]:
-                return True
+            if ((v_self is None) or (v_other is None)):
+                if ((v_self is None) != (v_other is None)):
+                    return v_self is None
+            else:
+                if self[v] < other[v]:
+                    return True
         return False
     
     def __str__(self) -> str:
         args_str = ",\n".join([
             f" {v}= {repr(self[v])}"
-            for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
+            for v in _jtask_comparison_attributes
         ])
         return 'JTask(\n' + args_str + ",\n)"
 

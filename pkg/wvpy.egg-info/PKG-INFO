@@ -6,6 +6,9 @@ Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
 Author-email: jmount@win-vector.com
 License: License :: OSI Approved :: BSD 3-clause License
+Description: 
+        Convert Jupyter notebooks to and from Python files.
+        
 Platform: any
 Classifier: Intended Audience :: Science/Research
 Classifier: Programming Language :: Python
@@ -21,7 +24,3 @@ Classifier: License :: OSI Approved :: BSD License
 Description-Content-Type: text/markdown
 Provides-Extra: pdf_export
 Provides-Extra: code_format
-License-File: LICENSE
-
-
-Convert Jupyter notebooks to and from Python files.
