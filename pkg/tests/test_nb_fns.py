@@ -49,6 +49,41 @@ def test_jupyter_notebook_good():
     os.chdir(orig_wd)
 
 
+def test_jupyter_notebook_sheet_vars_good():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    try:
+        os.remove("example_sheet_vars_notebook.html")
+    except FileNotFoundError:
+        pass
+    render_as_html(
+        "example_sheet_vars_notebook.ipynb",
+        sheet_vars={'x': 7},
+    )
+    os.remove("example_sheet_vars_notebook.html")
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
+
+def test_jupyter_notebook_sheet_vars_bad():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    try:
+        os.remove("example_sheet_vars_notebook.html")
+    except FileNotFoundError:
+        pass
+    with pytest.raises(CellExecutionError):
+        render_as_html(
+            "example_sheet_vars_notebook.ipynb",
+            sheet_vars={'x': 4},  # wrong value!
+        )
+    os.remove("example_sheet_vars_notebook.html")
+    # want the raised issue if not present
+    os.chdir(orig_wd)
+
+
 def test_jupyter_notebook_bad():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
@@ -219,3 +254,16 @@ def test_nb_convert():
     res_txt = convert_notebook_code_to_py(nb)
     assert isinstance(res_txt, str)
     # TODO: compare to original text
+
+
+def test_JTask_basics():
+    t1 = JTask("example_good_notebook.ipynb", strict=False)
+    s1 = str(t1)
+    assert isinstance(s1, str)
+    r1 = t1.__repr__()
+    assert isinstance(r1, str)
+    t2 = JTask("example_good_notebook.ipynb", strict=False, sheet_vars={'x': 7})
+    s2 = str(t2)
+    assert isinstance(s2, str)
+    r2 = t2.__repr__()
+    assert isinstance(r2, str)
