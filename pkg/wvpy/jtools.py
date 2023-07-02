@@ -347,11 +347,12 @@ def render_as_html(
             pickle.dump(sheet_vars, file=ntf)
         if (init_code is None) or (len(init_code) <= 0):
             init_code = ""
-        init_code = f"""
+        pickle_code = f"""
 import pickle
 with open({tmp_path.__repr__()}, 'rb') as pf:
    sheet_vars = pickle.load(pf)
-""" + "\n\n" + init_code
+""" 
+        init_code = init_code + "\n\n" + pickle_code
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(
