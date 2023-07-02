@@ -1,14 +1,14 @@
 # setup.py
 import setuptools
 
-DESCRIPTION = "Convert Jupyter notebooks to and from Python files."
+DESCRIPTION = "Convert Jupyter notebooks to and from Python files, and render."
 LONG_DESCRIPTION = """
-Convert Jupyter notebooks to and from Python files.
+Convert Jupyter notebooks to and from Python files, and render.
 """
 
 setuptools.setup(
     name="wvpy",
-    version="0.4.2",
+    version="0.4.3",
     author="John Mount",
     author_email="jmount@win-vector.com",
     url="https://github.com/WinVector/wvpy",
