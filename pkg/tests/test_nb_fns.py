@@ -60,6 +60,7 @@ def test_jupyter_notebook_sheet_vars_good():
     render_as_html(
         "example_sheet_vars_notebook.ipynb",
         sheet_vars={'x': 7},
+        init_code='y = 3',
     )
     os.remove("example_sheet_vars_notebook.html")
     # want the raised issue if not present
@@ -78,6 +79,7 @@ def test_jupyter_notebook_sheet_vars_bad():
         render_as_html(
             "example_sheet_vars_notebook.ipynb",
             sheet_vars={'x': 4},  # wrong value!
+            init_code='y = 3',
         )
     os.remove("example_sheet_vars_notebook.html")
     # want the raised issue if not present

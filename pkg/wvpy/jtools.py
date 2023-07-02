@@ -351,7 +351,7 @@ def render_as_html(
 import pickle
 with open({tmp_path.__repr__()}, 'rb') as pf:
    sheet_vars = pickle.load(pf)
-""" + "\n" + init_code
+""" + "\n\n" + init_code
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(
