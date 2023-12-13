@@ -374,10 +374,9 @@ def render_as_html(
                 prompt_strip_regexp,
                 ' ',
                 html_body)
-        if not convert_to_pdf:
-            with open(html_name, "wt") as f:
-                f.write(html_body)
-        else:
+        with open(html_name, "wt") as f:
+            f.write(html_body)
+        if convert_to_pdf:
             assert have_pdf_kit
             pdf_name = html_name.removesuffix('.html') + '.pdf'
             pdfkit.from_string(html_body, pdf_name)

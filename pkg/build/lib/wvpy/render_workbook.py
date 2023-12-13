@@ -28,10 +28,10 @@ def render_workbook(
     # checks
     assert isinstance(quiet, bool)
     assert isinstance(strip_input, bool)
-    assert len(infiles) > 0
-    assert len(set(infiles)) == len(infiles)
     assert not isinstance(infiles, str)  # common error
     infiles = list(infiles)
+    assert len(infiles) > 0
+    assert len(set(infiles)) == len(infiles)
     tasks = []
     for input_file_name in infiles:
         assert isinstance(input_file_name, str)
