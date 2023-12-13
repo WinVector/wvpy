@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: wvpy
 Version: 0.4.3
-Summary: Convert Jupyter notebooks to and from Python files.
+Summary: Convert Jupyter notebooks to and from Python files, and render.
 Home-page: https://github.com/WinVector/wvpy
 Author: John Mount
 Author-email: jmount@win-vector.com
@@ -24,4 +24,4 @@ Provides-Extra: code_format
 License-File: LICENSE
 
 
-Convert Jupyter notebooks to and from Python files.
+Convert Jupyter notebooks to and from Python files, and render.

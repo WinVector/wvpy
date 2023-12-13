@@ -9,6 +9,8 @@ from nbconvert import HTMLExporter
 from nbconvert.preprocessors import ExecutePreprocessor
 from multiprocessing import Pool
 import sys
+import pickle
+import tempfile
 
 from typing import Iterable, List, Optional
 from functools import total_ordering
@@ -287,6 +289,7 @@ def render_as_html(
     timeout:int = 60000,
     kernel_name: Optional[str] = None,
     verbose: bool = True,
+    sheet_vars = None,
     init_code: Optional[str] = None,
     exclude_input: bool = False,
     prompt_strip_regexp: Optional[str] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
@@ -301,7 +304,8 @@ def render_as_html(
     :param timeout: Maximum time in seconds each notebook cell is allowed to run.
                     passed to nbconvert.preprocessors.ExecutePreprocessor.
     :param kernel_name: Jupyter kernel to use. passed to nbconvert.preprocessors.ExecutePreprocessor.
-    :param verbose logical, if True print while running 
+    :param verbose logical, if True print while running
+    :param sheet_vars: if not None value is de-serialized as a variable named "sheet_vars"
     :param init_code: Python init code for first cell
     :param exclude_input: if True, exclude input cells
     :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
@@ -335,7 +339,20 @@ def render_as_html(
         nb = convert_py_code_to_notebook(text)
     else:
         raise ValueError('{ipynb_exists}: file must end with .py or .ipynb')
+    tmp_path = None
     # do the conversion
+    if sheet_vars is not None:
+        with tempfile.NamedTemporaryFile(delete=False) as ntf:
+            tmp_path = ntf.name
+            pickle.dump(sheet_vars, file=ntf)
+        if (init_code is None) or (len(init_code) <= 0):
+            init_code = ""
+        pickle_code = f"""
+import pickle
+with open({tmp_path.__repr__()}, 'rb') as pf:
+   sheet_vars = pickle.load(pf)
+""" 
+        init_code = init_code + "\n\n" + pickle_code
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
         nb = prepend_code_cell_to_notebook(
@@ -383,10 +400,19 @@ def render_as_html(
         caught = ep.caught_exception
     except Exception as e:
         caught = e
+    if tmp_path is not None:
+        try:
+            os.remove(tmp_path)
+        except FileNotFoundError:
+            pass
     if caught is not None:
         raise caught
     if verbose:
         print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
+
+
+_jtask_comparison_attributes = [
+    "sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
 
 
 @total_ordering
@@ -397,6 +423,7 @@ class JTask:
         *,
         output_suffix: Optional[str] = None,
         exclude_input: bool = True,
+        sheet_vars = None,
         init_code: Optional[str] = None,
         path_prefix: Optional[str] = None,
         strict: bool = True,
@@ -407,6 +434,7 @@ class JTask:
         :param sheet_name: name of sheet to run can be .ipynb or .py, and suffix can be omitted.
         :param output_suffix: optional string to append to rendered HTML file name.
         :param exclude_input: if True strip input cells out of HTML render.
+        :param sheet_vars: if not None value is de-serialized as a variable named "sheet_vars"
         :param init_code: optional code to insert at the top of the Jupyter sheet, used to pass parameters.
         :param path_prefix: optional prefix to add to sheet_name to find Jupyter source. 
         :param strict: if True check paths path_prefix and path_prefix/sheetname[.py|.ipynb] exist.
@@ -431,6 +459,7 @@ class JTask:
         self.sheet_name = sheet_name
         self.output_suffix = output_suffix
         self.exclude_input = exclude_input
+        self.sheet_vars = sheet_vars
         self.init_code = init_code
         self.path_prefix = path_prefix
 
@@ -442,6 +471,7 @@ class JTask:
             path,
             exclude_input=self.exclude_input,
             output_suffix=self.output_suffix,
+            sheet_vars=self.sheet_vars,
             init_code=self.init_code,
         )
 
@@ -453,12 +483,14 @@ class JTask:
 
     def __eq__(self, other):
         if not self._is_valid_operand(other):
-            return NotImplemented
+            return False
         if str(type(self)) != str(type(other)):
             return False
-        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+        for v in _jtask_comparison_attributes:
             if self[v] != other[v]:
                 return False
+        if str(self.sheet_vars) != str(other.sheet_vars):
+            return False
         return True
 
     def __lt__(self, other):
@@ -466,20 +498,24 @@ class JTask:
             return NotImplemented
         if str(type(self)) < str(type(other)):
             return True
-        for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]:
+        for v in _jtask_comparison_attributes:
             v_self = self[v]
             v_other = other[v]
             # can't order compare None to None
-            if ((v_self is None) or (v_other is None)) and ((v_self is None) != (v_other is None)):
-                return v_self is None
-            if self[v] < other[v]:
-                return True
+            if ((v_self is None) or (v_other is None)):
+                if ((v_self is None) != (v_other is None)):
+                    return v_self is None
+            else:
+                if self[v] < other[v]:
+                    return True
+        if str(self.sheet_vars) < str(other.sheet_vars):
+            return True
         return False
     
     def __str__(self) -> str:
         args_str = ",\n".join([
-            f" {v}= {repr(self[v])}"
-            for v in ["sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
+            f" {v}={repr(self[v])}"
+            for v in _jtask_comparison_attributes + ["sheet_vars"]
         ])
         return 'JTask(\n' + args_str + ",\n)"
 

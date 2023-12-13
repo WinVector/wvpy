@@ -1,9 +1,9 @@
 # setup.py
 import setuptools
 
-DESCRIPTION = "Convert Jupyter notebooks to and from Python files."
+DESCRIPTION = "Convert Jupyter notebooks to and from Python files, and render."
 LONG_DESCRIPTION = """
-Convert Jupyter notebooks to and from Python files.
+Convert Jupyter notebooks to and from Python files, and render.
 """
 
 setuptools.setup(
