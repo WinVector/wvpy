@@ -91,14 +91,18 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             f.write(string_res)
     except Exception as e:
         caught = e
+    nw = datetime.datetime.now()
     if tmp_path is not None:
         try:
             os.remove(tmp_path)
         except FileNotFoundError:
             pass
     if caught is not None:
+        with open(result_file_name, "wt") as f:
+            f.print(f'\n\nexception in execute_py "{result_file_name}" {nw}\n\n')
+            f.print(str(e))
         if verbose:
-            print(f'\exception in execute_py "{result_file_name}" {datetime.datetime.now()}')
+            print(f'\texception in execute_py "{result_file_name}" {nw}')
         raise caught
     if verbose:
-        print(f'\tdone execute_py "{result_file_name}" {datetime.datetime.now()}')
+        print(f'\tdone execute_py "{result_file_name}" {nw}')

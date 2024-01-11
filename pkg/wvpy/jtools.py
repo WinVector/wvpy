@@ -387,6 +387,7 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         caught = ep.caught_exception
     except Exception as e:
         caught = e
+    nw = datetime.datetime.now()
     if tmp_path is not None:
         try:
             os.remove(tmp_path)
@@ -394,10 +395,10 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             pass
     if caught is not None:
         if verbose:
-            print(f'\exception in execute_py "{html_name}" {datetime.datetime.now()}')
+            print(f'\texception in execute_py "{html_name}" {nw}')
         raise caught
     if verbose:
-        print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')
+        print(f'\tdone render_as_html "{html_name}" {nw}')
 
 
 _jtask_comparison_attributes = [
