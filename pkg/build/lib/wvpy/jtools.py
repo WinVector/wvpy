@@ -393,6 +393,8 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         except FileNotFoundError:
             pass
     if caught is not None:
+        if verbose:
+            print(f'\exception in execute_py "{html_name}" {datetime.datetime.now()}')
         raise caught
     if verbose:
         print(f'\tdone render_as_html "{html_name}" {datetime.datetime.now()}')

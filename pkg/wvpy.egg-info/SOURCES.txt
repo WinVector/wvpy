@@ -6,6 +6,7 @@ Doc/documentation.txt
 tests/test_nb_fns.py
 wvpy/__init__.py
 wvpy/jtools.py
+wvpy/ptools.py
 wvpy/pysheet.py
 wvpy/render_workbook.py
 wvpy.egg-info/PKG-INFO

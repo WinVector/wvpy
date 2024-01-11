@@ -7,6 +7,10 @@ collected 13 items
 tests/test_nb_fns.py .............                                       [100%]
 
 =============================== warnings summary ===============================
+wvpy/jtools.py:397
+  /Users/johnmount/Documents/work/wvpy/pkg/wvpy/jtools.py:397: DeprecationWarning: invalid escape sequence '\e'
+    print(f'\exception in execute_py "{html_name}" {datetime.datetime.now()}')
+
 tests/test_nb_fns.py::test_jupyter_notebook_good
   /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/debugpy/_vendored/pydevd/pydevd_plugins/extensions/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('pydevd_plugins.extensions')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
@@ -33,10 +37,11 @@ tests/test_nb_fns.py::test_jupyter_notebook_good
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              317     99    69%
+wvpy/jtools.py              319     99    69%
+wvpy/ptools.py               64     64     0%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
 ---------------------------------------------
-TOTAL                       473    252    47%
+TOTAL                       539    316    41%
 
-======================= 13 passed, 4 warnings in 27.38s ========================
+======================= 13 passed, 5 warnings in 26.03s ========================
