@@ -15,6 +15,8 @@ import tempfile
 from typing import Iterable, List, Optional
 from functools import total_ordering
 
+from wvpy.ptools import execute_py
+
 
 have_black = False
 try:
@@ -454,12 +456,29 @@ class JTask:
         self.path_prefix = path_prefix
 
     def render_as_html(self) -> None:
+        """
+        Render Jupyter notebook or Python (treated as notebook) to HTML.
+        """
         path = self.sheet_name
         if isinstance(self.path_prefix, str) and (len(self.path_prefix) > 0):
             path = os.path.join(self.path_prefix, self.sheet_name)
         render_as_html(
             path,
             exclude_input=self.exclude_input,
+            output_suffix=self.output_suffix,
+            sheet_vars=self.sheet_vars,
+            init_code=self.init_code,
+        )
+    
+    def render_py_txt(self) -> None:
+        """
+        Render Python to text (without nbconver, nbformat Jupyter bindings)
+        """
+        path = self.sheet_name
+        if isinstance(self.path_prefix, str) and (len(self.path_prefix) > 0):
+            path = os.path.join(self.path_prefix, self.sheet_name)
+        execute_py(
+            path,
             output_suffix=self.output_suffix,
             sheet_vars=self.sheet_vars,
             init_code=self.init_code,
@@ -515,7 +534,7 @@ class JTask:
 
 def job_fn(arg: JTask):
     """
-    Function to run a JTask job. Exceptions pass through
+    Function to run a JTask job for Jupyter notebook. Exceptions pass through
     """
     assert isinstance(arg, JTask)
     # render notebook
@@ -524,12 +543,34 @@ def job_fn(arg: JTask):
 
 def job_fn_eat_exception(arg: JTask):
     """
-    Function to run a JTask job, catching any exception and returning it as a value
+    Function to run a JTask job for Jupyter notebook, catching any exception and returning it as a value
     """
     assert isinstance(arg, JTask)
     # render notebook
     try:
         return arg.render_as_html()
+    except Exception as e:
+        print(f"{arg} caught {e}")
+        return (arg, e)
+
+
+def job_fn_py_txt(arg: JTask):
+    """
+    Function to run a JTask job for Python to txt. Exceptions pass through
+    """
+    assert isinstance(arg, JTask)
+    # render Python
+    return arg.render_py_txt()
+
+
+def job_fn_py_txt_eat_exception(arg: JTask):
+    """
+    Function to run a JTask job for Python to txt, catching any exception and returning it as a value
+    """
+    assert isinstance(arg, JTask)
+    # render Python
+    try:
+        return arg.render_py_txt()
     except Exception as e:
         print(f"{arg} caught {e}")
         return (arg, e)
