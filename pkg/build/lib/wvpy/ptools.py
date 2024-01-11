@@ -1,18 +1,15 @@
 
 """Python rendering tools"""
 
-import re
 import datetime
 import os
-from multiprocessing import Pool
-import sys
 import pickle
 import tempfile
 from io import StringIO
 from contextlib import redirect_stdout
+import traceback
 
 from typing import Iterable, List, Optional
-from functools import total_ordering
 
 
 def execute_py(
@@ -73,6 +70,7 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
     except FileNotFoundError:
         pass
     caught = None
+    trace = None
     try:
         if verbose:
             print(
@@ -89,8 +87,10 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         string_res = res_buffer.getvalue()
         with open(result_file_name, "wt") as f:
             f.write(string_res)
+            f.write("\n\n")
     except Exception as e:
         caught = e
+        trace = traceback.format_exc()
     nw = datetime.datetime.now()
     if tmp_path is not None:
         try:
@@ -99,8 +99,11 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             pass
     if caught is not None:
         with open(result_file_name, "wt") as f:
-            f.print(f'\n\nexception in execute_py "{result_file_name}" {nw}\n\n')
-            f.print(str(e))
+            f.write(f'\n\nexception in execute_py "{result_file_name}" {nw}\n\n')
+            f.write(str(caught))
+            f.write("\n\n")
+            f.write(str(trace))
+            f.write("\n\n")
         if verbose:
             print(f'\texception in execute_py "{result_file_name}" {nw}')
         raise caught
