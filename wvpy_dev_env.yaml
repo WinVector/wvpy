@@ -16,5 +16,3 @@ dependencies:
     - IPython
     - nbformat
     - nbconvert
-    - pdfkit
- 

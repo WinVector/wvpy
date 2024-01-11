@@ -19,7 +19,6 @@ setuptools.setup(
         "nbconvert"
     ],
     extras_require = {
-        'pdf_export': ["pdfkit"],
         'code_format': ["black"]
     },
     platforms=["any"],

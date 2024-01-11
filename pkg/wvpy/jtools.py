@@ -293,7 +293,6 @@ def render_as_html(
     init_code: Optional[str] = None,
     exclude_input: bool = False,
     prompt_strip_regexp: Optional[str] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
-    convert_to_pdf: bool = False,
 ) -> None:
     """
     Render a Jupyter notebook in the current directory as HTML.
@@ -309,11 +308,9 @@ def render_as_html(
     :param init_code: Python init code for first cell
     :param exclude_input: if True, exclude input cells
     :param prompt_strip_regexp: regexp to strip prompts, only used if exclude_input is True
-    :param convert_to_pdf: if True convert HTML to PDF, and delete HTML
     :return: None
     """
     assert isinstance(notebook_file_name, str)
-    assert isinstance(convert_to_pdf, bool)
     # deal with no suffix case
     if (not notebook_file_name.endswith(".ipynb")) and (not notebook_file_name.endswith(".py")):
         py_name = notebook_file_name + ".py"
@@ -393,10 +390,6 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
                 html_body)
         with open(html_name, "wt") as f:
             f.write(html_body)
-        if convert_to_pdf:
-            assert have_pdf_kit
-            pdf_name = html_name.removesuffix('.html') + '.pdf'
-            pdfkit.from_string(html_body, pdf_name)
         caught = ep.caught_exception
     except Exception as e:
         caught = e
