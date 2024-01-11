@@ -582,6 +582,7 @@ def run_pool(
         njobs: int = 4,
         verbose: bool = True,
         stop_on_error: bool = True,
+        use_Jupyter: bool = True,
         ) -> List:
     """
     Run a pool of tasks.
@@ -590,12 +591,14 @@ def run_pool(
     :param njobs: degree of parallelism
     :param verbose: if True, print on failure
     :param stop_on_error: if True, stop pool on error
+    :param use_Jupyter: if True, use nbconvert, nbformat Jupyter fns.
     """
     tasks = list(tasks)
     assert isinstance(njobs, int)
     assert njobs > 0
     assert isinstance(verbose, bool)
     assert isinstance(stop_on_error, bool)
+    assert isinstance(use_Jupyter, bool)
     if len(tasks) <= 0:
         return
     for task in tasks:
@@ -603,9 +606,13 @@ def run_pool(
     if stop_on_error:
         # # complex way, allowing a stop on job failure
         # https://stackoverflow.com/a/25791961/6901725
+        if use_Jupyter:
+            fn = job_fn
+        else:
+            fn = job_fn_py_txt
         with Pool(njobs) as pool:
             try:
-                res = list(pool.imap_unordered(job_fn, tasks))  # list is forcing iteration over tasks for side-effects
+                res = list(pool.imap_unordered(fn, tasks))  # list is forcing iteration over tasks for side-effects
             except Exception:
                 if verbose:
                     sys.stdout.flush()
@@ -618,7 +625,11 @@ def run_pool(
                 pool.close()
                 pool.join()
     else:
+        if use_Jupyter:
+            fn = job_fn_eat_exception
+        else:
+            fn = job_fn_py_txt_eat_exception
         # simple way, but doesn't exit until all jobs succeed or fail
         with Pool(njobs) as pool:
-            res = list(pool.map(job_fn_eat_exception, tasks))
+            res = list(pool.map(fn, tasks))
         return res

@@ -723,46 +723,57 @@
 </span><span id="L-581"><a href="#L-581"><span class="linenos">581</span></a>        <span class="n">njobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
 </span><span id="L-582"><a href="#L-582"><span class="linenos">582</span></a>        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 </span><span id="L-583"><a href="#L-583"><span class="linenos">583</span></a>        <span class="n">stop_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="L-584"><a href="#L-584"><span class="linenos">584</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-</span><span id="L-585"><a href="#L-585"><span class="linenos">585</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-586"><a href="#L-586"><span class="linenos">586</span></a><span class="sd">    Run a pool of tasks.</span>
-</span><span id="L-587"><a href="#L-587"><span class="linenos">587</span></a>
-</span><span id="L-588"><a href="#L-588"><span class="linenos">588</span></a><span class="sd">    :param tasks: iterable of tasks</span>
-</span><span id="L-589"><a href="#L-589"><span class="linenos">589</span></a><span class="sd">    :param njobs: degree of parallelism</span>
-</span><span id="L-590"><a href="#L-590"><span class="linenos">590</span></a><span class="sd">    :param verbose: if True, print on failure</span>
-</span><span id="L-591"><a href="#L-591"><span class="linenos">591</span></a><span class="sd">    :param stop_on_error: if True, stop pool on error</span>
-</span><span id="L-592"><a href="#L-592"><span class="linenos">592</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-593"><a href="#L-593"><span class="linenos">593</span></a>    <span class="n">tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
-</span><span id="L-594"><a href="#L-594"><span class="linenos">594</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">njobs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-</span><span id="L-595"><a href="#L-595"><span class="linenos">595</span></a>    <span class="k">assert</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">0</span>
-</span><span id="L-596"><a href="#L-596"><span class="linenos">596</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-</span><span id="L-597"><a href="#L-597"><span class="linenos">597</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_on_error</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-</span><span id="L-598"><a href="#L-598"><span class="linenos">598</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-599"><a href="#L-599"><span class="linenos">599</span></a>        <span class="k">return</span>
-</span><span id="L-600"><a href="#L-600"><span class="linenos">600</span></a>    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
-</span><span id="L-601"><a href="#L-601"><span class="linenos">601</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">JTask</span><span class="p">)</span>
-</span><span id="L-602"><a href="#L-602"><span class="linenos">602</span></a>    <span class="k">if</span> <span class="n">stop_on_error</span><span class="p">:</span>
-</span><span id="L-603"><a href="#L-603"><span class="linenos">603</span></a>        <span class="c1"># # complex way, allowing a stop on job failure</span>
-</span><span id="L-604"><a href="#L-604"><span class="linenos">604</span></a>        <span class="c1"># https://stackoverflow.com/a/25791961/6901725</span>
-</span><span id="L-605"><a href="#L-605"><span class="linenos">605</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-</span><span id="L-606"><a href="#L-606"><span class="linenos">606</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="L-607"><a href="#L-607"><span class="linenos">607</span></a>                <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">job_fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>  <span class="c1"># list is forcing iteration over tasks for side-effects</span>
-</span><span id="L-608"><a href="#L-608"><span class="linenos">608</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="L-609"><a href="#L-609"><span class="linenos">609</span></a>                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-</span><span id="L-610"><a href="#L-610"><span class="linenos">610</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!! run_pool: a worker raised an Exception, aborting...&quot;</span><span class="p">)</span>
-</span><span id="L-612"><a href="#L-612"><span class="linenos">612</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span id="L-613"><a href="#L-613"><span class="linenos">613</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-</span><span id="L-615"><a href="#L-615"><span class="linenos">615</span></a>                <span class="k">raise</span>  <span class="c1"># re-raise Exception</span>
-</span><span id="L-616"><a href="#L-616"><span class="linenos">616</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span id="L-618"><a href="#L-618"><span class="linenos">618</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-</span><span id="L-619"><a href="#L-619"><span class="linenos">619</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>        <span class="c1"># simple way, but doesn&#39;t exit until all jobs succeed or fail</span>
-</span><span id="L-621"><a href="#L-621"><span class="linenos">621</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-</span><span id="L-622"><a href="#L-622"><span class="linenos">622</span></a>            <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">job_fn_eat_exception</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>
-</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>        <span class="k">return</span> <span class="n">res</span>
+</span><span id="L-584"><a href="#L-584"><span class="linenos">584</span></a>        <span class="n">use_Jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="L-585"><a href="#L-585"><span class="linenos">585</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+</span><span id="L-586"><a href="#L-586"><span class="linenos">586</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-587"><a href="#L-587"><span class="linenos">587</span></a><span class="sd">    Run a pool of tasks.</span>
+</span><span id="L-588"><a href="#L-588"><span class="linenos">588</span></a>
+</span><span id="L-589"><a href="#L-589"><span class="linenos">589</span></a><span class="sd">    :param tasks: iterable of tasks</span>
+</span><span id="L-590"><a href="#L-590"><span class="linenos">590</span></a><span class="sd">    :param njobs: degree of parallelism</span>
+</span><span id="L-591"><a href="#L-591"><span class="linenos">591</span></a><span class="sd">    :param verbose: if True, print on failure</span>
+</span><span id="L-592"><a href="#L-592"><span class="linenos">592</span></a><span class="sd">    :param stop_on_error: if True, stop pool on error</span>
+</span><span id="L-593"><a href="#L-593"><span class="linenos">593</span></a><span class="sd">    :param use_Jupyter: if True, use nbconvert, nbformat Jupyter fns.</span>
+</span><span id="L-594"><a href="#L-594"><span class="linenos">594</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-595"><a href="#L-595"><span class="linenos">595</span></a>    <span class="n">tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+</span><span id="L-596"><a href="#L-596"><span class="linenos">596</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">njobs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+</span><span id="L-597"><a href="#L-597"><span class="linenos">597</span></a>    <span class="k">assert</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span id="L-598"><a href="#L-598"><span class="linenos">598</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="L-599"><a href="#L-599"><span class="linenos">599</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_on_error</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="L-600"><a href="#L-600"><span class="linenos">600</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_Jupyter</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="L-601"><a href="#L-601"><span class="linenos">601</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-602"><a href="#L-602"><span class="linenos">602</span></a>        <span class="k">return</span>
+</span><span id="L-603"><a href="#L-603"><span class="linenos">603</span></a>    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+</span><span id="L-604"><a href="#L-604"><span class="linenos">604</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">JTask</span><span class="p">)</span>
+</span><span id="L-605"><a href="#L-605"><span class="linenos">605</span></a>    <span class="k">if</span> <span class="n">stop_on_error</span><span class="p">:</span>
+</span><span id="L-606"><a href="#L-606"><span class="linenos">606</span></a>        <span class="c1"># # complex way, allowing a stop on job failure</span>
+</span><span id="L-607"><a href="#L-607"><span class="linenos">607</span></a>        <span class="c1"># https://stackoverflow.com/a/25791961/6901725</span>
+</span><span id="L-608"><a href="#L-608"><span class="linenos">608</span></a>        <span class="k">if</span> <span class="n">use_Jupyter</span><span class="p">:</span>
+</span><span id="L-609"><a href="#L-609"><span class="linenos">609</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn</span>
+</span><span id="L-610"><a href="#L-610"><span class="linenos">610</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-611"><a href="#L-611"><span class="linenos">611</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_py_txt</span>
+</span><span id="L-612"><a href="#L-612"><span class="linenos">612</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+</span><span id="L-613"><a href="#L-613"><span class="linenos">613</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="L-614"><a href="#L-614"><span class="linenos">614</span></a>                <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>  <span class="c1"># list is forcing iteration over tasks for side-effects</span>
+</span><span id="L-615"><a href="#L-615"><span class="linenos">615</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="L-616"><a href="#L-616"><span class="linenos">616</span></a>                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+</span><span id="L-617"><a href="#L-617"><span class="linenos">617</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span id="L-618"><a href="#L-618"><span class="linenos">618</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!! run_pool: a worker raised an Exception, aborting...&quot;</span><span class="p">)</span>
+</span><span id="L-619"><a href="#L-619"><span class="linenos">619</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span id="L-620"><a href="#L-620"><span class="linenos">620</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="L-621"><a href="#L-621"><span class="linenos">621</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span id="L-622"><a href="#L-622"><span class="linenos">622</span></a>                <span class="k">raise</span>  <span class="c1"># re-raise Exception</span>
+</span><span id="L-623"><a href="#L-623"><span class="linenos">623</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="L-624"><a href="#L-624"><span class="linenos">624</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="L-625"><a href="#L-625"><span class="linenos">625</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span><span id="L-626"><a href="#L-626"><span class="linenos">626</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-627"><a href="#L-627"><span class="linenos">627</span></a>        <span class="k">if</span> <span class="n">use_Jupyter</span><span class="p">:</span>
+</span><span id="L-628"><a href="#L-628"><span class="linenos">628</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_eat_exception</span>
+</span><span id="L-629"><a href="#L-629"><span class="linenos">629</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-630"><a href="#L-630"><span class="linenos">630</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_py_txt_eat_exception</span>
+</span><span id="L-631"><a href="#L-631"><span class="linenos">631</span></a>        <span class="c1"># simple way, but doesn&#39;t exit until all jobs succeed or fail</span>
+</span><span id="L-632"><a href="#L-632"><span class="linenos">632</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+</span><span id="L-633"><a href="#L-633"><span class="linenos">633</span></a>            <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>
+</span><span id="L-634"><a href="#L-634"><span class="linenos">634</span></a>        <span class="k">return</span> <span class="n">res</span>
 </span></pre></div>
 
 
@@ -2060,7 +2071,7 @@ passed to nbconvert.preprocessors.ExecutePreprocessor.</li>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_pool</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">tasks</span><span class="p">:</span> <span class="n">Iterable</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">njobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>,</span><span class="param">	<span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">stop_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">List</span>:</span></span>
+        <span class="name">run_pool</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">tasks</span><span class="p">:</span> <span class="n">Iterable</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">njobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>,</span><span class="param">	<span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">stop_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">use_Jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">List</span>:</span></span>
 
                 <label class="view-source-button" for="run_pool-view-source"><span>View Source</span></label>
 
@@ -2072,46 +2083,57 @@ passed to nbconvert.preprocessors.ExecutePreprocessor.</li>
 </span><span id="run_pool-583"><a href="#run_pool-583"><span class="linenos">583</span></a>        <span class="n">njobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
 </span><span id="run_pool-584"><a href="#run_pool-584"><span class="linenos">584</span></a>        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 </span><span id="run_pool-585"><a href="#run_pool-585"><span class="linenos">585</span></a>        <span class="n">stop_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="run_pool-586"><a href="#run_pool-586"><span class="linenos">586</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-</span><span id="run_pool-587"><a href="#run_pool-587"><span class="linenos">587</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="run_pool-588"><a href="#run_pool-588"><span class="linenos">588</span></a><span class="sd">    Run a pool of tasks.</span>
-</span><span id="run_pool-589"><a href="#run_pool-589"><span class="linenos">589</span></a>
-</span><span id="run_pool-590"><a href="#run_pool-590"><span class="linenos">590</span></a><span class="sd">    :param tasks: iterable of tasks</span>
-</span><span id="run_pool-591"><a href="#run_pool-591"><span class="linenos">591</span></a><span class="sd">    :param njobs: degree of parallelism</span>
-</span><span id="run_pool-592"><a href="#run_pool-592"><span class="linenos">592</span></a><span class="sd">    :param verbose: if True, print on failure</span>
-</span><span id="run_pool-593"><a href="#run_pool-593"><span class="linenos">593</span></a><span class="sd">    :param stop_on_error: if True, stop pool on error</span>
-</span><span id="run_pool-594"><a href="#run_pool-594"><span class="linenos">594</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="run_pool-595"><a href="#run_pool-595"><span class="linenos">595</span></a>    <span class="n">tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
-</span><span id="run_pool-596"><a href="#run_pool-596"><span class="linenos">596</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">njobs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-</span><span id="run_pool-597"><a href="#run_pool-597"><span class="linenos">597</span></a>    <span class="k">assert</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">0</span>
-</span><span id="run_pool-598"><a href="#run_pool-598"><span class="linenos">598</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-</span><span id="run_pool-599"><a href="#run_pool-599"><span class="linenos">599</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_on_error</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-</span><span id="run_pool-600"><a href="#run_pool-600"><span class="linenos">600</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="run_pool-601"><a href="#run_pool-601"><span class="linenos">601</span></a>        <span class="k">return</span>
-</span><span id="run_pool-602"><a href="#run_pool-602"><span class="linenos">602</span></a>    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
-</span><span id="run_pool-603"><a href="#run_pool-603"><span class="linenos">603</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">JTask</span><span class="p">)</span>
-</span><span id="run_pool-604"><a href="#run_pool-604"><span class="linenos">604</span></a>    <span class="k">if</span> <span class="n">stop_on_error</span><span class="p">:</span>
-</span><span id="run_pool-605"><a href="#run_pool-605"><span class="linenos">605</span></a>        <span class="c1"># # complex way, allowing a stop on job failure</span>
-</span><span id="run_pool-606"><a href="#run_pool-606"><span class="linenos">606</span></a>        <span class="c1"># https://stackoverflow.com/a/25791961/6901725</span>
-</span><span id="run_pool-607"><a href="#run_pool-607"><span class="linenos">607</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-</span><span id="run_pool-608"><a href="#run_pool-608"><span class="linenos">608</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="run_pool-609"><a href="#run_pool-609"><span class="linenos">609</span></a>                <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">job_fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>  <span class="c1"># list is forcing iteration over tasks for side-effects</span>
-</span><span id="run_pool-610"><a href="#run_pool-610"><span class="linenos">610</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="run_pool-611"><a href="#run_pool-611"><span class="linenos">611</span></a>                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-</span><span id="run_pool-612"><a href="#run_pool-612"><span class="linenos">612</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span id="run_pool-613"><a href="#run_pool-613"><span class="linenos">613</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!! run_pool: a worker raised an Exception, aborting...&quot;</span><span class="p">)</span>
-</span><span id="run_pool-614"><a href="#run_pool-614"><span class="linenos">614</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span id="run_pool-615"><a href="#run_pool-615"><span class="linenos">615</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span id="run_pool-616"><a href="#run_pool-616"><span class="linenos">616</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-</span><span id="run_pool-617"><a href="#run_pool-617"><span class="linenos">617</span></a>                <span class="k">raise</span>  <span class="c1"># re-raise Exception</span>
-</span><span id="run_pool-618"><a href="#run_pool-618"><span class="linenos">618</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="run_pool-619"><a href="#run_pool-619"><span class="linenos">619</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span id="run_pool-620"><a href="#run_pool-620"><span class="linenos">620</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-</span><span id="run_pool-621"><a href="#run_pool-621"><span class="linenos">621</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="run_pool-622"><a href="#run_pool-622"><span class="linenos">622</span></a>        <span class="c1"># simple way, but doesn&#39;t exit until all jobs succeed or fail</span>
-</span><span id="run_pool-623"><a href="#run_pool-623"><span class="linenos">623</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-</span><span id="run_pool-624"><a href="#run_pool-624"><span class="linenos">624</span></a>            <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">job_fn_eat_exception</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>
-</span><span id="run_pool-625"><a href="#run_pool-625"><span class="linenos">625</span></a>        <span class="k">return</span> <span class="n">res</span>
+</span><span id="run_pool-586"><a href="#run_pool-586"><span class="linenos">586</span></a>        <span class="n">use_Jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="run_pool-587"><a href="#run_pool-587"><span class="linenos">587</span></a>        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+</span><span id="run_pool-588"><a href="#run_pool-588"><span class="linenos">588</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="run_pool-589"><a href="#run_pool-589"><span class="linenos">589</span></a><span class="sd">    Run a pool of tasks.</span>
+</span><span id="run_pool-590"><a href="#run_pool-590"><span class="linenos">590</span></a>
+</span><span id="run_pool-591"><a href="#run_pool-591"><span class="linenos">591</span></a><span class="sd">    :param tasks: iterable of tasks</span>
+</span><span id="run_pool-592"><a href="#run_pool-592"><span class="linenos">592</span></a><span class="sd">    :param njobs: degree of parallelism</span>
+</span><span id="run_pool-593"><a href="#run_pool-593"><span class="linenos">593</span></a><span class="sd">    :param verbose: if True, print on failure</span>
+</span><span id="run_pool-594"><a href="#run_pool-594"><span class="linenos">594</span></a><span class="sd">    :param stop_on_error: if True, stop pool on error</span>
+</span><span id="run_pool-595"><a href="#run_pool-595"><span class="linenos">595</span></a><span class="sd">    :param use_Jupyter: if True, use nbconvert, nbformat Jupyter fns.</span>
+</span><span id="run_pool-596"><a href="#run_pool-596"><span class="linenos">596</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="run_pool-597"><a href="#run_pool-597"><span class="linenos">597</span></a>    <span class="n">tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+</span><span id="run_pool-598"><a href="#run_pool-598"><span class="linenos">598</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">njobs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+</span><span id="run_pool-599"><a href="#run_pool-599"><span class="linenos">599</span></a>    <span class="k">assert</span> <span class="n">njobs</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span id="run_pool-600"><a href="#run_pool-600"><span class="linenos">600</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="run_pool-601"><a href="#run_pool-601"><span class="linenos">601</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_on_error</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="run_pool-602"><a href="#run_pool-602"><span class="linenos">602</span></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_Jupyter</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span id="run_pool-603"><a href="#run_pool-603"><span class="linenos">603</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="run_pool-604"><a href="#run_pool-604"><span class="linenos">604</span></a>        <span class="k">return</span>
+</span><span id="run_pool-605"><a href="#run_pool-605"><span class="linenos">605</span></a>    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+</span><span id="run_pool-606"><a href="#run_pool-606"><span class="linenos">606</span></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">JTask</span><span class="p">)</span>
+</span><span id="run_pool-607"><a href="#run_pool-607"><span class="linenos">607</span></a>    <span class="k">if</span> <span class="n">stop_on_error</span><span class="p">:</span>
+</span><span id="run_pool-608"><a href="#run_pool-608"><span class="linenos">608</span></a>        <span class="c1"># # complex way, allowing a stop on job failure</span>
+</span><span id="run_pool-609"><a href="#run_pool-609"><span class="linenos">609</span></a>        <span class="c1"># https://stackoverflow.com/a/25791961/6901725</span>
+</span><span id="run_pool-610"><a href="#run_pool-610"><span class="linenos">610</span></a>        <span class="k">if</span> <span class="n">use_Jupyter</span><span class="p">:</span>
+</span><span id="run_pool-611"><a href="#run_pool-611"><span class="linenos">611</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn</span>
+</span><span id="run_pool-612"><a href="#run_pool-612"><span class="linenos">612</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="run_pool-613"><a href="#run_pool-613"><span class="linenos">613</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_py_txt</span>
+</span><span id="run_pool-614"><a href="#run_pool-614"><span class="linenos">614</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+</span><span id="run_pool-615"><a href="#run_pool-615"><span class="linenos">615</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="run_pool-616"><a href="#run_pool-616"><span class="linenos">616</span></a>                <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>  <span class="c1"># list is forcing iteration over tasks for side-effects</span>
+</span><span id="run_pool-617"><a href="#run_pool-617"><span class="linenos">617</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="run_pool-618"><a href="#run_pool-618"><span class="linenos">618</span></a>                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+</span><span id="run_pool-619"><a href="#run_pool-619"><span class="linenos">619</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span id="run_pool-620"><a href="#run_pool-620"><span class="linenos">620</span></a>                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!! run_pool: a worker raised an Exception, aborting...&quot;</span><span class="p">)</span>
+</span><span id="run_pool-621"><a href="#run_pool-621"><span class="linenos">621</span></a>                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span id="run_pool-622"><a href="#run_pool-622"><span class="linenos">622</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="run_pool-623"><a href="#run_pool-623"><span class="linenos">623</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span id="run_pool-624"><a href="#run_pool-624"><span class="linenos">624</span></a>                <span class="k">raise</span>  <span class="c1"># re-raise Exception</span>
+</span><span id="run_pool-625"><a href="#run_pool-625"><span class="linenos">625</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="run_pool-626"><a href="#run_pool-626"><span class="linenos">626</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="run_pool-627"><a href="#run_pool-627"><span class="linenos">627</span></a>                <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span><span id="run_pool-628"><a href="#run_pool-628"><span class="linenos">628</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="run_pool-629"><a href="#run_pool-629"><span class="linenos">629</span></a>        <span class="k">if</span> <span class="n">use_Jupyter</span><span class="p">:</span>
+</span><span id="run_pool-630"><a href="#run_pool-630"><span class="linenos">630</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_eat_exception</span>
+</span><span id="run_pool-631"><a href="#run_pool-631"><span class="linenos">631</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="run_pool-632"><a href="#run_pool-632"><span class="linenos">632</span></a>            <span class="n">fn</span> <span class="o">=</span> <span class="n">job_fn_py_txt_eat_exception</span>
+</span><span id="run_pool-633"><a href="#run_pool-633"><span class="linenos">633</span></a>        <span class="c1"># simple way, but doesn&#39;t exit until all jobs succeed or fail</span>
+</span><span id="run_pool-634"><a href="#run_pool-634"><span class="linenos">634</span></a>        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">njobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+</span><span id="run_pool-635"><a href="#run_pool-635"><span class="linenos">635</span></a>            <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>
+</span><span id="run_pool-636"><a href="#run_pool-636"><span class="linenos">636</span></a>        <span class="k">return</span> <span class="n">res</span>
 </span></pre></div>
 
 
@@ -2124,6 +2146,7 @@ passed to nbconvert.preprocessors.ExecutePreprocessor.</li>
 <li><strong>njobs</strong>:  degree of parallelism</li>
 <li><strong>verbose</strong>:  if True, print on failure</li>
 <li><strong>stop_on_error</strong>:  if True, stop pool on error</li>
+<li><strong>use_Jupyter</strong>:  if True, use nbconvert, nbformat Jupyter fns.</li>
 </ul>
 </div>
 
