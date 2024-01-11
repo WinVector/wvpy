@@ -15,12 +15,6 @@ import tempfile
 from typing import Iterable, List, Optional
 from functools import total_ordering
 
-have_pdf_kit = False
-try:
-    import pdfkit
-    have_pdf_kit = True
-except ModuleNotFoundError:
-    pass
 
 have_black = False
 try:

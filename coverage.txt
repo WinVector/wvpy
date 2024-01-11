@@ -33,10 +33,10 @@ tests/test_nb_fns.py::test_jupyter_notebook_good
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              323    101    69%
+wvpy/jtools.py              317     99    69%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
 ---------------------------------------------
-TOTAL                       479    254    47%
+TOTAL                       473    252    47%
 
-======================= 13 passed, 4 warnings in 29.09s ========================
+======================= 13 passed, 4 warnings in 27.38s ========================
