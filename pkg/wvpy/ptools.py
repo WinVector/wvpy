@@ -83,8 +83,8 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         with redirect_stdout(res_buffer):
             exec(
                 python_source,
-                globas=dict(),
-                locals=dict(),
+                dict(),
+                dict(),
             )
         string_res = res_buffer.getvalue()
         with open(result_file_name, "wt") as f:

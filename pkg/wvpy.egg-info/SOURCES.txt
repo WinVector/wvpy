@@ -4,6 +4,7 @@ README.txt
 setup.py
 Doc/documentation.txt
 tests/test_nb_fns.py
+tests/test_py_fns.py
 wvpy/__init__.py
 wvpy/jtools.py
 wvpy/ptools.py

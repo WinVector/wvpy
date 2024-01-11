@@ -2,14 +2,19 @@
 platform darwin -- Python 3.11.3, pytest-7.3.1, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-4.0.0
-collected 13 items
+collected 14 items
 
-tests/test_nb_fns.py .............                                       [100%]
+tests/test_nb_fns.py .............                                       [ 92%]
+tests/test_py_fns.py .                                                   [100%]
 
 =============================== warnings summary ===============================
 wvpy/jtools.py:397
   /Users/johnmount/Documents/work/wvpy/pkg/wvpy/jtools.py:397: DeprecationWarning: invalid escape sequence '\e'
     print(f'\exception in execute_py "{html_name}" {datetime.datetime.now()}')
+
+wvpy/ptools.py:101
+  /Users/johnmount/Documents/work/wvpy/pkg/wvpy/ptools.py:101: DeprecationWarning: invalid escape sequence '\e'
+    print(f'\exception in execute_py "{result_file_name}" {datetime.datetime.now()}')
 
 tests/test_nb_fns.py::test_jupyter_notebook_good
   /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/debugpy/_vendored/pydevd/pydevd_plugins/extensions/__init__.py:4: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('pydevd_plugins.extensions')`.
@@ -38,10 +43,10 @@ Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
 wvpy/jtools.py              319     99    69%
-wvpy/ptools.py               64     64     0%
+wvpy/ptools.py               64     21    67%
 wvpy/pysheet.py              99     99     0%
 wvpy/render_workbook.py      54     54     0%
 ---------------------------------------------
-TOTAL                       539    316    41%
+TOTAL                       539    273    49%
 
-======================= 13 passed, 5 warnings in 26.03s ========================
+======================= 14 passed, 6 warnings in 24.92s ========================
