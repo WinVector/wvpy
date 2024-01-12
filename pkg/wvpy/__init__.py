@@ -1,5 +1,5 @@
 __docformat__ = "restructuredtext"
-__version__ = "0.4.3"
+__version__ = "1.0.0"
 
 __doc__ = """
 This<https://github.com/WinVector/wvpy> a system for rendering Jupyter notebooks.
