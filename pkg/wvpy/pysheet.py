@@ -117,7 +117,10 @@ def pysheet(
 
 if __name__ == '__main__':
     try:
-        parser = argparse.ArgumentParser(description="Convert between .py and .ipynb or back (can have suffix, or guess suffix)")
+        parser = argparse.ArgumentParser(
+            prog="wvpy.pysheet",
+            description="Convert between .py and .ipynb or back (can have suffix, or guess suffix)",
+            )
         parser.add_argument('--quiet', action='store_true', help='quite operation')
         parser.add_argument('--delete', action='store_true', help='delete input file')
         parser.add_argument('--black', action='store_true', help='use black to re-format cells')
