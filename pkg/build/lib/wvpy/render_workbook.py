@@ -79,7 +79,7 @@ if __name__ == '__main__':
             help='name of input file(s)')
         parser.add_argument('--strip_input', action='store_true', help="strip input cells and cell markers")
         parser.add_argument('--quiet', action='store_true', help='quiet operation')
-        parser.add_argumnet('--pytxt', action='store_true', help='render Python to txt (without nbconvert/Jupyter)')
+        parser.add_argument('--pytxt', action='store_true', help='render Python to txt (without nbconvert/Jupyter)')
         args = parser.parse_args()
         # checks
         assert isinstance(args.quiet, bool)
