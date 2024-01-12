@@ -61,7 +61,7 @@ def render_workbook(
 
 if __name__ == '__main__':
     try:
-        parser = argparse.ArgumentParser(description="Render .py or .ipynb to .html by executing in Jupyter")
+        parser = argparse.ArgumentParser(description="Render .py or .ipynb to .html by executing using nbcovert Jupyter")
         parser.add_argument(
             'infile', 
             metavar='infile', 
