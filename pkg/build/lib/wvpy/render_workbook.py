@@ -9,6 +9,7 @@ import os
 import sys
 import traceback
 from wvpy.jtools import render_as_html
+from wvpy.ptools import execute_py
 
 
 def render_workbook(
@@ -16,6 +17,7 @@ def render_workbook(
     *,
     quiet: bool = False,
     strip_input: bool = True,
+    use_Jupyter: bool = True,
 ) -> int:
     """
     Render a list of Jupyter notebooks.
@@ -23,11 +25,13 @@ def render_workbook(
     :param infiles: list of file names to process
     :param quiet: if true do the work quietly
     :param strip_input: if true strip input cells and cell numbering
+    :param use_Jupyter: if True, use nbconvert, nbformat Jupyter fns.
     :return: 0 if successful 
     """
     # checks
     assert isinstance(quiet, bool)
     assert isinstance(strip_input, bool)
+    assert isinstance(use_Jupyter, bool)
     assert not isinstance(infiles, str)  # common error
     infiles = list(infiles)
     assert len(infiles) > 0
@@ -52,10 +56,15 @@ def render_workbook(
         tasks.append(input_file_name)
     # do the work
     for input_file_name in tasks:
-        render_as_html(
-            input_file_name, 
-            exclude_input=strip_input, 
-            verbose=quiet == False)
+        if use_Jupyter:
+            render_as_html(
+                input_file_name, 
+                exclude_input=strip_input, 
+                verbose=quiet == False)
+        else:
+            execute_py(
+                input_file_name,
+                verbose=quiet == False)
     return 0
 
 
@@ -70,16 +79,19 @@ if __name__ == '__main__':
             help='name of input file(s)')
         parser.add_argument('--strip_input', action='store_true', help="strip input cells and cell markers")
         parser.add_argument('--quiet', action='store_true', help='quiet operation')
+        parser.add_argumnet('--pytxt', action='store_true', help='render Python to txt (without nbconvert/Jupyter)')
         args = parser.parse_args()
         # checks
         assert isinstance(args.quiet, bool)
         assert isinstance(args.strip_input, bool)
+        assert isinstance(args.pytxt, bool)
         assert len(args.infile) > 0
         assert len(set(args.infile)) == len(args.infile)
         ret = render_workbook(
             quiet=args.quiet,
             strip_input=args.strip_input,
             infiles=args.infile,
+            use_Jupyter=args.pytxt is False,
         )
         sys.exit(ret)
     except AssertionError:
