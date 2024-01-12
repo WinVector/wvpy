@@ -24,3 +24,7 @@ warnings.filterwarnings(
 "
 ```
 
+```
+python -m wvpy.pysheet plt_example.py
+```
+
