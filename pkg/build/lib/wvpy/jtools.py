@@ -603,6 +603,7 @@ def run_pool(
         return
     for task in tasks:
         assert isinstance(task, JTask)
+    res = None
     if stop_on_error:
         # # complex way, allowing a stop on job failure
         # https://stackoverflow.com/a/25791961/6901725
@@ -632,4 +633,4 @@ def run_pool(
         # simple way, but doesn't exit until all jobs succeed or fail
         with Pool(njobs) as pool:
             res = list(pool.map(fn, tasks))
-        return res
+    return res
