@@ -12,8 +12,9 @@ import sys
 import pickle
 import tempfile
 
-from typing import Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 from functools import total_ordering
+from contextlib import contextmanager
 
 from wvpy.ptools import execute_py
 
@@ -634,3 +635,19 @@ def run_pool(
         with Pool(njobs) as pool:
             res = list(pool.map(fn, tasks))
     return res
+
+
+@contextmanager
+def task_vars(env) -> None:
+    """
+    Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys().
+
+    :param env: working environment, setting to globals() is usually the correct choice
+    """
+    try:
+        yield
+    finally:
+        sheet_vars = env["sheet_vars"]
+        for k, v in sheet_vars.items():
+            env[k] = v
+        

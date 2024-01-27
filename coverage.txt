@@ -13,12 +13,12 @@ tests/test_render_main.py .                                              [100%]
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
-wvpy/jtools.py              344    103    70%
+wvpy/jtools.py              352    103    71%
 wvpy/ptools.py               75     17    77%
 wvpy/pysheet.py              99     49    51%
 wvpy/render_workbook.py      63     32    49%
 ---------------------------------------------
-TOTAL                       584    201    66%
+TOTAL                       592    201    66%
 
 
-============================= 17 passed in 39.61s ==============================
+============================= 17 passed in 38.37s ==============================
