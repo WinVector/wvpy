@@ -641,13 +641,18 @@ def run_pool(
 def task_vars(env) -> None:
     """
     Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys().
+    Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
 
     :param env: working environment, setting to globals() is usually the correct choice
+    :return None:
     """
+    pre_known_vars = set(env.keys())
     try:
         yield
     finally:
+        post_known_vars = set(env.keys())
+        expected_vars = post_known_vars - pre_known_vars
         sheet_vars = env["sheet_vars"]
         for k, v in sheet_vars.items():
+            assert k in expected_vars
             env[k] = v
-        
