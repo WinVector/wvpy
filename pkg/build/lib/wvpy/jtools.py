@@ -647,19 +647,20 @@ def declare_task_variables(env, result_map = None) -> None:
     :param result_map: empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the set of default names.
     :return None:
     """
+    sheet_vars = dict()
     pre_known_vars = set()
     if env is not None:
         pre_known_vars = set(env.keys())
     if result_map is not None:
-        result_map["sheet_vars"] = dict()
+        result_map["sheet_vars"] = sheet_vars
         result_map["declared_vars"] = set()
     if "sheet_vars" in pre_known_vars:
         sheet_vars = env["sheet_vars"]
-        already_assigned_vars = set(sheet_vars.keys()).intersection(pre_known_vars)
-        if len(already_assigned_vars) > 0:
-            raise ValueError(f"attempting to set pre-with variables: {sorted(already_assigned_vars)}")
         if result_map is not None:
             result_map["sheet_vars"] = sheet_vars
+        already_assigned_vars = set(sheet_vars.keys()).intersection(pre_known_vars)
+        if len(already_assigned_vars) > 0:
+            raise ValueError(f"declare_task_variables(): attempting to set pre-with variables: {sorted(already_assigned_vars)}")
     try:
         yield
     finally:
@@ -670,7 +671,7 @@ def declare_task_variables(env, result_map = None) -> None:
         if "sheet_vars" in pre_known_vars:
             unexpected_vars = set(sheet_vars.keys()) - declared_vars
             if len(unexpected_vars) > 0:
-                raise ValueError(f"unknown variables: {sorted(unexpected_vars)}")
+                raise ValueError(f"declare_task_variables(): attempting to assign undeclared variables: {sorted(unexpected_vars)}")
             # do the assignments
             for k, v in sheet_vars.items():
                 env[k] = v
