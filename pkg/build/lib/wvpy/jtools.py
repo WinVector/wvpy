@@ -638,23 +638,39 @@ def run_pool(
 
 
 @contextmanager
-def override_task_vars(env) -> None:
+def declare_task_variables(env, result_map = None) -> None:
     """
-    Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys().
+    Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys() if "sheet_vars" defined in env.
     Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
 
-    :param env: working environment, setting to globals() is usually the correct choice
+    :param env: working environment, setting to globals() is usually the correct choice.
+    :param result_map: empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the set of default names.
     :return None:
     """
-    pre_known_vars = set(env.keys())
-    assert "sheet_vars" in pre_known_vars
+    pre_known_vars = set()
+    if env is not None:
+        pre_known_vars = set(env.keys())
+    if result_map is not None:
+        result_map["sheet_vars"] = dict()
+        result_map["declared_vars"] = set()
+    if "sheet_vars" in pre_known_vars:
+        sheet_vars = env["sheet_vars"]
+        already_assigned_vars = set(sheet_vars.keys()).intersection(pre_known_vars)
+        if len(already_assigned_vars) > 0:
+            raise ValueError(f"attempting to set pre-with variables: {sorted(already_assigned_vars)}")
+        if result_map is not None:
+            result_map["sheet_vars"] = sheet_vars
     try:
         yield
     finally:
         post_known_vars = set(env.keys())
-        expected_vars = post_known_vars - pre_known_vars
-        sheet_vars = env["sheet_vars"]
-        unexpected_vars = set(sheet_vars.keys()) - expected_vars
-        assert len(unexpected_vars) == 0
-        for k, v in sheet_vars.items():
-            env[k] = v
+        declared_vars = post_known_vars - pre_known_vars
+        if result_map is not None:
+            result_map["declared_vars"] = declared_vars
+        if "sheet_vars" in pre_known_vars:
+            unexpected_vars = set(sheet_vars.keys()) - declared_vars
+            if len(unexpected_vars) > 0:
+                raise ValueError(f"unknown variables: {sorted(unexpected_vars)}")
+            # do the assignments
+            for k, v in sheet_vars.items():
+                env[k] = v

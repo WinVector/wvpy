@@ -94,7 +94,7 @@
                     <a class="function" href="#run_pool">run_pool</a>
             </li>
             <li>
-                    <a class="function" href="#override_task_vars">override_task_vars</a>
+                    <a class="function" href="#declare_task_variables">declare_task_variables</a>
             </li>
     </ul>
 
@@ -758,26 +758,42 @@
 </span><span id="L-637"><a href="#L-637"><span class="linenos">637</span></a>
 </span><span id="L-638"><a href="#L-638"><span class="linenos">638</span></a>
 </span><span id="L-639"><a href="#L-639"><span class="linenos">639</span></a><span class="nd">@contextmanager</span>
-</span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a><span class="k">def</span> <span class="nf">override_task_vars</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a><span class="k">def</span> <span class="nf">declare_task_variables</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">result_map</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-641"><a href="#L-641"><span class="linenos">641</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a><span class="sd">    Copy env[&quot;sheet_vars&quot;][k] into env[k] for all k in sheet_vars.keys().</span>
+</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a><span class="sd">    Copy env[&quot;sheet_vars&quot;][k] into env[k] for all k in sheet_vars.keys() if &quot;sheet_vars&quot; defined in env.</span>
 </span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a><span class="sd">    Only variables that are first assigned in the with block of this task manager are allowed to be assigned.</span>
 </span><span id="L-644"><a href="#L-644"><span class="linenos">644</span></a>
-</span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a><span class="sd">    :param env: working environment, setting to globals() is usually the correct choice</span>
-</span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a><span class="sd">    :return None:</span>
-</span><span id="L-647"><a href="#L-647"><span class="linenos">647</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a>    <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a>    <span class="k">assert</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span>
-</span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>        <span class="k">yield</span>
-</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>    <span class="k">finally</span><span class="p">:</span>
-</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>        <span class="n">post_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a>        <span class="n">expected_vars</span> <span class="o">=</span> <span class="n">post_known_vars</span> <span class="o">-</span> <span class="n">pre_known_vars</span>
-</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>        <span class="n">sheet_vars</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span>
-</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>        <span class="n">unexpected_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">expected_vars</span>
-</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="L-658"><a href="#L-658"><span class="linenos">658</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sheet_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="L-659"><a href="#L-659"><span class="linenos">659</span></a>            <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a><span class="sd">    :param env: working environment, setting to globals() is usually the correct choice.</span>
+</span><span id="L-646"><a href="#L-646"><span class="linenos">646</span></a><span class="sd">    :param result_map: empty dictionary to return results in. result_map[&quot;sheet_vars&quot;] is the dictionary if incoming assignments, result_map[&quot;declared_vars&quot;] is the set of default names.</span>
+</span><span id="L-647"><a href="#L-647"><span class="linenos">647</span></a><span class="sd">    :return None:</span>
+</span><span id="L-648"><a href="#L-648"><span class="linenos">648</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-649"><a href="#L-649"><span class="linenos">649</span></a>    <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="L-650"><a href="#L-650"><span class="linenos">650</span></a>    <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-651"><a href="#L-651"><span class="linenos">651</span></a>        <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="L-652"><a href="#L-652"><span class="linenos">652</span></a>    <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-653"><a href="#L-653"><span class="linenos">653</span></a>        <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="L-654"><a href="#L-654"><span class="linenos">654</span></a>        <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;declared_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="L-655"><a href="#L-655"><span class="linenos">655</span></a>    <span class="k">if</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span><span class="p">:</span>
+</span><span id="L-656"><a href="#L-656"><span class="linenos">656</span></a>        <span class="n">sheet_vars</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span>
+</span><span id="L-657"><a href="#L-657"><span class="linenos">657</span></a>        <span class="n">already_assigned_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pre_known_vars</span><span class="p">)</span>
+</span><span id="L-658"><a href="#L-658"><span class="linenos">658</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">already_assigned_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-659"><a href="#L-659"><span class="linenos">659</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;attempting to set pre-with variables: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">already_assigned_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-660"><a href="#L-660"><span class="linenos">660</span></a>        <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-661"><a href="#L-661"><span class="linenos">661</span></a>            <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet_vars</span>
+</span><span id="L-662"><a href="#L-662"><span class="linenos">662</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-663"><a href="#L-663"><span class="linenos">663</span></a>        <span class="k">yield</span>
+</span><span id="L-664"><a href="#L-664"><span class="linenos">664</span></a>    <span class="k">finally</span><span class="p">:</span>
+</span><span id="L-665"><a href="#L-665"><span class="linenos">665</span></a>        <span class="n">post_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="L-666"><a href="#L-666"><span class="linenos">666</span></a>        <span class="n">declared_vars</span> <span class="o">=</span> <span class="n">post_known_vars</span> <span class="o">-</span> <span class="n">pre_known_vars</span>
+</span><span id="L-667"><a href="#L-667"><span class="linenos">667</span></a>        <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-668"><a href="#L-668"><span class="linenos">668</span></a>            <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;declared_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">declared_vars</span>
+</span><span id="L-669"><a href="#L-669"><span class="linenos">669</span></a>        <span class="k">if</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span><span class="p">:</span>
+</span><span id="L-670"><a href="#L-670"><span class="linenos">670</span></a>            <span class="n">unexpected_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">declared_vars</span>
+</span><span id="L-671"><a href="#L-671"><span class="linenos">671</span></a>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-672"><a href="#L-672"><span class="linenos">672</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown variables: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-673"><a href="#L-673"><span class="linenos">673</span></a>            <span class="c1"># do the assignments</span>
+</span><span id="L-674"><a href="#L-674"><span class="linenos">674</span></a>            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sheet_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-675"><a href="#L-675"><span class="linenos">675</span></a>                <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 </span></pre></div>
 
 
@@ -2062,49 +2078,66 @@ passed to nbconvert.preprocessors.ExecutePreprocessor.</li>
 
 
                 </section>
-                <section id="override_task_vars">
-                            <input id="override_task_vars-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="declare_task_variables">
+                            <input id="declare_task_variables-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
                     <div class="decorator">@contextmanager</div>
 
         <span class="def">def</span>
-        <span class="name">override_task_vars</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">env</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">declare_task_variables</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">env</span>, </span><span class="param"><span class="n">result_map</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="override_task_vars-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="declare_task_variables-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#override_task_vars"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="override_task_vars-641"><a href="#override_task_vars-641"><span class="linenos">641</span></a><span class="nd">@contextmanager</span>
-</span><span id="override_task_vars-642"><a href="#override_task_vars-642"><span class="linenos">642</span></a><span class="k">def</span> <span class="nf">override_task_vars</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="override_task_vars-643"><a href="#override_task_vars-643"><span class="linenos">643</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="override_task_vars-644"><a href="#override_task_vars-644"><span class="linenos">644</span></a><span class="sd">    Copy env[&quot;sheet_vars&quot;][k] into env[k] for all k in sheet_vars.keys().</span>
-</span><span id="override_task_vars-645"><a href="#override_task_vars-645"><span class="linenos">645</span></a><span class="sd">    Only variables that are first assigned in the with block of this task manager are allowed to be assigned.</span>
-</span><span id="override_task_vars-646"><a href="#override_task_vars-646"><span class="linenos">646</span></a>
-</span><span id="override_task_vars-647"><a href="#override_task_vars-647"><span class="linenos">647</span></a><span class="sd">    :param env: working environment, setting to globals() is usually the correct choice</span>
-</span><span id="override_task_vars-648"><a href="#override_task_vars-648"><span class="linenos">648</span></a><span class="sd">    :return None:</span>
-</span><span id="override_task_vars-649"><a href="#override_task_vars-649"><span class="linenos">649</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="override_task_vars-650"><a href="#override_task_vars-650"><span class="linenos">650</span></a>    <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="override_task_vars-651"><a href="#override_task_vars-651"><span class="linenos">651</span></a>    <span class="k">assert</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span>
-</span><span id="override_task_vars-652"><a href="#override_task_vars-652"><span class="linenos">652</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="override_task_vars-653"><a href="#override_task_vars-653"><span class="linenos">653</span></a>        <span class="k">yield</span>
-</span><span id="override_task_vars-654"><a href="#override_task_vars-654"><span class="linenos">654</span></a>    <span class="k">finally</span><span class="p">:</span>
-</span><span id="override_task_vars-655"><a href="#override_task_vars-655"><span class="linenos">655</span></a>        <span class="n">post_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="override_task_vars-656"><a href="#override_task_vars-656"><span class="linenos">656</span></a>        <span class="n">expected_vars</span> <span class="o">=</span> <span class="n">post_known_vars</span> <span class="o">-</span> <span class="n">pre_known_vars</span>
-</span><span id="override_task_vars-657"><a href="#override_task_vars-657"><span class="linenos">657</span></a>        <span class="n">sheet_vars</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span>
-</span><span id="override_task_vars-658"><a href="#override_task_vars-658"><span class="linenos">658</span></a>        <span class="n">unexpected_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">expected_vars</span>
-</span><span id="override_task_vars-659"><a href="#override_task_vars-659"><span class="linenos">659</span></a>        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="override_task_vars-660"><a href="#override_task_vars-660"><span class="linenos">660</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sheet_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="override_task_vars-661"><a href="#override_task_vars-661"><span class="linenos">661</span></a>            <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <a class="headerlink" href="#declare_task_variables"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="declare_task_variables-641"><a href="#declare_task_variables-641"><span class="linenos">641</span></a><span class="nd">@contextmanager</span>
+</span><span id="declare_task_variables-642"><a href="#declare_task_variables-642"><span class="linenos">642</span></a><span class="k">def</span> <span class="nf">declare_task_variables</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">result_map</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="declare_task_variables-643"><a href="#declare_task_variables-643"><span class="linenos">643</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="declare_task_variables-644"><a href="#declare_task_variables-644"><span class="linenos">644</span></a><span class="sd">    Copy env[&quot;sheet_vars&quot;][k] into env[k] for all k in sheet_vars.keys() if &quot;sheet_vars&quot; defined in env.</span>
+</span><span id="declare_task_variables-645"><a href="#declare_task_variables-645"><span class="linenos">645</span></a><span class="sd">    Only variables that are first assigned in the with block of this task manager are allowed to be assigned.</span>
+</span><span id="declare_task_variables-646"><a href="#declare_task_variables-646"><span class="linenos">646</span></a>
+</span><span id="declare_task_variables-647"><a href="#declare_task_variables-647"><span class="linenos">647</span></a><span class="sd">    :param env: working environment, setting to globals() is usually the correct choice.</span>
+</span><span id="declare_task_variables-648"><a href="#declare_task_variables-648"><span class="linenos">648</span></a><span class="sd">    :param result_map: empty dictionary to return results in. result_map[&quot;sheet_vars&quot;] is the dictionary if incoming assignments, result_map[&quot;declared_vars&quot;] is the set of default names.</span>
+</span><span id="declare_task_variables-649"><a href="#declare_task_variables-649"><span class="linenos">649</span></a><span class="sd">    :return None:</span>
+</span><span id="declare_task_variables-650"><a href="#declare_task_variables-650"><span class="linenos">650</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="declare_task_variables-651"><a href="#declare_task_variables-651"><span class="linenos">651</span></a>    <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="declare_task_variables-652"><a href="#declare_task_variables-652"><span class="linenos">652</span></a>    <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="declare_task_variables-653"><a href="#declare_task_variables-653"><span class="linenos">653</span></a>        <span class="n">pre_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="declare_task_variables-654"><a href="#declare_task_variables-654"><span class="linenos">654</span></a>    <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="declare_task_variables-655"><a href="#declare_task_variables-655"><span class="linenos">655</span></a>        <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span id="declare_task_variables-656"><a href="#declare_task_variables-656"><span class="linenos">656</span></a>        <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;declared_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="declare_task_variables-657"><a href="#declare_task_variables-657"><span class="linenos">657</span></a>    <span class="k">if</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span><span class="p">:</span>
+</span><span id="declare_task_variables-658"><a href="#declare_task_variables-658"><span class="linenos">658</span></a>        <span class="n">sheet_vars</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span>
+</span><span id="declare_task_variables-659"><a href="#declare_task_variables-659"><span class="linenos">659</span></a>        <span class="n">already_assigned_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">pre_known_vars</span><span class="p">)</span>
+</span><span id="declare_task_variables-660"><a href="#declare_task_variables-660"><span class="linenos">660</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">already_assigned_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="declare_task_variables-661"><a href="#declare_task_variables-661"><span class="linenos">661</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;attempting to set pre-with variables: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">already_assigned_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="declare_task_variables-662"><a href="#declare_task_variables-662"><span class="linenos">662</span></a>        <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="declare_task_variables-663"><a href="#declare_task_variables-663"><span class="linenos">663</span></a>            <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;sheet_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet_vars</span>
+</span><span id="declare_task_variables-664"><a href="#declare_task_variables-664"><span class="linenos">664</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="declare_task_variables-665"><a href="#declare_task_variables-665"><span class="linenos">665</span></a>        <span class="k">yield</span>
+</span><span id="declare_task_variables-666"><a href="#declare_task_variables-666"><span class="linenos">666</span></a>    <span class="k">finally</span><span class="p">:</span>
+</span><span id="declare_task_variables-667"><a href="#declare_task_variables-667"><span class="linenos">667</span></a>        <span class="n">post_known_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="declare_task_variables-668"><a href="#declare_task_variables-668"><span class="linenos">668</span></a>        <span class="n">declared_vars</span> <span class="o">=</span> <span class="n">post_known_vars</span> <span class="o">-</span> <span class="n">pre_known_vars</span>
+</span><span id="declare_task_variables-669"><a href="#declare_task_variables-669"><span class="linenos">669</span></a>        <span class="k">if</span> <span class="n">result_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="declare_task_variables-670"><a href="#declare_task_variables-670"><span class="linenos">670</span></a>            <span class="n">result_map</span><span class="p">[</span><span class="s2">&quot;declared_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">declared_vars</span>
+</span><span id="declare_task_variables-671"><a href="#declare_task_variables-671"><span class="linenos">671</span></a>        <span class="k">if</span> <span class="s2">&quot;sheet_vars&quot;</span> <span class="ow">in</span> <span class="n">pre_known_vars</span><span class="p">:</span>
+</span><span id="declare_task_variables-672"><a href="#declare_task_variables-672"><span class="linenos">672</span></a>            <span class="n">unexpected_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">declared_vars</span>
+</span><span id="declare_task_variables-673"><a href="#declare_task_variables-673"><span class="linenos">673</span></a>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="declare_task_variables-674"><a href="#declare_task_variables-674"><span class="linenos">674</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unknown variables: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unexpected_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="declare_task_variables-675"><a href="#declare_task_variables-675"><span class="linenos">675</span></a>            <span class="c1"># do the assignments</span>
+</span><span id="declare_task_variables-676"><a href="#declare_task_variables-676"><span class="linenos">676</span></a>            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sheet_vars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="declare_task_variables-677"><a href="#declare_task_variables-677"><span class="linenos">677</span></a>                <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys().
+            <div class="docstring"><p>Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys() if "sheet_vars" defined in env.
 Only variables that are first assigned in the with block of this task manager are allowed to be assigned.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>env</strong>:  working environment, setting to globals() is usually the correct choice</li>
+<li><strong>env</strong>:  working environment, setting to globals() is usually the correct choice.</li>
+<li><strong>result_map</strong>:  empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the set of default names.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
