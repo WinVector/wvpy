@@ -3,8 +3,6 @@
 
 import datetime
 import os
-import pickle
-import tempfile
 from io import StringIO
 from contextlib import redirect_stdout
 import traceback
