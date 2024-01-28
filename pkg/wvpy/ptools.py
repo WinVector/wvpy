@@ -4,7 +4,7 @@
 import datetime
 import os
 from io import StringIO
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 import traceback
 import copy
 from typing import Iterable, List, Optional
@@ -59,37 +59,37 @@ def execute_py(
         pass
     caught = None
     trace = None
-    try:
-        if verbose:
-            print(
-                f'start execute_py "{source_file_name}" {exec_note} {datetime.datetime.now()}'
-            )
-        # https://stackoverflow.com/a/3906390
-        res_buffer = StringIO()
-        with redirect_stdout(res_buffer):
-            # https://docs.python.org/3/library/functions.html#exec
-            exec_env = dict()
-            if sheet_vars is not None:
-                exec_env["sheet_vars"] = copy.deepcopy(sheet_vars)
-            exec(
-                python_source,
-                exec_env,
-            )
-        string_res = res_buffer.getvalue()
-        with open(result_file_name, "wt", encoding="utf-8") as f:
-            f.write(string_res)
-            f.write("\n\n")
-    except Exception as e:
-        caught = e
-        trace = traceback.format_exc()
+    if verbose:
+        print(
+            f'start execute_py "{source_file_name}" {exec_note} {datetime.datetime.now()}'
+        )
+    # https://stackoverflow.com/a/3906390
+    res_buffer_stdout = StringIO()
+    res_buffer_stderr = StringIO()
+    exec_env = dict()
+    if sheet_vars is not None:
+        exec_env["sheet_vars"] = copy.deepcopy(sheet_vars)
+    with redirect_stdout(res_buffer_stdout):
+        with redirect_stderr(res_buffer_stderr):
+            try:
+                # https://docs.python.org/3/library/functions.html#exec
+                exec(
+                    python_source,
+                    exec_env,
+                )
+            except Exception as e:
+                caught = e
+                trace = traceback.format_exc()
+    string_res = res_buffer_stdout.getvalue() + "\n\n" + res_buffer_stderr.getvalue()
+    if caught is not None:
+        string_res = string_res + "\n\n" + str(caught)
+    if trace is not None:
+        string_res = string_res + "\n\n" + str(trace)
+    with open(result_file_name, "wt", encoding="utf-8") as f:
+        f.write(string_res)
+        f.write("\n\n")
     nw = datetime.datetime.now()
     if caught is not None:
-        with open(result_file_name, "wt", encoding="utf-8") as f:
-            f.write(f'\n\nexception in execute_py "{source_file_name}" {nw}\n\n')
-            f.write(str(caught))
-            f.write("\n\n")
-            f.write(str(trace))
-            f.write("\n\n")
         if verbose:
             print(f'\texception in execute_py "{source_file_name}" {nw}')
         raise caught
