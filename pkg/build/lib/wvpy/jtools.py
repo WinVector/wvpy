@@ -638,7 +638,7 @@ def run_pool(
 
 
 @contextmanager
-def task_vars(env) -> None:
+def override_task_vars(env) -> None:
     """
     Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys().
     Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
