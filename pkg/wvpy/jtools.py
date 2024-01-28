@@ -647,12 +647,14 @@ def task_vars(env) -> None:
     :return None:
     """
     pre_known_vars = set(env.keys())
+    assert "sheet_vars" in pre_known_vars
     try:
         yield
     finally:
         post_known_vars = set(env.keys())
         expected_vars = post_known_vars - pre_known_vars
         sheet_vars = env["sheet_vars"]
+        unexpected_vars = set(sheet_vars.keys()) - expected_vars
+        assert len(unexpected_vars) == 0
         for k, v in sheet_vars.items():
-            assert k in expected_vars
             env[k] = v

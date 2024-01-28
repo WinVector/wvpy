@@ -83,7 +83,7 @@
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    :param source_file_name: name of source file, must end with .py (.py added if not present)</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    :param output_suffix: optional name to add to result name</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    :param verbose logical, if True print while running</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    :param sheet_vars: if not None value is de-serialized as a variable named &quot;sheet_vars&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    :param sheet_vars: if not None value is de-serialized as a variable named &quot;sheet_vars&quot; (usually a dictionary)</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    :param init_code: Python init code for first cell</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    :return: None</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -199,7 +199,7 @@
 </span><span id="execute_py-27"><a href="#execute_py-27"><span class="linenos"> 27</span></a><span class="sd">    :param source_file_name: name of source file, must end with .py (.py added if not present)</span>
 </span><span id="execute_py-28"><a href="#execute_py-28"><span class="linenos"> 28</span></a><span class="sd">    :param output_suffix: optional name to add to result name</span>
 </span><span id="execute_py-29"><a href="#execute_py-29"><span class="linenos"> 29</span></a><span class="sd">    :param verbose logical, if True print while running</span>
-</span><span id="execute_py-30"><a href="#execute_py-30"><span class="linenos"> 30</span></a><span class="sd">    :param sheet_vars: if not None value is de-serialized as a variable named &quot;sheet_vars&quot;</span>
+</span><span id="execute_py-30"><a href="#execute_py-30"><span class="linenos"> 30</span></a><span class="sd">    :param sheet_vars: if not None value is de-serialized as a variable named &quot;sheet_vars&quot; (usually a dictionary)</span>
 </span><span id="execute_py-31"><a href="#execute_py-31"><span class="linenos"> 31</span></a><span class="sd">    :param init_code: Python init code for first cell</span>
 </span><span id="execute_py-32"><a href="#execute_py-32"><span class="linenos"> 32</span></a><span class="sd">    :return: None</span>
 </span><span id="execute_py-33"><a href="#execute_py-33"><span class="linenos"> 33</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -297,7 +297,7 @@ Exceptions raised in the rendering notebook are allowed to pass through.</p>
 <li><strong>source_file_name</strong>:  name of source file, must end with .py (.py added if not present)</li>
 <li><strong>output_suffix</strong>:  optional name to add to result name
 :param verbose logical, if True print while running</li>
-<li><strong>sheet_vars</strong>:  if not None value is de-serialized as a variable named "sheet_vars"</li>
+<li><strong>sheet_vars</strong>:  if not None value is de-serialized as a variable named "sheet_vars" (usually a dictionary)</li>
 <li><strong>init_code</strong>:  Python init code for first cell</li>
 </ul>
 

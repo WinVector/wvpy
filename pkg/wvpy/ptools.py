@@ -26,7 +26,7 @@ def execute_py(
     :param source_file_name: name of source file, must end with .py (.py added if not present)
     :param output_suffix: optional name to add to result name
     :param verbose logical, if True print while running
-    :param sheet_vars: if not None value is de-serialized as a variable named "sheet_vars"
+    :param sheet_vars: if not None value is de-serialized as a variable named "sheet_vars" (usually a dictionary)
     :param init_code: Python init code for first cell
     :return: None
     """
