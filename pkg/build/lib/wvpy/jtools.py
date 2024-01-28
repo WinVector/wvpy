@@ -398,10 +398,10 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             pass
     if caught is not None:
         if verbose:
-            print(f'\texception in execute_py "{html_name}" {nw}')
+            print(f'\texception in execute_py "{notebook_file_name}" {nw}')
         raise caught
     if verbose:
-        print(f'\tdone render_as_html "{html_name}" {nw}')
+        print(f'\tdone render_as_html "{notebook_file_name}" {nw}')
 
 
 _jtask_comparison_attributes = [
