@@ -14,5 +14,5 @@ with declare_task_variables(globals()):
 
 """end code"""
 
-print(f"processing analysis and results for {city}.")
+print(f"Analysis and results for {city}.")
 
