@@ -8,6 +8,7 @@ import tempfile
 from io import StringIO
 from contextlib import redirect_stdout
 import traceback
+import copy
 from typing import Iterable, List, Optional
 
 
@@ -39,20 +40,6 @@ def execute_py(
     assert os.path.exists(source_file_name)
     with open(source_file_name, encoding="utf-8") as inf:
         python_source = inf.read()
-    tmp_path = None
-    # do the conversion
-    if sheet_vars is not None:
-        with tempfile.NamedTemporaryFile(delete=False) as ntf:
-            tmp_path = ntf.name
-            pickle.dump(sheet_vars, file=ntf)
-        if (init_code is None) or (len(init_code) <= 0):
-            init_code = ""
-        pickle_code = f"""
-import pickle
-with open({tmp_path.__repr__()}, 'rb') as pf:
-   sheet_vars = pickle.load(pf)
-"""
-        init_code = init_code + "\n\n" + pickle_code
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
         python_source = (
@@ -83,9 +70,12 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         res_buffer = StringIO()
         with redirect_stdout(res_buffer):
             # https://docs.python.org/3/library/functions.html#exec
+            exec_env = dict()
+            if sheet_vars is not None:
+                exec_env["sheet_vars"] = copy.deepcopy(sheet_vars)
             exec(
                 python_source,
-                dict(),
+                exec_env,
             )
         string_res = res_buffer.getvalue()
         with open(result_file_name, "wt", encoding="utf-8") as f:
@@ -95,11 +85,6 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         caught = e
         trace = traceback.format_exc()
     nw = datetime.datetime.now()
-    if tmp_path is not None:
-        try:
-            os.remove(tmp_path)
-        except FileNotFoundError:
-            pass
     if caught is not None:
         with open(result_file_name, "wt", encoding="utf-8") as f:
             f.write(f'\n\nexception in execute_py "{source_file_name}" {nw}\n\n')
