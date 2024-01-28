@@ -8,6 +8,7 @@ wvpy/jtools.py
 wvpy/ptools.py
 wvpy/pysheet.py
 wvpy/render_workbook.py
+wvpy/util.py
 wvpy.egg-info/PKG-INFO
 wvpy.egg-info/SOURCES.txt
 wvpy.egg-info/dependency_links.txt

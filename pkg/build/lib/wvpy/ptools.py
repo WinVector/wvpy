@@ -9,6 +9,8 @@ import traceback
 import copy
 from typing import Iterable, List, Optional
 
+from wvpy.util import escape_ansi
+
 
 def execute_py(
     source_file_name: str,
@@ -82,16 +84,18 @@ def execute_py(
                 trace = traceback.format_exc()
     string_res = res_buffer_stdout.getvalue() + "\n\n" + res_buffer_stderr.getvalue()
     if caught is not None:
-        string_res = string_res + "\n\n" + str(caught)
+        string_res = string_res + "\n\n" + escape_ansi(str(caught))
     if trace is not None:
-        string_res = string_res + "\n\n" + str(trace)
+        string_res = string_res + "\n\n" + escape_ansi(str(trace))
     with open(result_file_name, "wt", encoding="utf-8") as f:
         f.write(string_res)
         f.write("\n\n")
     nw = datetime.datetime.now()
     if caught is not None:
         if verbose:
-            print(f'\texception in execute_py "{source_file_name}" {nw}')
+            print(f'\n\n\texception in execute_py "{source_file_name}" {nw} {escape_ansi(str(caught))}\n\n')
+            if trace is not None:
+                print(f'\n\n\t\ttrace {escape_ansi(str(trace))}\n\n')
         raise caught
     if verbose:
         print(f'\tdone execute_py "{source_file_name}" {nw}')

@@ -11,11 +11,13 @@ from multiprocessing import Pool
 import sys
 import pickle
 import tempfile
+import traceback
 
 from typing import Any, Dict, Iterable, List, Optional
 from functools import total_ordering
 from contextlib import contextmanager
 
+from wvpy.util import escape_ansi
 from wvpy.ptools import execute_py
 
 
@@ -365,11 +367,13 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
     except FileNotFoundError:
         pass
     caught = None
+    trace = None
+    html_body = ""
+    if verbose:
+        print(
+            f'start render_as_html "{notebook_file_name}" {exec_note} {datetime.datetime.now()}'
+        )
     try:
-        if verbose:
-            print(
-                f'start render_as_html "{notebook_file_name}" {exec_note} {datetime.datetime.now()}'
-            )
         if kernel_name is not None:
             ep = OurExecutor(
                 timeout=timeout, kernel_name=kernel_name
@@ -379,17 +383,26 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         nb_res, nb_resources = ep.preprocess(nb)
         html_exporter = HTMLExporter(exclude_input=exclude_input)
         html_body, html_resources = html_exporter.from_notebook_node(nb_res)
-        if exclude_input and (prompt_strip_regexp is not None):
-            # strip output prompts
-            html_body = re.sub(
-                prompt_strip_regexp,
-                ' ',
-                html_body)
-        with open(html_name, "wt") as f:
-            f.write(html_body)
         caught = ep.caught_exception
     except Exception as e:
         caught = e
+        trace = traceback.format_exc()
+    if exclude_input and (prompt_strip_regexp is not None):
+        # strip output prompts
+        html_body = re.sub(
+            prompt_strip_regexp,
+            ' ',
+            html_body)
+    with open(html_name, "wt", encoding="utf-8") as f:
+        f.write(html_body)
+        if caught is not None:
+            f.write("\n<pre>\n")
+            f.write(escape_ansi(str(caught)))
+            f.write("\n</pre>\n")
+        if trace is not None:
+            f.write("\n<pre>\n")
+            f.write(escape_ansi(str(trace)))
+            f.write("\n</pre>\n")
     nw = datetime.datetime.now()
     if tmp_path is not None:
         try:
@@ -398,7 +411,9 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             pass
     if caught is not None:
         if verbose:
-            print(f'\texception in execute_py "{notebook_file_name}" {nw}')
+            print(f'\n\n\texception in render_as_html "{notebook_file_name}" {nw} {escape_ansi(str(caught))}\n\n')
+            if trace is not None:
+                print(f'\n\n\t\ttrace {escape_ansi(str(trace))}\n\n')
         raise caught
     if verbose:
         print(f'\tdone render_as_html "{notebook_file_name}" {nw}')
