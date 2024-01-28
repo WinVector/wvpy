@@ -1,5 +1,10 @@
 
 rm -f *.html
+python -m wvpy.render_workbook initial_example.ipynb
+
+
+
+rm -f *.html
 python cities_example_01.py
 
 
