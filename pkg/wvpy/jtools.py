@@ -448,7 +448,10 @@ class JTask:
                 path = path.removesuffix(".ipynb")
             py_exists = os.path.exists(path + ".py")
             ipynb_exists = os.path.exists(path + ".ipynb")
-            assert (py_exists + ipynb_exists) == 1
+            assert (py_exists + ipynb_exists) >= 1
+            if (not sheet_name.endswith(".py")) and (not sheet_name.endswith(".ipynb")):
+                # no suffix, so must be unambiguous
+                assert (py_exists + ipynb_exists) == 1
         self.sheet_name = sheet_name
         self.output_suffix = output_suffix
         self.exclude_input = exclude_input
