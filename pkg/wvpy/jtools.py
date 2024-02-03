@@ -673,15 +673,13 @@ def declare_task_variables(
     env,
     *,
     result_map:Optional[Dict[str, Any]] = None,
-    known_defaults:Optional[Dict[str, Any]] = None,
     ) -> None:
     """
     Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys() if "sheet_vars" defined in env.
     Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
 
     :param env: working environment, setting to globals() is usually the correct choice.
-    :param result_map: empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the set of default names.
-    :param known_defaults: known default values, confirm block assignments don't set anything inconsistent with known_defaults.
+    :param result_map: empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the dictionary of default names and values.
     :return None:
     """
     sheet_vars = dict()
@@ -704,19 +702,11 @@ def declare_task_variables(
         post_known_vars = set(env.keys())
         declared_vars = post_known_vars - pre_known_vars
         if result_map is not None:
-            result_map["declared_vars"] = declared_vars
+            result_map["declared_vars"] = {k: env[k] for k in declared_vars}
         if "sheet_vars" in pre_known_vars:
             unexpected_vars = set(sheet_vars.keys()) - declared_vars
             if len(unexpected_vars) > 0:
                 raise ValueError(f"declare_task_variables(): attempting to assign undeclared variables: {sorted(unexpected_vars)}")
-            inconsistent_defaults = dict()
-            if known_defaults is not None:
-                for k, v in known_defaults.items():
-                    if k in declared_vars:
-                        if env[k] != v:
-                            inconsistent_defaults[k] = {"default assignment": env[k], "known_defaults": v}
-                if len(inconsistent_defaults) > 0:
-                    raise ValueError(f"default assignments inconsistent with known defaults: {repr(inconsistent_defaults)}")
             # do the assignments
             for k, v in sheet_vars.items():
                 env[k] = v
