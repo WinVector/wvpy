@@ -174,10 +174,10 @@ def convert_py_file_to_notebook(
     assert isinstance(ipynb_file, str)
     assert isinstance(use_black, bool)
     assert py_file != ipynb_file  # prevent clobber
-    with open(py_file, "r") as f:
+    with open(py_file, "r", encoding="utf-8") as f:
         text = f.read()
     nb = convert_py_code_to_notebook(text, use_black=use_black)
-    with open(ipynb_file, "w") as f:
+    with open(ipynb_file, "w", encoding="utf-8") as f:
         nbformat.write(nb, f)
 
 
@@ -242,7 +242,7 @@ def convert_notebook_file_to_py(
     with open(ipynb_file, "rb") as f:
         nb = nbformat.read(f, as_version=4)
     py_source = convert_notebook_code_to_py(nb, use_black=use_black)
-    with open(py_file, "w") as f:
+    with open(py_file, "w", encoding="utf-8") as f:
         f.write(py_source)
 
 
@@ -336,7 +336,7 @@ def render_as_html(
             nb = nbformat.read(f, as_version=4)
     elif notebook_file_name.endswith(".py"):
         suffix = ".py"
-        with open(notebook_file_name, "r") as f:
+        with open(notebook_file_name, "r", encoding="utf-8") as f:
             text = f.read()
         nb = convert_py_code_to_notebook(text)
     else:
@@ -497,7 +497,7 @@ class JTask:
 
     def render_py_txt(self) -> None:
         """
-        Render Python to text (without nbconver, nbformat Jupyter bindings)
+        Render Python to text (without nbconvert, nbformat Jupyter bindings)
         """
         path = self.sheet_name
         if isinstance(self.path_prefix, str) and (len(self.path_prefix) > 0):
