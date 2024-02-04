@@ -34,6 +34,12 @@ def record_assignments(
     """
     Context manager to record all assignments to new variables in a with-block.
     New variables being variables not set prior to entering the with block.
+    Setting `env=globals()` works if calling environment assignments are assigning into globals, as (from `help(globals)`): "NOTE: Updates to this dictionary *will* affect 
+    name lookups in the current global scope and vice-versa."
+    Setting `env=locals()` is not to be trusted as (from `help(locals`)): "NOTE: Whether or not updates to this dictionary will affect name lookups in
+    the local scope and vice-versa is *implementation dependent* and not
+    covered by any backwards compatibility guarantees."
+    Because of the above `record_assignments()` is unlikely to work inside a function body.
 
     Example:
     ```python
@@ -78,11 +84,16 @@ def ensure_names_not_already_assigned(env, *, keys: Iterable[str]) -> None:
 
 
 def assign_values_from_map(
-    env, *, values: Dict[str, Any], expected_keys: Optional[Iterable[str]]
+    env, *, values: Dict[str, Any], expected_keys: Optional[Iterable[str]] = None,
 ) -> None:
     """
     Assign values from map into environment.
     For an example please see: https://github.com/WinVector/wvpy/blob/main/examples/declare_variables/record_example.ipynb .
+    Setting `env=globals()` works as (from `help(globals)`): "NOTE: Updates to this dictionary *will* affect 
+    name lookups in the current global scope and vice-versa."
+    Setting `env=locals()` is not to be trusted as (from `help(locals`)): "NOTE: Whether or not updates to this dictionary will affect name lookups in
+    the local scope and vice-versa is *implementation dependent* and not
+    covered by any backwards compatibility guarantees."
 
     :param env: working environment, setting to `globals()` is usually the correct choice.
     :param values: dictionary to copy into environment.

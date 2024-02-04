@@ -674,6 +674,12 @@ def declare_task_variables(
     """
     Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys() if "sheet_vars" defined in env.
     Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
+    Setting `env=globals()` works if calling environment assignments are assigning into globals, as (from `help(globals)`): "NOTE: Updates to this dictionary *will* affect 
+    name lookups in the current global scope and vice-versa."
+    Setting `env=locals()` is not to be trusted as (from `help(locals`)): "NOTE: Whether or not updates to this dictionary will affect name lookups in
+    the local scope and vice-versa is *implementation dependent* and not
+    covered by any backwards compatibility guarantees."
+    Because of the above `declare_task_variables()` is unlikely to work inside a function body.
 
     :param env: working environment, setting to globals() is usually the correct choice.
     :param result_map: empty dictionary to return results in. result_map["sheet_vars"] is the dictionary if incoming assignments, result_map["declared_vars"] is the dictionary of default names and values.
