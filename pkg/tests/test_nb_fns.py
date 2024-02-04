@@ -31,6 +31,9 @@ from wvpy.jtools import (
     convert_notebook_code_to_py,
     JTask,
     job_fn,
+    job_fn_eat_exception,
+    job_fn_py_txt,
+    job_fn_py_txt_eat_exception,
     run_pool,
 )
 
@@ -103,6 +106,74 @@ def test_jupyter_notebook_bad():
     with pytest.raises(CellExecutionError):
         render_as_html("example_bad_notebook.ipynb")
     os.remove("example_bad_notebook.html")
+    os.chdir(orig_wd)
+
+
+def test_jobs_direct_html():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
+    for fn in [job_fn, job_fn_eat_exception]:
+        tasks = [
+            JTask(
+                "example_good_notebook.ipynb",
+                init_code="x = 2",
+                ),
+            JTask(
+                "example_parameterized_notebook.ipynb",
+                init_code="x = 2",
+                ),
+        ]
+        res = [fn(task) for task in tasks]
+        for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+            os.remove(nm)
+    os.chdir(orig_wd)
+
+
+def test_jobs_direct_txt():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    for nm in ["example_py_sheet.txt"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
+    for fn in [job_fn_py_txt, job_fn_py_txt_eat_exception]:
+        tasks = [
+            JTask(
+                "example_py_sheet.py",
+                ),
+        ]
+        res = [fn(task) for task in tasks]
+        for nm in ["example_py_sheet.txt"]:
+            os.remove(nm)
+    os.chdir(orig_wd)
+
+
+def test_jobs_direct_pyhtml():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    for nm in ["example_py_sheet.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
+    for fn in [job_fn, job_fn_eat_exception]:
+        tasks = [
+            JTask(
+                "example_py_sheet.py",
+                ),
+        ]
+        res = [fn(task) for task in tasks]
+        for nm in ["example_py_sheet.html"]:
+            os.remove(nm)
     os.chdir(orig_wd)
 
 
