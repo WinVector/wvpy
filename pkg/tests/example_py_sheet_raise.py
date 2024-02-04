@@ -1,2 +1,1 @@
-
-raise(Exception("ex"))
+raise (Exception("ex"))

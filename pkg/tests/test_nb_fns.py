@@ -1,4 +1,3 @@
-
 import os
 import pytest
 import warnings
@@ -22,9 +21,18 @@ import multiprocessing
 # and does not reoccur when we import wvpy.jtools components
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    from nbconvert.preprocessors.execute import CellExecutionError  # even importing this causes warning
+    from nbconvert.preprocessors.execute import (
+        CellExecutionError,
+    )  # even importing this causes warning
 
-from wvpy.jtools import render_as_html, convert_py_code_to_notebook, convert_notebook_code_to_py, JTask, job_fn, run_pool
+from wvpy.jtools import (
+    render_as_html,
+    convert_py_code_to_notebook,
+    convert_notebook_code_to_py,
+    JTask,
+    job_fn,
+    run_pool,
+)
 
 
 # confirm we have not killed all warnings
@@ -41,9 +49,7 @@ def test_jupyter_notebook_good():
         os.remove("example_good_notebook.html")
     except FileNotFoundError:
         pass
-    render_as_html(
-        "example_good_notebook.ipynb"
-    )
+    render_as_html("example_good_notebook.ipynb")
     os.remove("example_good_notebook.html")
     # want the raised issue if not present
     os.chdir(orig_wd)
@@ -59,8 +65,8 @@ def test_jupyter_notebook_sheet_vars_good():
         pass
     render_as_html(
         "example_sheet_vars_notebook.ipynb",
-        sheet_vars={'x': 7},
-        init_code='y = 3',
+        sheet_vars={"x": 7},
+        init_code="y = 3",
     )
     os.remove("example_sheet_vars_notebook.html")
     # want the raised issue if not present
@@ -78,8 +84,8 @@ def test_jupyter_notebook_sheet_vars_bad():
     with pytest.raises(CellExecutionError):
         render_as_html(
             "example_sheet_vars_notebook.ipynb",
-            sheet_vars={'x': 4},  # wrong value!
-            init_code='y = 3',
+            sheet_vars={"x": 4},  # wrong value!
+            init_code="y = 3",
         )
     os.remove("example_sheet_vars_notebook.html")
     # want the raised issue if not present
@@ -95,9 +101,7 @@ def test_jupyter_notebook_bad():
     except FileNotFoundError:
         pass
     with pytest.raises(CellExecutionError):
-        render_as_html(
-            "example_bad_notebook.ipynb"
-        )
+        render_as_html("example_bad_notebook.ipynb")
     os.remove("example_bad_notebook.html")
     os.chdir(orig_wd)
 
@@ -161,7 +165,7 @@ def test_jupyter_notebook_parameterized_good():
         pass
     render_as_html(
         "example_parameterized_notebook.ipynb",
-        init_code='x = 2',
+        init_code="x = 2",
     )
     os.remove("example_parameterized_notebook.html")
     # want the raised issue if not present
@@ -191,7 +195,7 @@ def test_jtask_param_good():
     os.chdir(source_dir)
     task = JTask(
         "example_parameterized_notebook.ipynb",
-        init_code='x = 2',
+        init_code="x = 2",
         output_suffix="_z",
     )
     task_str = str(task)
@@ -219,7 +223,7 @@ def test_jtask_param_bad():
         pass
     task = JTask(
         "example_parameterized_notebook.ipynb",
-        init_code='x = 1',
+        init_code="x = 1",
     )
     with pytest.raises(CellExecutionError):
         with multiprocessing.Pool(2) as p:
@@ -264,7 +268,7 @@ def test_JTask_basics():
     assert isinstance(s1, str)
     r1 = t1.__repr__()
     assert isinstance(r1, str)
-    t2 = JTask("example_good_notebook.ipynb", strict=False, sheet_vars={'x': 7})
+    t2 = JTask("example_good_notebook.ipynb", strict=False, sheet_vars={"x": 7})
     s2 = str(t2)
     assert isinstance(s2, str)
     r2 = t2.__repr__()

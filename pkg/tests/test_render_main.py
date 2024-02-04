@@ -1,9 +1,5 @@
-
-
-
 import os
 from wvpy.render_workbook import render_workbook
-
 
 
 def test_pysheet_1():

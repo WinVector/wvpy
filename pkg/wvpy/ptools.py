@@ -1,4 +1,3 @@
-
 """Python rendering tools"""
 
 import datetime
@@ -17,7 +16,7 @@ def execute_py(
     *,
     output_suffix: Optional[str] = None,
     verbose: bool = True,
-    sheet_vars = None,
+    sheet_vars=None,
     init_code: Optional[str] = None,
 ) -> None:
     """
@@ -42,11 +41,7 @@ def execute_py(
         python_source = inf.read()
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
-        python_source = (
-            init_code
-            + "\n\n"
-            + python_source
-        )
+        python_source = init_code + "\n\n" + python_source
     result_file_name = os.path.basename(source_file_name)
     result_file_name = result_file_name.removesuffix(".py")
     exec_note = ""
@@ -93,9 +88,11 @@ def execute_py(
     nw = datetime.datetime.now()
     if caught is not None:
         if verbose:
-            print(f'\n\n\texception in execute_py "{source_file_name}" {nw} {escape_ansi(str(caught))}\n\n')
+            print(
+                f'\n\n\texception in execute_py "{source_file_name}" {nw} {escape_ansi(str(caught))}\n\n'
+            )
             if trace is not None:
-                print(f'\n\n\t\ttrace {escape_ansi(str(trace))}\n\n')
+                print(f"\n\n\t\ttrace {escape_ansi(str(trace))}\n\n")
         raise caught
     if verbose:
         print(f'\tdone execute_py "{source_file_name}" {nw}')

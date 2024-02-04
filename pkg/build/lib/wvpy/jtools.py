@@ -1,4 +1,3 @@
-
 """Jupyter tools"""
 
 import re
@@ -24,13 +23,14 @@ from wvpy.ptools import execute_py
 have_black = False
 try:
     import black
+
     have_black = True
 except ModuleNotFoundError:
     pass
 
 nbf_v = nbformat.v4
 
-#def _normalize(nb):
+# def _normalize(nb):
 #    # try and work around version mismatches
 #    return nbformat.validator.normalize(nb, version=4, version_minor=5)[1]
 
@@ -46,31 +46,30 @@ def pretty_format_python(python_txt: str, *, black_mode=None) -> str:
     """
     assert have_black
     assert isinstance(python_txt, str)
-    formatted_python = python_txt.strip('\n') + '\n'
+    formatted_python = python_txt.strip("\n") + "\n"
     if len(formatted_python.strip()) > 0:
         if black_mode is None:
             black_mode = black.FileMode()
         try:
             formatted_python = black.format_str(formatted_python, mode=black_mode)
-            formatted_python = formatted_python.strip('\n') + '\n'
+            formatted_python = formatted_python.strip("\n") + "\n"
         except Exception:
             pass
     return formatted_python
 
 
 def convert_py_code_to_notebook(
-    text: str,
-    *,
-    use_black:bool = False) -> nbformat.notebooknode.NotebookNode:
+    text: str, *, use_black: bool = False
+) -> nbformat.notebooknode.NotebookNode:
     """
-    Convert python text to a notebook. 
+    Convert python text to a notebook.
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
     "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
 
     :param text: Python text to convert.
     :param use_black: if True use black to re-format Python code
-    :return: a notebook 
+    :return: a notebook
     """
     # https://stackoverflow.com/a/23729611/6901725
     # https://nbviewer.org/gist/fperez/9716279
@@ -79,7 +78,9 @@ def convert_py_code_to_notebook(
     lines = text.splitlines()
     begin_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*begin\s+text\s*$")
     end_text_regexp = re.compile(r"^\s*r?((''')|(\"\"\"))\s*#\s*end\s+text\s*$")
-    end_code_regexp = re.compile(r"(^\s*r?'''\s*end\s+code\s*'''\s*$)|(^\s*r?\"\"\"\s*end\s+code\s*\"\"\"\s*$)")
+    end_code_regexp = re.compile(
+        r"(^\s*r?'''\s*end\s+code\s*'''\s*$)|(^\s*r?\"\"\"\s*end\s+code\s*\"\"\"\s*$)"
+    )
     # run a little code collecting state machine
     cells = []
     collecting_python = []
@@ -99,13 +100,13 @@ def convert_py_code_to_notebook(
             code_end = end_code_regexp.match(line)
         if is_end or text_start or code_start or code_end:
             if (collecting_python is not None) and (len(collecting_python) > 0):
-                python_block = ('\n'.join(collecting_python)).strip('\n') + '\n'
+                python_block = ("\n".join(collecting_python)).strip("\n") + "\n"
                 if len(python_block.strip()) > 0:
                     if use_black and have_black:
                         python_block = pretty_format_python(python_block)
                     cells.append(nbf_v.new_code_cell(python_block))
             if (collecting_text is not None) and (len(collecting_text) > 0):
-                txt_block = ('\n'.join(collecting_text)).strip('\n') + '\n'
+                txt_block = ("\n".join(collecting_text)).strip("\n") + "\n"
                 if len(txt_block.strip()) > 0:
                     cells.append(nbf_v.new_markdown_cell(txt_block))
             collecting_python = None
@@ -147,21 +148,19 @@ def prepend_code_cell_to_notebook(
     for i in range(len(orig_cells)):
         orig_cells[i]["id"] = f"cell{i}"
     cells = [header_cell] + orig_cells
-    nb_out = nbf_v.new_notebook(
-        cells=cells
-    )
+    nb_out = nbf_v.new_notebook(cells=cells)
     # nb_out = _normalize(nb_out)
     return nb_out
 
 
 def convert_py_file_to_notebook(
-    py_file: str, 
+    py_file: str,
     *,
     ipynb_file: str,
     use_black: bool = False,
-    ) -> None:
+) -> None:
     """
-    Convert python text to a notebook. 
+    Convert python text to a notebook.
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
     "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
@@ -169,16 +168,16 @@ def convert_py_file_to_notebook(
     :param py_file: Path to python source file.
     :param ipynb_file: Path to notebook result file.
     :param use_black: if True use black to re-format Python code
-    :return: nothing 
+    :return: nothing
     """
     assert isinstance(py_file, str)
     assert isinstance(ipynb_file, str)
     assert isinstance(use_black, bool)
     assert py_file != ipynb_file  # prevent clobber
-    with open(py_file, 'r') as f:
+    with open(py_file, "r") as f:
         text = f.read()
     nb = convert_py_code_to_notebook(text, use_black=use_black)
-    with open(ipynb_file, 'w') as f:
+    with open(ipynb_file, "w") as f:
         nbformat.write(nb, f)
 
 
@@ -186,9 +185,9 @@ def convert_notebook_code_to_py(
     nb: nbformat.notebooknode.NotebookNode,
     *,
     use_black: bool = False,
-    ) -> str:
+) -> str:
     """
-    Convert ipython notebook inputs to a py code. 
+    Convert ipython notebook inputs to a py code.
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
     "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
@@ -202,31 +201,31 @@ def convert_notebook_code_to_py(
     code_needs_end = False
     for cell in nb.cells:
         if len(cell.source.strip()) > 0:
-            if cell.cell_type == 'code':
+            if cell.cell_type == "code":
                 if code_needs_end:
                     res.append('\n"""end code"""\n')
-                py_text = cell.source.strip('\n') + '\n'
+                py_text = cell.source.strip("\n") + "\n"
                 if use_black and have_black:
                     py_text = pretty_format_python(py_text)
                 res.append(py_text)
                 code_needs_end = True
             else:
                 res.append('\n""" begin text')
-                res.append(cell.source.strip('\n'))
+                res.append(cell.source.strip("\n"))
                 res.append('"""  # end text\n')
                 code_needs_end = False
-    res_text = '\n' + ('\n'.join(res)).strip('\n') + '\n\n'
+    res_text = "\n" + ("\n".join(res)).strip("\n") + "\n\n"
     return res_text
 
 
 def convert_notebook_file_to_py(
     ipynb_file: str,
-    *,  
+    *,
     py_file: str,
     use_black: bool = False,
-    ) -> None:
+) -> None:
     """
-    Convert ipython notebook inputs to a py file. 
+    Convert ipython notebook inputs to a py file.
     "''' begin text" ends any open blocks, and starts a new markdown block (triple double quotes also allowed)
     "''' # end text" ends text, and starts a new code block (triple double quotes also allowed)
     "'''end code'''" ends code blocks, and starts a new code block (triple double quotes also allowed)
@@ -243,17 +242,18 @@ def convert_notebook_file_to_py(
     with open(ipynb_file, "rb") as f:
         nb = nbformat.read(f, as_version=4)
     py_source = convert_notebook_code_to_py(nb, use_black=use_black)
-    with open(py_file, 'w') as f:
-        f.write(py_source)        
+    with open(py_file, "w") as f:
+        f.write(py_source)
 
 
 class OurExecutor(ExecutePreprocessor):
     """Catch exception in notebook processing"""
+
     def __init__(self, **kw):
         """Initialize the preprocessor."""
         ExecutePreprocessor.__init__(self, **kw)
         self.caught_exception = None
-    
+
     def preprocess_cell(self, cell, resources, index):
         """
         Override if you want to apply some preprocessing to each cell.
@@ -279,19 +279,21 @@ class OurExecutor(ExecutePreprocessor):
 
 # https://nbconvert.readthedocs.io/en/latest/execute_api.html
 # https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html
-# HTML element we are trying to delete: 
+# HTML element we are trying to delete:
 #   <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 def render_as_html(
     notebook_file_name: str,
     *,
     output_suffix: Optional[str] = None,
-    timeout:int = 60000,
+    timeout: int = 60000,
     kernel_name: Optional[str] = None,
     verbose: bool = True,
-    sheet_vars = None,
+    sheet_vars=None,
     init_code: Optional[str] = None,
     exclude_input: bool = False,
-    prompt_strip_regexp: Optional[str] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
+    prompt_strip_regexp: Optional[
+        str
+    ] = r'<\s*div\s+class\s*=\s*"jp-OutputPrompt[^<>]*>[^<>]*Out[^<>]*<\s*/div\s*>',
 ) -> None:
     """
     Render a Jupyter notebook in the current directory as HTML.
@@ -311,17 +313,21 @@ def render_as_html(
     """
     assert isinstance(notebook_file_name, str)
     # deal with no suffix case
-    if (not notebook_file_name.endswith(".ipynb")) and (not notebook_file_name.endswith(".py")):
+    if (not notebook_file_name.endswith(".ipynb")) and (
+        not notebook_file_name.endswith(".py")
+    ):
         py_name = notebook_file_name + ".py"
         py_exists = os.path.exists(py_name)
         ipynb_name = notebook_file_name + ".ipynb"
         ipynb_exists = os.path.exists(ipynb_name)
         if (py_exists + ipynb_exists) != 1:
-            raise ValueError('{ipynb_exists}: if file suffix is not specified then exactly one of .py or .ipynb file must exist')
+            raise ValueError(
+                "{ipynb_exists}: if file suffix is not specified then exactly one of .py or .ipynb file must exist"
+            )
         if ipynb_exists:
-            notebook_file_name = notebook_file_name + '.ipynb'
+            notebook_file_name = notebook_file_name + ".ipynb"
         else:
-            notebook_file_name = notebook_file_name + '.py'
+            notebook_file_name = notebook_file_name + ".py"
     # get the input
     assert os.path.exists(notebook_file_name)
     if notebook_file_name.endswith(".ipynb"):
@@ -330,11 +336,11 @@ def render_as_html(
             nb = nbformat.read(f, as_version=4)
     elif notebook_file_name.endswith(".py"):
         suffix = ".py"
-        with open(notebook_file_name, 'r') as f:
+        with open(notebook_file_name, "r") as f:
             text = f.read()
         nb = convert_py_code_to_notebook(text)
     else:
-        raise ValueError('{ipynb_exists}: file must end with .py or .ipynb')
+        raise ValueError("{ipynb_exists}: file must end with .py or .ipynb")
     tmp_path = None
     # do the conversion
     if sheet_vars is not None:
@@ -347,13 +353,11 @@ def render_as_html(
 import pickle
 with open({tmp_path.__repr__()}, 'rb') as pf:
    sheet_vars = pickle.load(pf)
-""" 
+"""
         init_code = init_code + "\n\n" + pickle_code
     if (init_code is not None) and (len(init_code) > 0):
         assert isinstance(init_code, str)
-        nb = prepend_code_cell_to_notebook(
-            nb, 
-            code_text=f'\n\n{init_code}\n\n')
+        nb = prepend_code_cell_to_notebook(nb, code_text=f"\n\n{init_code}\n\n")
     html_name = os.path.basename(notebook_file_name)
     html_name = html_name.removesuffix(suffix)
     exec_note = ""
@@ -375,9 +379,7 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         )
     try:
         if kernel_name is not None:
-            ep = OurExecutor(
-                timeout=timeout, kernel_name=kernel_name
-            )
+            ep = OurExecutor(timeout=timeout, kernel_name=kernel_name)
         else:
             ep = OurExecutor(timeout=timeout)
         nb_res, nb_resources = ep.preprocess(nb)
@@ -389,10 +391,7 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
         trace = traceback.format_exc()
     if exclude_input and (prompt_strip_regexp is not None):
         # strip output prompts
-        html_body = re.sub(
-            prompt_strip_regexp,
-            ' ',
-            html_body)
+        html_body = re.sub(prompt_strip_regexp, " ", html_body)
     with open(html_name, "wt", encoding="utf-8") as f:
         f.write(html_body)
         if caught is not None:
@@ -411,16 +410,23 @@ with open({tmp_path.__repr__()}, 'rb') as pf:
             pass
     if caught is not None:
         if verbose:
-            print(f'\n\n\texception in render_as_html "{notebook_file_name}" {nw} {escape_ansi(str(caught))}\n\n')
+            print(
+                f'\n\n\texception in render_as_html "{notebook_file_name}" {nw} {escape_ansi(str(caught))}\n\n'
+            )
             if trace is not None:
-                print(f'\n\n\t\ttrace {escape_ansi(str(trace))}\n\n')
+                print(f"\n\n\t\ttrace {escape_ansi(str(trace))}\n\n")
         raise caught
     if verbose:
         print(f'\tdone render_as_html "{notebook_file_name}" {nw}')
 
 
 _jtask_comparison_attributes = [
-    "sheet_name", "output_suffix", "exclude_input", "init_code", "path_prefix"]
+    "sheet_name",
+    "output_suffix",
+    "exclude_input",
+    "init_code",
+    "path_prefix",
+]
 
 
 @total_ordering
@@ -431,7 +437,7 @@ class JTask:
         *,
         output_suffix: Optional[str] = None,
         exclude_input: bool = True,
-        sheet_vars = None,
+        sheet_vars=None,
         init_code: Optional[str] = None,
         path_prefix: Optional[str] = None,
         strict: bool = True,
@@ -444,7 +450,7 @@ class JTask:
         :param exclude_input: if True strip input cells out of HTML render.
         :param sheet_vars: if not None value is de-serialized as a variable named "sheet_vars"
         :param init_code: optional code to insert at the top of the Jupyter sheet, used to pass parameters.
-        :param path_prefix: optional prefix to add to sheet_name to find Jupyter source. 
+        :param path_prefix: optional prefix to add to sheet_name to find Jupyter source.
         :param strict: if True check paths path_prefix and path_prefix/sheetname[.py|.ipynb] exist.
         """
         assert isinstance(sheet_name, str)
@@ -488,7 +494,7 @@ class JTask:
             sheet_vars=self.sheet_vars,
             init_code=self.init_code,
         )
-    
+
     def render_py_txt(self) -> None:
         """
         Render Python to text (without nbconver, nbformat Jupyter bindings)
@@ -504,7 +510,7 @@ class JTask:
         )
 
     def __getitem__(self, item):
-         return getattr(self, item)
+        return getattr(self, item)
 
     def _is_valid_operand(self, other):
         return isinstance(other, JTask)
@@ -530,8 +536,8 @@ class JTask:
             v_self = self[v]
             v_other = other[v]
             # can't order compare None to None
-            if ((v_self is None) or (v_other is None)):
-                if ((v_self is None) != (v_other is None)):
+            if (v_self is None) or (v_other is None):
+                if (v_self is None) != (v_other is None):
                     return v_self is None
             else:
                 if self[v] < other[v]:
@@ -539,13 +545,15 @@ class JTask:
         if str(self.sheet_vars) < str(other.sheet_vars):
             return True
         return False
-    
+
     def __str__(self) -> str:
-        args_str = ",\n".join([
-            f" {v}={repr(self[v])}"
-            for v in _jtask_comparison_attributes + ["sheet_vars"]
-        ])
-        return 'JTask(\n' + args_str + ",\n)"
+        args_str = ",\n".join(
+            [
+                f" {v}={repr(self[v])}"
+                for v in _jtask_comparison_attributes + ["sheet_vars"]
+            ]
+        )
+        return "JTask(\n" + args_str + ",\n)"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -596,13 +604,13 @@ def job_fn_py_txt_eat_exception(arg: JTask):
 
 
 def run_pool(
-        tasks: Iterable, 
-        *, 
-        njobs: int = 4,
-        verbose: bool = True,
-        stop_on_error: bool = True,
-        use_Jupyter: bool = True,
-        ) -> List:
+    tasks: Iterable,
+    *,
+    njobs: int = 4,
+    verbose: bool = True,
+    stop_on_error: bool = True,
+    use_Jupyter: bool = True,
+) -> List:
     """
     Run a pool of tasks.
 
@@ -632,7 +640,9 @@ def run_pool(
             fn = job_fn_py_txt
         with Pool(njobs) as pool:
             try:
-                res = list(pool.imap_unordered(fn, tasks))  # list is forcing iteration over tasks for side-effects
+                res = list(
+                    pool.imap_unordered(fn, tasks)
+                )  # list is forcing iteration over tasks for side-effects
             except Exception:
                 if verbose:
                     sys.stdout.flush()
@@ -659,8 +669,8 @@ def run_pool(
 def declare_task_variables(
     env,
     *,
-    result_map:Optional[Dict[str, Any]] = None,
-    ) -> None:
+    result_map: Optional[Dict[str, Any]] = None,
+) -> None:
     """
     Copy env["sheet_vars"][k] into env[k] for all k in sheet_vars.keys() if "sheet_vars" defined in env.
     Only variables that are first assigned in the with block of this task manager are allowed to be assigned.
@@ -682,7 +692,9 @@ def declare_task_variables(
             result_map["sheet_vars"] = sheet_vars
         already_assigned_vars = set(sheet_vars.keys()).intersection(pre_known_vars)
         if len(already_assigned_vars) > 0:
-            raise ValueError(f"declare_task_variables(): attempting to set pre-with variables: {sorted(already_assigned_vars)}")
+            raise ValueError(
+                f"declare_task_variables(): attempting to set pre-with variables: {sorted(already_assigned_vars)}"
+            )
     try:
         yield
     finally:
@@ -693,7 +705,9 @@ def declare_task_variables(
         if "sheet_vars" in pre_known_vars:
             unexpected_vars = set(sheet_vars.keys()) - declared_vars
             if len(unexpected_vars) > 0:
-                raise ValueError(f"declare_task_variables(): attempting to assign undeclared variables: {sorted(unexpected_vars)}")
+                raise ValueError(
+                    f"declare_task_variables(): attempting to assign undeclared variables: {sorted(unexpected_vars)}"
+                )
             # do the assignments
             for k, v in sheet_vars.items():
                 env[k] = v

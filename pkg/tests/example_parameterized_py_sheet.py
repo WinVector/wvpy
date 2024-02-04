@@ -1,4 +1,3 @@
-
 from wvpy.jtools import declare_task_variables
 
 

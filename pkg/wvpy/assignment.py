@@ -66,6 +66,7 @@ def ensure_names_not_already_assigned(env, *, keys: Iterable[str]) -> None:
     """
     Check that no key in keys is already set in the environment env.
     Raises ValueError if keys are already assigned.
+    For an example please see: https://github.com/WinVector/wvpy/blob/main/examples/declare_variables/record_example.ipynb .
 
     :param env: working environment, setting to `globals()` is usually the correct choice.
     :param keys: keys to confirm not already set.
@@ -81,6 +82,7 @@ def assign_values_from_map(
 ) -> None:
     """
     Assign values from map into environment.
+    For an example please see: https://github.com/WinVector/wvpy/blob/main/examples/declare_variables/record_example.ipynb .
 
     :param env: working environment, setting to `globals()` is usually the correct choice.
     :param values: dictionary to copy into environment.
