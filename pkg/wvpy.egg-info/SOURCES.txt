@@ -4,6 +4,7 @@ README.txt
 setup.py
 Doc/documentation.txt
 wvpy/__init__.py
+wvpy/assignment.py
 wvpy/jtools.py
 wvpy/ptools.py
 wvpy/pysheet.py

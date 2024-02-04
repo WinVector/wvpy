@@ -16,7 +16,6 @@ import traceback
 from typing import Any, Dict, Iterable, List, Optional
 from functools import total_ordering
 from contextlib import contextmanager
-from collections import namedtuple
 
 from wvpy.util import escape_ansi
 from wvpy.ptools import execute_py
@@ -654,18 +653,6 @@ def run_pool(
         with Pool(njobs) as pool:
             res = list(pool.map(fn, tasks))
     return res
-
-
-def write_dict_as_assignments(values: Dict[str, Any]) -> str:
-    """
-    Write a dictionary as a block of Python assignment statements.
-
-    :param values: dictionary
-    :return: assignment statements
-    """
-    return "\n" + "\n".join([
-        f"{k} = {repr(values[k])}" for k in sorted(values.keys())
-    ]) + "\n"
 
 
 @contextmanager
