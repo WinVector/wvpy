@@ -20,12 +20,12 @@ with declare_task_variables(globals()):
 """end code"""
 
 # import our packages
-import warnings
 import datetime
 import requests
 import pandas as pd
 from IPython.display import display, Markdown
-from plotnine import *
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 """end code"""
@@ -88,16 +88,10 @@ present(display_df.loc[:, ["properties.parameters.NWSheadline"]].to_markdown())
 
 # plot
 if html_render and (sum(pd.isnull(display_df["properties.severity"]) == False) > 0):
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        print(
-            ggplot(
-                data=display_df,
-                mapping=aes(x="properties.severity"),
-                )
-                + geom_histogram()
-                + ggtitle(f"Weather severity distribution for {state_code}, retrieved at {time_stamp_str}")
-        )
+    ax = sns.histplot(data=display_df, x="properties.severity")
+    plt.title(f"Weather severity distribution for {state_code}, retrieved at {time_stamp_str}")
+    ax.set(xlabel='Severity')
+    plt.show()
 
 
 """end code"""
