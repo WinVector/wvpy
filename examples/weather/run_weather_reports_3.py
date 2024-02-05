@@ -1,0 +1,20 @@
+
+# python run_weather_reports_2.py
+from wvpy.jtools import JTask, run_pool
+
+
+if __name__ == '__main__':
+    state_codes = [
+        "CA",
+        "TX",
+        "KS",
+    ]
+    tasks = [
+        JTask(
+            sheet_name="weather_example_3.py",
+            sheet_vars={"state_code": state_code},
+            output_suffix=f"_{state_code}",
+        )
+        for state_code in state_codes
+    ]
+    run_pool(tasks, use_Jupyter=False)
