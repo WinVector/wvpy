@@ -81,7 +81,7 @@ if df.shape[0] > 0:
 else:
     display_df = pd.DataFrame({col: [None] for col in display_cols})
 
-present(display_df.to_markdown())
+present(display_df.loc[:, ["properties.parameters.NWSheadline"]].to_markdown())
 
 
 """end code"""
