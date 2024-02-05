@@ -3,6 +3,14 @@ MANIFEST.in
 README.txt
 setup.py
 Doc/documentation.txt
+tests/test_assignment_services.py
+tests/test_declare_task_variables.py
+tests/test_execute_py.py
+tests/test_jtools.py
+tests/test_nb_fns.py
+tests/test_py_fns.py
+tests/test_pysheet.py
+tests/test_render_main.py
 wvpy/__init__.py
 wvpy/assignment.py
 wvpy/jtools.py

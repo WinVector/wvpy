@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.11.2, pytest-7.1.2, pluggy-1.0.0
+platform darwin -- Python 3.11.7, pytest-7.4.0, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
-plugins: anyio-3.5.0, cov-4.0.0
+plugins: cov-4.1.0, anyio-4.2.0
 collected 31 items
 
 tests/test_assignment_services.py .....                                  [ 16%]
@@ -14,8 +14,8 @@ tests/test_pysheet.py .                                                  [ 96%]
 tests/test_render_main.py .                                              [100%]
 
 =============================== warnings summary ===============================
-../../../../opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/jupyter_client/connect.py:20
-  /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/jupyter_client/connect.py:20: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+../../../../opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/jupyter_client/connect.py:22
+  /Users/johnmount/opt/anaconda3/envs/wvpy_dev_env/lib/python3.11/site-packages/jupyter_client/connect.py:22: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
   given by the platformdirs library.  To remove this warning and
   see the appropriate new directories, set the environment variable
   `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
@@ -28,7 +28,7 @@ tests/test_render_main.py .                                              [100%]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
----------- coverage: platform darwin, python 3.11.2-final-0 ----------
+---------- coverage: platform darwin, python 3.11.7-final-0 ----------
 Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
@@ -41,4 +41,4 @@ wvpy/util.py                  4      0   100%
 ---------------------------------------------
 TOTAL                       624    138    78%
 
-======================= 31 passed, 2 warnings in 53.11s ========================
+======================= 31 passed, 2 warnings in 50.60s ========================

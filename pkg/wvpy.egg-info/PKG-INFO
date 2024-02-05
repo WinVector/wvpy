@@ -19,8 +19,12 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: License :: OSI Approved :: BSD License
 Description-Content-Type: text/markdown
-Provides-Extra: code_format
 License-File: LICENSE
+Requires-Dist: IPython
+Requires-Dist: nbformat
+Requires-Dist: nbconvert
+Provides-Extra: code-format
+Requires-Dist: black; extra == "code-format"
 
 
 Convert Jupyter notebooks to and from Python files, and render.
