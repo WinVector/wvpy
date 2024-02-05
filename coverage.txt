@@ -2,13 +2,14 @@
 platform darwin -- Python 3.11.2, pytest-7.1.2, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: anyio-3.5.0, cov-4.0.0
-collected 28 items
+collected 31 items
 
-tests/test_assignment_services.py .....                                  [ 17%]
-tests/test_declare_task_variables.py ..                                  [ 25%]
-tests/test_execute_py.py .                                               [ 28%]
-tests/test_nb_fns.py ................                                    [ 85%]
-tests/test_py_fns.py ..                                                  [ 92%]
+tests/test_assignment_services.py .....                                  [ 16%]
+tests/test_declare_task_variables.py ..                                  [ 22%]
+tests/test_execute_py.py .                                               [ 25%]
+tests/test_jtools.py ..                                                  [ 32%]
+tests/test_nb_fns.py .................                                   [ 87%]
+tests/test_py_fns.py ..                                                  [ 93%]
 tests/test_pysheet.py .                                                  [ 96%]
 tests/test_render_main.py .                                              [100%]
 
@@ -32,12 +33,12 @@ Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
 wvpy/assignment.py           30      0   100%
-wvpy/jtools.py              389     90    77%
+wvpy/jtools.py              360     51    86%
 wvpy/ptools.py               65      6    91%
 wvpy/pysheet.py              99     49    51%
 wvpy/render_workbook.py      63     32    49%
 wvpy/util.py                  4      0   100%
 ---------------------------------------------
-TOTAL                       653    177    73%
+TOTAL                       624    138    78%
 
-======================= 28 passed, 2 warnings in 49.58s ========================
+======================= 31 passed, 2 warnings in 49.14s ========================

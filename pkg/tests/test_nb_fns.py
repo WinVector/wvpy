@@ -1,7 +1,9 @@
 import os
-import pytest
 import warnings
+import tempfile
 import multiprocessing
+import pytest
+
 
 # importing nbconvert components such as nbconvert.preprocessors.execute
 # while in pytest causes the following warning:
@@ -29,6 +31,8 @@ from wvpy.jtools import (
     render_as_html,
     convert_py_code_to_notebook,
     convert_notebook_code_to_py,
+    convert_py_file_to_notebook,
+    convert_notebook_file_to_py,
     JTask,
     job_fn,
     job_fn_eat_exception,
@@ -272,7 +276,10 @@ def test_jtask_param_good():
     task_str = str(task)
     assert isinstance(task_str, str)
     back = eval(task_str)
-    assert task == back
+    assert isinstance(back, JTask)
+    assert set(vars(task)) == set(vars(back))
+    for v in vars(task):
+        assert task[v] == back[v]
     try:
         os.remove("example_parameterized_notebook_z.html")
     except FileNotFoundError:
@@ -331,6 +338,22 @@ def test_nb_convert():
     res_txt = convert_notebook_code_to_py(nb)
     assert isinstance(res_txt, str)
     # TODO: compare to original text
+
+
+def test_nb_convert_f():
+    tf_name = tempfile.NamedTemporaryFile(delete=False).name
+    os.remove(tf_name)
+    os.mkdir(tf_name)
+    with open(os.path.join(tf_name, "s.py"), "w", encoding="utf-8") as f:
+        f.write(ex_txt)
+    convert_py_file_to_notebook(os.path.join(tf_name, "s.py"), ipynb_file=os.path.join(tf_name, "s.ipynb"), use_black=True)
+    convert_notebook_file_to_py(os.path.join(tf_name, "s.ipynb"), py_file=os.path.join(tf_name, "s2.py"), use_black=True)
+    with open(os.path.join(tf_name, "s2.py"), "r", encoding="utf-8") as f:
+        res = f.read()
+    for fn in ["s.py", "s.ipynb", "s2.py"]:
+        os.remove(os.path.join(tf_name, fn))
+    os.rmdir(tf_name)
+
 
 
 def test_JTask_basics():

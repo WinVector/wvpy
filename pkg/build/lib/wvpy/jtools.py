@@ -13,7 +13,6 @@ import tempfile
 import traceback
 
 from typing import Any, Dict, Iterable, List, Optional
-from functools import total_ordering
 from contextlib import contextmanager
 
 from wvpy.util import escape_ansi
@@ -429,7 +428,6 @@ _jtask_comparison_attributes = [
 ]
 
 
-@total_ordering
 class JTask:
     def __init__(
         self,
@@ -514,37 +512,6 @@ class JTask:
 
     def _is_valid_operand(self, other):
         return isinstance(other, JTask)
-
-    def __eq__(self, other):
-        if not self._is_valid_operand(other):
-            return False
-        if str(type(self)) != str(type(other)):
-            return False
-        for v in _jtask_comparison_attributes:
-            if self[v] != other[v]:
-                return False
-        if str(self.sheet_vars) != str(other.sheet_vars):
-            return False
-        return True
-
-    def __lt__(self, other):
-        if not self._is_valid_operand(other):
-            return NotImplemented
-        if str(type(self)) < str(type(other)):
-            return True
-        for v in _jtask_comparison_attributes:
-            v_self = self[v]
-            v_other = other[v]
-            # can't order compare None to None
-            if (v_self is None) or (v_other is None):
-                if (v_self is None) != (v_other is None):
-                    return v_self is None
-            else:
-                if self[v] < other[v]:
-                    return True
-        if str(self.sheet_vars) < str(other.sheet_vars):
-            return True
-        return False
 
     def __str__(self) -> str:
         args_str = ",\n".join(
