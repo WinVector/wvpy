@@ -181,7 +181,34 @@ def test_jobs_direct_pyhtml():
     os.chdir(orig_wd)
 
 
-def test_pool_completes_bad():
+def test_pool_completes_bad_assert():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
+    tasks = [
+        JTask("example_good_notebook.ipynb"),
+        JTask(
+            "example_parameterized_notebook.ipynb",
+            init_code="x = 7",  # wrong value
+        ),
+    ]
+    run_pool(
+        tasks,
+        njobs=2,
+        verbose=False,
+        stop_on_error=False,
+    )
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        os.remove(nm)
+    os.chdir(orig_wd)
+
+
+def test_pool_completes_bad_except():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)
@@ -205,7 +232,35 @@ def test_pool_completes_bad():
     os.chdir(orig_wd)
 
 
-def test_pool_stops_bad():
+def test_pool_stops_bad_assert():
+    source_dir = os.path.dirname(os.path.realpath(__file__))
+    orig_wd = os.getcwd()
+    os.chdir(source_dir)
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        try:
+            os.remove(nm)
+        except FileNotFoundError:
+            pass
+    tasks = [
+        JTask("example_good_notebook.ipynb"),
+        JTask(
+            "example_parameterized_notebook.ipynb",
+            init_code="x = 7",  # wrong value
+        ),
+    ]
+    with pytest.raises(CellExecutionError):
+        run_pool(
+            tasks,
+            njobs=2,
+            verbose=False,
+            stop_on_error=True,
+        )
+    for nm in ["example_good_notebook.html", "example_parameterized_notebook.html"]:
+        os.remove(nm)
+    os.chdir(orig_wd)
+
+
+def test_pool_stops_bad_except():
     source_dir = os.path.dirname(os.path.realpath(__file__))
     orig_wd = os.getcwd()
     os.chdir(source_dir)

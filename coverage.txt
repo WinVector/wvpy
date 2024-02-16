@@ -2,13 +2,13 @@
 platform darwin -- Python 3.11.7, pytest-7.4.0, pluggy-1.0.0
 rootdir: /Users/johnmount/Documents/work/wvpy/pkg
 plugins: cov-4.1.0, anyio-4.2.0
-collected 31 items
+collected 33 items
 
-tests/test_assignment_services.py .....                                  [ 16%]
-tests/test_declare_task_variables.py ..                                  [ 22%]
-tests/test_execute_py.py .                                               [ 25%]
-tests/test_jtools.py ..                                                  [ 32%]
-tests/test_nb_fns.py .................                                   [ 87%]
+tests/test_assignment_services.py .....                                  [ 15%]
+tests/test_declare_task_variables.py ..                                  [ 21%]
+tests/test_execute_py.py .                                               [ 24%]
+tests/test_jtools.py ..                                                  [ 30%]
+tests/test_nb_fns.py ...................                                 [ 87%]
 tests/test_py_fns.py ..                                                  [ 93%]
 tests/test_pysheet.py .                                                  [ 96%]
 tests/test_render_main.py .                                              [100%]
@@ -33,12 +33,12 @@ Name                      Stmts   Miss  Cover
 ---------------------------------------------
 wvpy/__init__.py              3      0   100%
 wvpy/assignment.py           30      0   100%
-wvpy/jtools.py              360     51    86%
-wvpy/ptools.py               65      6    91%
+wvpy/jtools.py              370     61    84%
+wvpy/ptools.py               75     12    84%
 wvpy/pysheet.py              99     49    51%
 wvpy/render_workbook.py      63     32    49%
 wvpy/util.py                  4      0   100%
 ---------------------------------------------
-TOTAL                       624    138    78%
+TOTAL                       644    154    76%
 
-======================= 31 passed, 2 warnings in 48.67s ========================
+======================= 33 passed, 2 warnings in 58.11s ========================

@@ -121,7 +121,7 @@ if __name__ == "__main__":
         _, _, tb = sys.exc_info()
         tb_info = traceback.extract_tb(tb)
         filename, line, func, text = tb_info[-1]
-        print(f"Assertion failed {filename}:{line} (caller {func}) in statement {text}")
+        print(f"Assertion failed {filename}: {line} (caller {func}) in statement {text}")
     except Exception as ex:
         print(ex)
     sys.exit(-1)

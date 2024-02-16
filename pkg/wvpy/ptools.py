@@ -2,11 +2,12 @@
 
 import datetime
 import os
+import sys
 from io import StringIO
 from contextlib import redirect_stderr, redirect_stdout
 import traceback
 import copy
-from typing import Iterable, List, Optional
+from typing import Optional
 
 from wvpy.util import escape_ansi
 
@@ -56,6 +57,7 @@ def execute_py(
         pass
     caught = None
     trace = None
+    exception_text = None
     if verbose:
         print(
             f'start execute_py "{source_file_name}" {exec_note} {datetime.datetime.now()}'
@@ -74,22 +76,30 @@ def execute_py(
                     python_source,
                     exec_env,
                 )
+            except AssertionError as e:
+                _, _, tb = sys.exc_info()
+                tb_info = traceback.extract_tb(tb)
+                filename, line, func, text = tb_info[-1]
+                exception_text = f'execute_py: assertion failed in "{source_file_name}" (caller {func}) in statement {text}'
+                trace = traceback.format_exc()
+                caught = e
             except Exception as e:
                 caught = e
                 trace = traceback.format_exc()
+                exception_text = f'execute_py: Exception "{source_file_name}" "{escape_ansi(str(caught))}"'
+    nw = datetime.datetime.now()
     string_res = res_buffer_stdout.getvalue() + "\n\n" + res_buffer_stderr.getvalue()
-    if caught is not None:
-        string_res = string_res + "\n\n" + escape_ansi(str(caught))
+    if exception_text is not None:
+        string_res = string_res + "\n\n" + escape_ansi(str(caught)) + "\n\n"
     if trace is not None:
-        string_res = string_res + "\n\n" + escape_ansi(str(trace))
+        string_res = string_res + "\n\n" + escape_ansi(str(trace)) + "\n\n"
     with open(result_file_name, "wt", encoding="utf-8") as f:
         f.write(string_res)
         f.write("\n\n")
-    nw = datetime.datetime.now()
     if caught is not None:
         if verbose:
             print(
-                f'\n\n\texception in execute_py "{source_file_name}" {nw} {escape_ansi(str(caught))}\n\n'
+                f'\n\n\t{nw} {exception_text}\n\n'
             )
             if trace is not None:
                 print(f"\n\n\t\ttrace {escape_ansi(str(trace))}\n\n")

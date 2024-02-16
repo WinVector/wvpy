@@ -543,8 +543,13 @@ def job_fn_eat_exception(arg: JTask):
     # render notebook
     try:
         return arg.render_as_html()
+    except AssertionError:
+        _, _, tb = sys.exc_info()
+        tb_info = traceback.extract_tb(tb)
+        filename, line, func, text = tb_info[-1]
+        print(f"Assertion failed {filename}: {line} (caller {func}) in statement {text}")
     except Exception as e:
-        print(f"{arg} caught {e}")
+        print(f"{arg} caught {escape_ansi(e)}")
         return (arg, e)
 
 
@@ -565,8 +570,13 @@ def job_fn_py_txt_eat_exception(arg: JTask):
     # render Python
     try:
         return arg.render_py_txt()
+    except AssertionError:
+        _, _, tb = sys.exc_info()
+        tb_info = traceback.extract_tb(tb)
+        filename, line, func, text = tb_info[-1]
+        print(f"Assertion failed {filename}: {line} (caller {func}) in statement {text}")
     except Exception as e:
-        print(f"{arg} caught {e}")
+        print(f"{arg} caught {escape_ansi(e)}")
         return (arg, e)
 
 
