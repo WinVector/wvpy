@@ -9,6 +9,7 @@ import shutil
 import sys
 import traceback
 from wvpy.jtools import convert_py_file_to_notebook, convert_notebook_file_to_py
+from wvpy.util import escape_ansi
 
 
 def pysheet(
@@ -164,5 +165,5 @@ if __name__ == "__main__":
         filename, line, func, text = tb_info[-1]
         print(f"Assertion failed {filename}: {line} (caller {func}) in statement {text}")
     except Exception as ex:
-        print(ex)
+        print(escape_ansi(ex))
     sys.exit(-1)

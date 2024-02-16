@@ -35,10 +35,10 @@ wvpy/__init__.py              3      0   100%
 wvpy/assignment.py           30      0   100%
 wvpy/jtools.py              370     61    84%
 wvpy/ptools.py               75     12    84%
-wvpy/pysheet.py              99     49    51%
-wvpy/render_workbook.py      63     32    49%
+wvpy/pysheet.py             100     49    51%
+wvpy/render_workbook.py      64     32    50%
 wvpy/util.py                  4      0   100%
 ---------------------------------------------
-TOTAL                       644    154    76%
+TOTAL                       646    154    76%
 
-======================= 33 passed, 2 warnings in 58.11s ========================
+======================= 33 passed, 2 warnings in 55.47s ========================

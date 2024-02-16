@@ -9,6 +9,7 @@ import sys
 import traceback
 from wvpy.jtools import render_as_html
 from wvpy.ptools import execute_py
+from wvpy.util import escape_ansi
 
 
 def render_workbook(
@@ -123,5 +124,5 @@ if __name__ == "__main__":
         filename, line, func, text = tb_info[-1]
         print(f"Assertion failed {filename}: {line} (caller {func}) in statement {text}")
     except Exception as ex:
-        print(ex)
+        print(escape_ansi(ex))
     sys.exit(-1)
