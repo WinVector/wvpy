@@ -18,7 +18,7 @@ The above issues are fortunately all <em>inessential difficulties</em>. Python i
 The two features wvpy provides are:
 
   * Converting Juypter notebooks to/from vanilla Python files. We have an article on the technique [here](https://win-vector.com/2022/08/20/an-effective-personal-jupyter-data-science-workflow/), and a short video demonstration [here](https://youtu.be/cQ-tCwD4moc).
-  * Running many Jupyter notebooks with many different inputs, or *parameterized*. We have a short video on the technique [here](w92jsKubNCk).
+  * Running many Jupyter notebooks with many different inputs, or *parameterized*. We have a short video on the technique [here](https://youtu.be/w92jsKubNCk).
 
 The first wvpy feature is: converting Jupyter notebooks (which are JSON files ending with a <code>.ipynb</code> suffix) to and from simple Python code that is more compatible with source control (such as Git). A video describing
 
